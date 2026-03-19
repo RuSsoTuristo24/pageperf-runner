@@ -33,7 +33,7 @@ export function LongTasksPanel({ longTasks, targetUrl }: LongTasksPanelProps)
 				<table className="data-table" aria-label="Long tasks">
 					<thead>
 						<tr>
-							<th style={{ textAlign: 'left' }}>Скрипт</th>
+							<th style={{ textAlign: 'left' }} title="URL скрипта, вызвавшего длинную задачу">Скрипт</th>
 							<th title="Время начала задачи от начала навигации">Start</th>
 							<th title="Длительность задачи">Duration</th>
 						</tr>

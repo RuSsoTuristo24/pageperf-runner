@@ -274,7 +274,7 @@ export function RequestTable({
 									</button>
 								</th>
 							) : null}
-							<th>Mantis</th>
+							<th title="Отслеживание проблемных ассетов через Mantis bug tracker">Mantis</th>
 						</tr>
 					</thead>
 					<tbody>

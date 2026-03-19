@@ -9,6 +9,7 @@ import { LongTasksPanel } from './features/diagnostics/long-tasks-panel.js';
 import { OversizedImagesPanel } from './features/diagnostics/oversized-images-panel.js';
 import { RenderBlockingPanel } from './features/diagnostics/render-blocking-panel.js';
 import { ThirdPartyPanel } from './features/diagnostics/third-party-panel.js';
+import { CollapsiblePanel } from './features/diagnostics/collapsible-panel.js';
 import { JsExecutionPanel } from './features/runs/js-execution-panel.js';
 import { RunLaunchForm } from './features/runs/run-launch-form.js';
 import { RunList } from './features/runs/run-list.js';
@@ -1171,29 +1172,70 @@ export function App()
 
 				{workspaceTab === 'analysis' ? (
 					<>
-						<JsExecutionPanel
-							summary={activeJsExecutionSummary}
-							targetUrl={activePage?.url ?? selectedProfile?.url}
-						/>
+						<CollapsiblePanel
+							id="js-execution"
+							eyebrow="Main Thread"
+							title="JS Execution"
+							hint="Время исполнения каждого JS-файла на главном потоке. Показывает какие скрипты больше всего блокируют рендеринг и интерактивность. Данные из Chrome trace, атрибуция best-effort."
+							summary={activeJsExecutionSummary ? `${activeJsExecutionSummary.resources.length} скриптов` : 'Нет данных'}
+							defaultOpen={true}
+						>
+							<JsExecutionPanel
+								summary={activeJsExecutionSummary}
+								targetUrl={activePage?.url ?? selectedProfile?.url}
+							/>
+						</CollapsiblePanel>
 
-						<OversizedImagesPanel
-							images={activeDiagnostics?.oversizedImages}
-							targetUrl={activePage?.url ?? selectedProfile?.url}
-						/>
+						<CollapsiblePanel
+							id="oversized-images"
+							eyebrow="Оптимизация"
+							title="Oversized Images"
+							hint="Изображения, у которых natural-размер значительно больше display-размера. Лишние пиксели — лишний трафик и память. Можно уменьшить или использовать srcset."
+							summary={activeDiagnostics?.oversizedImages?.length ? `${activeDiagnostics.oversizedImages.length} изображений` : 'Нет данных'}
+						>
+							<OversizedImagesPanel
+								images={activeDiagnostics?.oversizedImages}
+								targetUrl={activePage?.url ?? selectedProfile?.url}
+							/>
+						</CollapsiblePanel>
 
-						<ThirdPartyPanel
-							summary={activeDiagnostics?.thirdParty}
-						/>
+						<CollapsiblePanel
+							id="third-party"
+							eyebrow="Внешние ресурсы"
+							title="Third Party"
+							hint="Запросы к внешним доменам (не origin страницы). Показывает объём трафика и blocking time от сторонних скриптов и сервисов."
+							summary={activeDiagnostics?.thirdParty ? `${activeDiagnostics.thirdParty.origins.length} origins, ${formatBytes(activeDiagnostics.thirdParty.totalTransferBytes)}` : 'Нет данных'}
+						>
+							<ThirdPartyPanel
+								summary={activeDiagnostics?.thirdParty}
+							/>
+						</CollapsiblePanel>
 
-						<LongTasksPanel
-							longTasks={activeTraceSummary?.longTasks}
-							targetUrl={activePage?.url ?? selectedProfile?.url}
-						/>
+						<CollapsiblePanel
+							id="long-tasks"
+							eyebrow="Main Thread"
+							title="Long Tasks"
+							hint="Задачи на главном потоке длительностью более 50 мс. Блокируют ввод пользователя, скролл и отрисовку. Напрямую влияют на Total Blocking Time (TBT) и отзывчивость страницы."
+							summary={activeTraceSummary?.longTasks?.length ? `${activeTraceSummary.longTasks.length} задач, ${formatMetricValue('duration', activeTraceSummary.longTasks.reduce((sum, t) => sum + t.durationMs, 0))}` : 'Нет данных'}
+						>
+							<LongTasksPanel
+								longTasks={activeTraceSummary?.longTasks}
+								targetUrl={activePage?.url ?? selectedProfile?.url}
+							/>
+						</CollapsiblePanel>
 
-						<RenderBlockingPanel
-							resources={activeDiagnostics?.renderBlocking}
-							targetUrl={activePage?.url ?? selectedProfile?.url}
-						/>
+						<CollapsiblePanel
+							id="render-blocking"
+							eyebrow="Критический путь"
+							title="Render Blocking"
+							hint="CSS и JS ресурсы, которые блокируют первую отрисовку страницы. Браузер не покажет контент пока они не загрузятся. Основная причина медленного FCP."
+							summary={activeDiagnostics?.renderBlocking?.length ? `${activeDiagnostics.renderBlocking.length} ресурсов` : 'Нет данных'}
+						>
+							<RenderBlockingPanel
+								resources={activeDiagnostics?.renderBlocking}
+								targetUrl={activePage?.url ?? selectedProfile?.url}
+							/>
+						</CollapsiblePanel>
 					</>
 				) : null}
 

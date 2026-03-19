@@ -32,8 +32,8 @@ export function RenderBlockingPanel({ resources, targetUrl }: RenderBlockingPane
 				<table className="data-table" aria-label="Render-blocking resources">
 					<thead>
 						<tr>
-							<th style={{ textAlign: 'left' }}>Ресурс</th>
-							<th>Type</th>
+							<th style={{ textAlign: 'left' }} title="URL ресурса, блокирующего рендеринг">Ресурс</th>
+							<th title="Тип ресурса (CSS, JS и т.д.)">Type</th>
 							<th title="Длительность загрузки">Duration</th>
 							<th title="Объём переданных данных">Transfer</th>
 						</tr>

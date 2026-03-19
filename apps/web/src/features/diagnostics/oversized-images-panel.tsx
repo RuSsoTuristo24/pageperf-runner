@@ -33,7 +33,7 @@ export function OversizedImagesPanel({ images, targetUrl }: OversizedImagesPanel
 				<table className="data-table" aria-label="Oversized images">
 					<thead>
 						<tr>
-							<th style={{ textAlign: 'left' }}>Изображение</th>
+							<th style={{ textAlign: 'left' }} title="URL изображения на странице">Изображение</th>
 							<th title="Реальный размер изображения (naturalWidth x naturalHeight)">Оригинал</th>
 							<th title="Размер отображения на странице (clientWidth x clientHeight)">Отображение</th>
 							<th title="Коэффициент — во сколько раз оригинал больше отображаемого">Ratio</th>

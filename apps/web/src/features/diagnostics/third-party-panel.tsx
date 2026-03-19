@@ -28,7 +28,7 @@ export function ThirdPartyPanel({ summary }: ThirdPartyPanelProps)
 				<table className="data-table" aria-label="Third-party origins">
 					<thead>
 						<tr>
-							<th style={{ textAlign: 'left' }}>Origin</th>
+							<th style={{ textAlign: 'left' }} title="Домен стороннего ресурса">Origin</th>
 							<th title="Объём данных, переданных по сети">Transfer</th>
 							<th title="Количество HTTP-запросов к этому origin">Запросы</th>
 							<th title="Суммарное время выполнения JS от этого origin на главном потоке">JS Blocking</th>

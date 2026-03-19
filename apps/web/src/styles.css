@@ -1828,3 +1828,76 @@ textarea {
 	color: #e74c3c;
 	margin: 0;
 }
+
+/* ── Collapsible Panel ── */
+.collapsible-panel {
+	padding: 0;
+	overflow: hidden;
+}
+.collapsible-panel-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 16px 20px;
+	border: 0;
+	background: transparent;
+	color: var(--text-primary);
+	cursor: pointer;
+	text-align: left;
+	font: inherit;
+	transition: background 0.15s ease;
+}
+.collapsible-panel-header:hover {
+	background: rgba(255, 255, 255, 0.03);
+}
+.collapsible-panel-indicator {
+	flex-shrink: 0;
+	width: 1.1rem;
+	font-size: 1rem;
+	color: var(--text-muted);
+	transition: color 0.15s ease;
+}
+.collapsible-panel-header:hover .collapsible-panel-indicator {
+	color: var(--text-secondary);
+}
+.collapsible-panel-titles {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+.collapsible-panel-titles .eyebrow {
+	margin: 0;
+}
+.collapsible-panel-title {
+	font-family: 'Archivo', 'IBM Plex Sans', sans-serif;
+	font-size: 1.15rem;
+	font-weight: 600;
+	letter-spacing: -0.03em;
+}
+.collapsible-panel-hint {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.3rem;
+	height: 1.3rem;
+	border-radius: 999px;
+	border: 1px solid var(--line-strong);
+	background: rgba(255, 255, 255, 0.035);
+	color: var(--text-secondary);
+	font-size: 0.78rem;
+	cursor: help;
+}
+.collapsible-panel-hint:hover {
+	border-color: rgba(93, 228, 199, 0.35);
+	color: var(--text-primary);
+}
+.collapsible-panel-summary {
+	margin-left: auto;
+	flex-shrink: 0;
+}
+.collapsible-panel-body {
+	border-top: 1px solid var(--line);
+}

@@ -31,11 +31,11 @@ export function JsExecutionPanel({ summary, targetUrl }: JsExecutionPanelProps)
 
 			<div className="js-execution-grid" role="table" aria-label="JS Execution table">
 				<div className="js-execution-header" role="row">
-					<span role="columnheader">Ресурс</span>
-					<span role="columnheader" title="Время парсинга JS-файла браузером">Parse</span>
-					<span role="columnheader" title="Время выполнения (evaluate) JS-кода">Eval</span>
-					<span role="columnheader" title="Суммарное время Parse + Eval">Итого</span>
-					<span role="columnheader" title="Уровень уверенности атрибуции (high/medium/low)">Уверенность</span>
+					<span role="columnheader" title="URL скрипта">Ресурс</span>
+					<span role="columnheader" title="Время компиляции JS движком V8. Часто 0 из-за lazy compilation — V8 компилирует код при первом вызове функции, а не при загрузке">Parse</span>
+					<span role="columnheader" title="Время исполнения JS на главном потоке. Включает EvaluateScript, FunctionCall, V8.Execute события">Eval</span>
+					<span role="columnheader" title="Суммарное время parse + eval">Итого</span>
+					<span role="columnheader" title="Точность привязки к скрипту. high = прямая ссылка в trace, medium = по call stack, low = по совпадению таймингов">Уверенность</span>
 				</div>
 
 				{resources.map((resource) => (
