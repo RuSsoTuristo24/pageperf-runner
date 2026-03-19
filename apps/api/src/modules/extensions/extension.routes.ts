@@ -48,4 +48,51 @@ export function registerExtensionRoutes(app: FastifyInstance, holder: ResolverHo
 			totalDeps: flat.length,
 		};
 	});
+
+	app.post('/api/extensions/batch-stats', async (request, reply) =>
+	{
+		if (!holder.current)
+		{
+			reply.code(503);
+
+			return { error: 'Modules path not configured. Set it in Settings.' };
+		}
+
+		const body = request.body as { urls?: string[] };
+
+		if (!Array.isArray(body.urls))
+		{
+			reply.code(400);
+
+			return { error: 'Expected { urls: string[] }' };
+		}
+
+		const resolver = holder.current;
+		const results: Array<{
+			url: string;
+			extension: string;
+			totalDeps: number;
+			totalSize: { js: number; css: number };
+		}> = [];
+
+		for (const url of body.urls)
+		{
+			const ext = resolver.resolveByUrl(url);
+			if (!ext)
+			{
+				continue;
+			}
+
+			const tree = resolver.resolveTree(ext);
+
+			results.push({
+				url,
+				extension: ext,
+				totalDeps: resolver.resolveFlat(ext).length,
+				totalSize: tree.totalSize ?? { js: 0, css: 0 },
+			});
+		}
+
+		return { results };
+	});
 }

@@ -80,7 +80,8 @@ function TreeNode({ node, isLast }: { node: ApiDependencyNode; isLast: boolean }
 					</button>
 				) : null}
 				{node.circular ? <span className="dep-tree-badge dep-tree-circular" title="Циклическая зависимость: этот экстеншен уже есть выше в дереве. Bitrix загрузит его один раз.">circular</span> : null}
-				{node.notFound ? <span className="dep-tree-badge dep-tree-not-found" title="Экстеншен объявлен как зависимость, но его config.php не найден в исходниках. Возможно, он регистрируется динамически или через другой модуль.">not in source</span> : null}
+				{node.builtIn ? <span className="dep-tree-badge dep-tree-built-in" title="Нет собственного config.php — код встроен в родительский бандл (bundle.config с protected: true). Отдельного файла на продакшене нет.">built into parent</span> : null}
+				{node.notFound ? <span className="dep-tree-badge dep-tree-not-found" title="Экстеншен объявлен как зависимость, но не найден ни config.php, ни bundle.config в исходниках. Возможно, регистрируется динамически.">not in source</span> : null}
 			</span>
 			{hasAlt && showAlt ? (
 				<div className="dep-tree-alt-panel">

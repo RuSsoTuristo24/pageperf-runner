@@ -1363,6 +1363,132 @@ textarea {
 	}
 }
 
+/* ── Asset Tops ── */
+.panel-tops {
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+}
+.panel-tops .panel-heading {
+	padding: 20px 20px 10px;
+}
+.tops-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2px;
+}
+.top-section {
+	padding: 16px 20px;
+	background: rgba(255, 255, 255, 0.02);
+	border-radius: 6px;
+}
+.top-section-title {
+	margin: 0 0 2px;
+	font-size: 13px;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.85);
+}
+.top-section-hint {
+	margin: 0 0 10px;
+	font-size: 11px;
+	color: rgba(255, 255, 255, 0.35);
+}
+.top-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+}
+.top-item {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	padding: 5px 8px;
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.02);
+	font-size: 12px;
+}
+.top-item:nth-child(1) {
+	background: rgba(231, 76, 60, 0.08);
+}
+.top-item:nth-child(2) {
+	background: rgba(241, 196, 15, 0.06);
+}
+.top-item:nth-child(3) {
+	background: rgba(241, 196, 15, 0.03);
+}
+.top-rank {
+	flex-shrink: 0;
+	width: 18px;
+	text-align: center;
+	font-weight: 700;
+	font-size: 11px;
+	color: rgba(255, 255, 255, 0.3);
+}
+.top-item:nth-child(1) .top-rank {
+	color: #e74c3c;
+}
+.top-item:nth-child(2) .top-rank {
+	color: rgba(241, 196, 15, 0.8);
+}
+.top-info {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+.top-name {
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.85);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.top-url {
+	font-size: 10px;
+	color: rgba(255, 255, 255, 0.25);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.top-value {
+	flex-shrink: 0;
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 12px;
+	font-variant-numeric: tabular-nums;
+	color: rgba(255, 255, 255, 0.6);
+	text-align: right;
+}
+.tops-dep-section {
+	grid-column: 1 / -1;
+}
+.tops-dep-prompt {
+	padding: 20px;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.4);
+	font-size: 13px;
+}
+.tops-dep-prompt p {
+	margin: 0 0 10px;
+}
+.tops-dep-prompt .secondary-button {
+	margin: 0 auto;
+}
+.tops-dep-error {
+	margin-top: 8px;
+	color: #e74c3c;
+	font-size: 12px;
+}
+.tops-dep-section > .top-section {
+	display: inline-block;
+	vertical-align: top;
+	width: calc(50% - 1px);
+}
+
 /* ── Eval column ── */
 .eval-na {
 	opacity: 0.2;
@@ -1606,6 +1732,11 @@ textarea {
 }
 .dep-tree-alt-sep {
 	color: rgba(255, 255, 255, 0.2);
+}
+.dep-tree-built-in {
+	background: rgba(99, 179, 237, 0.1);
+	color: rgba(99, 179, 237, 0.7);
+	cursor: help;
 }
 .dep-tree-circular {
 	background: rgba(241, 196, 15, 0.12);

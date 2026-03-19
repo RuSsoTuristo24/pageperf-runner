@@ -834,6 +834,8 @@ export type ApiDependencyNode = {
 	name: string;
 	circular?: boolean;
 	notFound?: boolean;
+	/** Built into parent bundle (has bundle.config but no config.php) */
+	builtIn?: boolean;
 	/** Alternative dep branches from conditional config.php */
 	altBranches?: string[][];
 	children: ApiDependencyNode[];
@@ -857,6 +859,18 @@ export function fetchExtensionDeps(extensionName: string): Promise<ApiExtensionD
 export function fetchUrlIndex(): Promise<Record<string, string>>
 {
 	return fetchJson<Record<string, string>>('/api/extensions/url-index');
+}
+
+export type ApiBatchExtStat = {
+	url: string;
+	extension: string;
+	totalDeps: number;
+	totalSize: { js: number; css: number };
+};
+
+export function fetchBatchExtStats(urls: string[]): Promise<{ results: ApiBatchExtStat[] }>
+{
+	return sendJson<{ results: ApiBatchExtStat[] }>('/api/extensions/batch-stats', 'POST', { urls });
 }
 
 export type ApiSettings = {

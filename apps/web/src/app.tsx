@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { AuthSessionCard } from './features/auth/auth-session-card.js';
 import { IssueWatch } from './features/asset-issues/issue-watch.js';
 import { AssetTable } from './features/assets/asset-table.js';
+import { AssetTops } from './features/assets/asset-tops.js';
 import { RequestTable } from './features/requests/request-table.js';
 import { LongTasksPanel } from './features/diagnostics/long-tasks-panel.js';
 import { OversizedImagesPanel } from './features/diagnostics/oversized-images-panel.js';
@@ -85,7 +86,7 @@ type DeepMetricItem = {
 	hint: string;
 };
 
-type WorkspaceTab = 'requests' | 'overview' | 'analysis' | 'assets' | 'mantis';
+type WorkspaceTab = 'assets' | 'tops' | 'requests' | 'overview' | 'analysis' | 'mantis';
 type RunPageRecord = NonNullable<ApiRunDetails['pages']>[number];
 
 type AssetRow = {
@@ -1105,6 +1106,7 @@ export function App()
 				<div className="resource-tabs workspace-tabs" role="tablist" aria-label="Workspace tabs">
 					{([
 						['assets', 'Ресурсы', filteredAssets.length],
+						['tops', 'Топы', null],
 						['requests', 'Запросы', filteredRequests.length],
 						['overview', 'Обзор', null],
 						['analysis', 'Анализ', null],
@@ -1210,6 +1212,14 @@ export function App()
 						onHeavyAssetThresholdMbChange={setHeavyAssetThresholdMb}
 						onSaveIssue={handleSaveAssetIssue}
 						onDeleteIssue={handleDeleteAssetIssue}
+					/>
+				) : null}
+
+				{workspaceTab === 'tops' ? (
+					<AssetTops
+						requests={selectedRequests}
+						jsExecByUrl={jsExecByUrl}
+						targetUrl={activePage?.url ?? selectedProfile?.url}
 					/>
 				) : null}
 

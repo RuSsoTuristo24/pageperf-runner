@@ -7,6 +7,8 @@ export type DependencyNode = {
 	name: string;
 	circular?: boolean;
 	notFound?: boolean;
+	/** Extension has bundle.config but no config.php — built into parent bundle */
+	builtIn?: boolean;
 	/** Alternative dep branches from conditional config.php (non-empty = has alternatives) */
 	altBranches?: string[][];
 	children: DependencyNode[];
@@ -99,9 +101,16 @@ export class ExtensionResolver
 		const configPath = this.getConfigPath(extensionName);
 		if (!configPath || !existsSync(configPath))
 		{
+			// Check if it has bundle.config but no config.php (built into parent)
+			const extDir = configPath ? join(configPath, '..') : null;
+			const hasBundle = extDir && (
+				existsSync(join(extDir, 'bundle.config.js'))
+				|| existsSync(join(extDir, 'bundle.config.ts'))
+			);
+
 			return {
 				name: extensionName,
-				notFound: true,
+				...(hasBundle ? { builtIn: true } : { notFound: true }),
 				children: [],
 			};
 		}
