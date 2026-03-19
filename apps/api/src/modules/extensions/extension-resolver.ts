@@ -258,6 +258,12 @@ export class ExtensionResolver
 						'/bitrix/js/' + segments.join('/') + '/' + jsPath,
 					);
 					index[urlPath] = extensionName;
+					// Also index .min variant for production URLs
+					const minUrl = urlPath.replace(/\.js$/, '.min.js');
+					if (minUrl !== urlPath)
+					{
+						index[minUrl] = extensionName;
+					}
 				}
 
 				const cssPath = parseBundlePath(source, 'css');
@@ -267,6 +273,11 @@ export class ExtensionResolver
 						'/bitrix/js/' + segments.join('/') + '/' + cssPath,
 					);
 					index[urlPath] = extensionName;
+					const minUrl = urlPath.replace(/\.css$/, '.min.css');
+					if (minUrl !== urlPath)
+					{
+						index[minUrl] = extensionName;
+					}
 				}
 			}
 			catch
