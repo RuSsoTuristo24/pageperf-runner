@@ -21,6 +21,8 @@ import { registerRunDetailRoutes } from './modules/runs/run-details.routes.js';
 import { registerRunLlmReportRoutes } from './modules/runs/run-llm-report.routes.js';
 import { InMemoryRunRepository } from './modules/runs/run.repository.js';
 import { registerRunRoutes } from './modules/runs/run.routes.js';
+import { ExtensionResolver } from './modules/extensions/extension-resolver.js';
+import { registerExtensionRoutes } from './modules/extensions/extension.routes.js';
 import { registerHealthRoutes } from './routes/health.js';
 
 type AppOptions = {
@@ -28,6 +30,7 @@ type AppOptions = {
 	authCapture?: (input: { targetUrl: string; storageStatePath: string }) => Promise<void>;
 	authValidate?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
 	storageRoot?: string;
+	modulesRoot?: string;
 };
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -68,7 +71,10 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 		authSessionService,
 	);
 
+	const extensionResolver = new ExtensionResolver(options.modulesRoot ?? 'C:/bitrix_repos/modules');
+
 	registerHealthRoutes(app);
+	registerExtensionRoutes(app, extensionResolver);
 	registerAssetIssueRoutes(app, assetIssueService);
 	registerAuthSessionRoutes(app, authSessionService);
 	registerProfileRoutes(app, profileService);
