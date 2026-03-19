@@ -19,12 +19,21 @@ export type FlatDependency = {
 export class ExtensionResolver
 {
 	private modulesRoot: string;
-	private urlIndex: Record<string, string>;
+	private urlIndex: Record<string, string> | null = null;
 
 	constructor(modulesRoot: string)
 	{
 		this.modulesRoot = modulesRoot;
-		this.urlIndex = this.buildUrlIndex();
+	}
+
+	private ensureUrlIndex(): Record<string, string>
+	{
+		if (this.urlIndex === null)
+		{
+			this.urlIndex = this.buildUrlIndex();
+		}
+
+		return this.urlIndex;
 	}
 
 	/**
@@ -57,7 +66,7 @@ export class ExtensionResolver
 	{
 		const normalized = posix.normalize(urlPath);
 
-		return this.urlIndex[normalized] ?? null;
+		return this.ensureUrlIndex()[normalized] ?? null;
 	}
 
 	/**
@@ -65,7 +74,7 @@ export class ExtensionResolver
 	 */
 	getUrlIndex(): Record<string, string>
 	{
-		return this.urlIndex;
+		return this.ensureUrlIndex();
 	}
 
 	private resolveTreeRecursive(extensionName: string, visited: Set<string>): DependencyNode
