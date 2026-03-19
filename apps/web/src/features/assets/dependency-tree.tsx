@@ -40,8 +40,8 @@ function TreeNode({ node, isLast }: { node: ApiDependencyNode; isLast: boolean }
 			<span className="dep-tree-label">
 				<span className="dep-tree-name">{node.name}</span>
 				{sizeLabel ? <span className="dep-tree-size">{sizeLabel}</span> : null}
-				{node.circular ? <span className="dep-tree-badge dep-tree-circular">circular</span> : null}
-				{node.notFound ? <span className="dep-tree-badge dep-tree-not-found">not in source</span> : null}
+				{node.circular ? <span className="dep-tree-badge dep-tree-circular" title="Циклическая зависимость: этот экстеншен уже есть выше в дереве. Bitrix загрузит его один раз.">circular</span> : null}
+				{node.notFound ? <span className="dep-tree-badge dep-tree-not-found" title="Экстеншен объявлен как зависимость, но его config.php не найден в исходниках. Возможно, он регистрируется динамически или через другой модуль.">not in source</span> : null}
 			</span>
 			{hasChildren ? (
 				<ul className="dep-tree-children">

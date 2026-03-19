@@ -19,11 +19,15 @@ export type FlatDependency = {
 export class ExtensionResolver
 {
 	private modulesRoot: string;
+	private wwwJsRoot: string | null;
 	private urlIndex: Record<string, string> | null = null;
 
-	constructor(modulesRoot: string)
+	constructor(modulesRoot: string, wwwJsRoot?: string)
 	{
 		this.modulesRoot = modulesRoot;
+		// Try to find www/bitrix/js relative to modules root
+		const defaultWww = join(modulesRoot, '..', 'www', 'bitrix', 'js');
+		this.wwwJsRoot = existsSync(wwwJsRoot ?? defaultWww) ? (wwwJsRoot ?? defaultWww) : null;
 	}
 
 	private ensureUrlIndex(): Record<string, string>
@@ -102,7 +106,7 @@ export class ExtensionResolver
 
 		const source = readFileSync(configPath, 'utf-8');
 		const deps = parseRelDependencies(source);
-		const bundleSize = this.readBundleSize(source, configPath);
+		const bundleSize = this.readBundleSize(source, configPath, extensionName);
 
 		const children = deps.map((dep) => this.resolveTreeRecursive(dep, visited));
 
@@ -155,42 +159,74 @@ export class ExtensionResolver
 
 	/**
 	 * Reads js/css bundle file sizes for an extension config.
+	 * Prefers .min files from the www production directory when available.
 	 */
-	private readBundleSize(source: string, configPath: string): { js: number; css: number }
+	private readBundleSize(source: string, configPath: string, extensionName: string): { js: number; css: number }
 	{
 		const extDir = join(configPath, '..');
+		const segments = extensionName.split('.');
+		const wwwExtDir = this.wwwJsRoot
+			? join(this.wwwJsRoot, ...segments)
+			: null;
+
 		let jsSize = 0;
 		let cssSize = 0;
 
 		const jsPath = parseBundlePath(source, 'js');
 		if (jsPath)
 		{
-			const fullPath = join(extDir, jsPath);
-			try
-			{
-				jsSize = statSync(fullPath).size;
-			}
-			catch
-			{
-				// File not found — size stays 0
-			}
+			jsSize = this.readFileSize(jsPath, extDir, wwwExtDir);
 		}
 
 		const cssPath = parseBundlePath(source, 'css');
 		if (cssPath)
 		{
-			const fullPath = join(extDir, cssPath);
-			try
-			{
-				cssSize = statSync(fullPath).size;
-			}
-			catch
-			{
-				// File not found — size stays 0
-			}
+			cssSize = this.readFileSize(cssPath, extDir, wwwExtDir);
 		}
 
 		return { js: jsSize, css: cssSize };
+	}
+
+	/**
+	 * Resolves file size: first tries .min variant in www, then .min in source,
+	 * then original in source.
+	 */
+	private readFileSize(relPath: string, sourceDir: string, wwwDir: string | null): number
+	{
+		const minPath = relPath.replace(/\.(js|css)$/, '.min.$1');
+
+		// 1. Try .min in www (production)
+		if (wwwDir)
+		{
+			try
+			{
+				return statSync(join(wwwDir, minPath)).size;
+			}
+			catch
+			{
+				// not found
+			}
+		}
+
+		// 2. Try .min in source
+		try
+		{
+			return statSync(join(sourceDir, minPath)).size;
+		}
+		catch
+		{
+			// not found
+		}
+
+		// 3. Fall back to original in source
+		try
+		{
+			return statSync(join(sourceDir, relPath)).size;
+		}
+		catch
+		{
+			return 0;
+		}
 	}
 
 	/**
