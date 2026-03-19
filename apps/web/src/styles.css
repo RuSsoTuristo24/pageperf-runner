@@ -1524,33 +1524,43 @@ textarea {
 	cursor: help;
 }
 
-/* ── Sidebar settings ── */
-.sidebar-settings {
-	margin-top: auto;
-	padding-top: 16px;
-	border-top: 1px solid rgba(255, 255, 255, 0.06);
+/* ── Settings ── */
+.brand-title-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
 }
-.settings-toggle {
+.settings-icon-button {
 	display: flex;
 	align-items: center;
-	gap: 6px;
-	width: 100%;
-	padding: 8px 0;
-	border: none;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	flex-shrink: 0;
+	margin-top: 2px;
+	padding: 0;
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	border-radius: 6px;
 	background: none;
-	color: rgba(255, 255, 255, 0.45);
-	font-size: 12px;
+	color: rgba(255, 255, 255, 0.35);
+	font-size: 16px;
 	cursor: pointer;
-	transition: color 0.15s;
+	transition: all 0.15s;
 }
-.settings-toggle:hover {
+.settings-icon-button:hover {
 	color: rgba(255, 255, 255, 0.8);
+	border-color: rgba(255, 255, 255, 0.25);
+	background: rgba(255, 255, 255, 0.05);
 }
-.settings-icon {
-	font-size: 14px;
+.settings-icon-button[aria-expanded="true"] {
+	color: #63b3ed;
+	border-color: rgba(99, 179, 237, 0.4);
+	background: rgba(99, 179, 237, 0.1);
 }
 .settings-panel {
-	padding: 10px 0 4px;
+	margin-top: 10px;
+	padding: 10px 0;
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
 	display: flex;
 	flex-direction: column;
 	gap: 8px;

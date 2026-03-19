@@ -935,8 +935,45 @@ export function App()
 		<main className="app-shell">
 			<aside className="sidebar">
 				<div className="brand-block">
-					<p className="eyebrow">Bitrix Frontend Diagnostics</p>
-					<h1>WebPerf Hub</h1>
+					<div className="brand-title-row">
+						<div>
+							<p className="eyebrow">Bitrix Frontend Diagnostics</p>
+							<h1>WebPerf Hub</h1>
+						</div>
+						<button
+							type="button"
+							className="settings-icon-button"
+							title="Настройки"
+							aria-expanded={showSettings}
+							onClick={() => setShowSettings((v) => !v)}
+						>
+							&#9881;
+						</button>
+					</div>
+					{showSettings ? (
+						<div className="settings-panel">
+							<label className="settings-field">
+								<span className="settings-label">Путь к модулям Bitrix</span>
+								<input
+									type="text"
+									className="settings-input"
+									placeholder="/home/user/bitrix/modules или C:\bitrix_repos\modules"
+									value={draftModulesRoot}
+									onChange={(event) => setDraftModulesRoot(event.target.value)}
+								/>
+								<span className="settings-hint">Абсолютный путь к директории с модулями (содержит main/, ui/, crm/ и т.д.)</span>
+							</label>
+							{settingsError ? <p className="settings-error">{settingsError}</p> : null}
+							<button
+								type="button"
+								className="secondary-button secondary-button-compact"
+								disabled={isSavingSettings || draftModulesRoot === (settings?.modulesRoot ?? '')}
+								onClick={() => { void handleSaveSettings(); }}
+							>
+								{isSavingSettings ? 'Сохраняю...' : 'Сохранить'}
+							</button>
+						</div>
+					) : null}
 					<p className="brand-copy">Диагностика загрузки страниц, сетевых запросов и JS-бандлов портала Bitrix.</p>
 				</div>
 
@@ -974,41 +1011,6 @@ export function App()
 					onRunSelect={setSelectedRunId}
 				/>
 
-				<div className="sidebar-settings">
-					<button
-						type="button"
-						className="settings-toggle"
-						onClick={() => setShowSettings((v) => !v)}
-						aria-expanded={showSettings}
-					>
-						<span className="settings-icon">&#9881;</span>
-						Настройки
-					</button>
-					{showSettings ? (
-						<div className="settings-panel">
-							<label className="settings-field">
-								<span className="settings-label">Путь к модулям Bitrix</span>
-								<input
-									type="text"
-									className="settings-input"
-									placeholder="/home/user/bitrix/modules или C:/bitrix_repos/modules"
-									value={draftModulesRoot}
-									onChange={(event) => setDraftModulesRoot(event.target.value)}
-								/>
-								<span className="settings-hint">Абсолютный путь к директории с модулями (содержит main/, ui/, crm/ и т.д.)</span>
-							</label>
-							{settingsError ? <p className="settings-error">{settingsError}</p> : null}
-							<button
-								type="button"
-								className="secondary-button secondary-button-compact"
-								disabled={isSavingSettings || draftModulesRoot === (settings?.modulesRoot ?? '')}
-								onClick={() => { void handleSaveSettings(); }}
-							>
-								{isSavingSettings ? 'Сохраняю...' : 'Сохранить'}
-							</button>
-						</div>
-					) : null}
-				</div>
 			</aside>
 
 			<section className="workspace">
