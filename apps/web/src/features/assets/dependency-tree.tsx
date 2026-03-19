@@ -40,6 +40,14 @@ function TreeNode({ node, isLast }: { node: ApiDependencyNode; isLast: boolean }
 			<span className="dep-tree-label">
 				<span className="dep-tree-name">{node.name}</span>
 				{sizeLabel ? <span className="dep-tree-size">{sizeLabel}</span> : null}
+				{node.branches && node.branches > 1 ? (
+					<span
+						className="dep-tree-badge dep-tree-conditional"
+						title={`В config.php ${node.branches} условных ветки с разными зависимостями. Показан union всех веток. Реальный набор зависит от PHP-условий на сервере.`}
+					>
+						{node.branches} ветки
+					</span>
+				) : null}
 				{node.circular ? <span className="dep-tree-badge dep-tree-circular" title="Циклическая зависимость: этот экстеншен уже есть выше в дереве. Bitrix загрузит его один раз.">circular</span> : null}
 				{node.notFound ? <span className="dep-tree-badge dep-tree-not-found" title="Экстеншен объявлен как зависимость, но его config.php не найден в исходниках. Возможно, он регистрируется динамически или через другой модуль.">not in source</span> : null}
 			</span>

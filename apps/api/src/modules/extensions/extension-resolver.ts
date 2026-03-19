@@ -7,6 +7,8 @@ export type DependencyNode = {
 	name: string;
 	circular?: boolean;
 	notFound?: boolean;
+	/** Number of conditional rel branches in config.php (>1 = conditional deps) */
+	branches?: number;
 	children: DependencyNode[];
 	bundleSize?: { js: number; css: number };
 };
@@ -105,13 +107,14 @@ export class ExtensionResolver
 		visited.add(extensionName);
 
 		const source = readFileSync(configPath, 'utf-8');
-		const deps = parseRelDependencies(source);
+		const parsed = parseRelDependencies(source);
 		const bundleSize = this.readBundleSize(source, configPath, extensionName);
 
-		const children = deps.map((dep) => this.resolveTreeRecursive(dep, visited));
+		const children = parsed.deps.map((dep) => this.resolveTreeRecursive(dep, visited));
 
 		return {
 			name: extensionName,
+			...(parsed.branches > 1 ? { branches: parsed.branches } : {}),
 			children,
 			bundleSize,
 		};

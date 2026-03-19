@@ -21,6 +21,13 @@ function extractNames(arrayContent: string): string[]
 	return names;
 }
 
+export type RelParseResult = {
+	/** Union of all dependencies from all branches */
+	deps: string[];
+	/** Number of distinct rel branches found (>1 means conditional config) */
+	branches: number;
+};
+
 /**
  * Extracts the `rel` dependency array from config.php source.
  *
@@ -28,44 +35,59 @@ function extractNames(arrayContent: string): string[]
  * 1. Inline: `'rel' => ['main.core', 'ui.buttons']`
  * 2. Variable: `$rel = ['main.core'];` then `'rel' => $rel`
  *
- * Always tries inline first; falls back to variable pattern.
+ * When multiple branches exist (conditional PHP), returns the union
+ * of all branches and sets `branches` to the count.
  */
-export function parseRelDependencies(phpSource: string): string[]
+export function parseRelDependencies(phpSource: string): RelParseResult
 {
+	const allBranches: string[][] = [];
+
 	// Pattern 1: inline 'rel' => [...]
-	const inlineRegex = /'rel'\s*=>\s*\[([\s\S]*?)\]/g;
-	let lastInlineMatch: string | null = null;
+	const inlineRegex = /['"]rel['"]\s*=>\s*\[([\s\S]*?)\]/g;
 	let match: RegExpExecArray | null;
 
 	while ((match = inlineRegex.exec(phpSource)) !== null)
 	{
-		lastInlineMatch = match[1];
-	}
-
-	if (lastInlineMatch !== null)
-	{
-		return extractNames(lastInlineMatch);
+		allBranches.push(extractNames(match[1]));
 	}
 
 	// Pattern 2: $rel = [...] then 'rel' => $rel
-	const varUsageRegex = /'rel'\s*=>\s*\$rel\b/;
-	if (varUsageRegex.test(phpSource))
+	if (allBranches.length === 0)
 	{
-		const varDefRegex = /\$rel\s*=\s*\[([\s\S]*?)\]/g;
-		let lastVarMatch: string | null = null;
-
-		while ((match = varDefRegex.exec(phpSource)) !== null)
+		const varUsageRegex = /['"]rel['"]\s*=>\s*\$rel\b/;
+		if (varUsageRegex.test(phpSource))
 		{
-			lastVarMatch = match[1];
-		}
+			const varDefRegex = /\$rel\s*=\s*\[([\s\S]*?)\]/g;
 
-		if (lastVarMatch !== null)
-		{
-			return extractNames(lastVarMatch);
+			while ((match = varDefRegex.exec(phpSource)) !== null)
+			{
+				allBranches.push(extractNames(match[1]));
+			}
 		}
 	}
 
-	return [];
+	if (allBranches.length === 0)
+	{
+		return { deps: [], branches: 0 };
+	}
+
+	// Deduplicate: union of all branches
+	const seen = new Set<string>();
+	const deps: string[] = [];
+
+	for (const branch of allBranches)
+	{
+		for (const dep of branch)
+		{
+			if (!seen.has(dep))
+			{
+				seen.add(dep);
+				deps.push(dep);
+			}
+		}
+	}
+
+	return { deps, branches: allBranches.length };
 }
 
 /**
@@ -80,7 +102,7 @@ export function parseRelDependencies(phpSource: string): string[]
 export function parseBundlePath(phpSource: string, key: 'js' | 'css'): string | null
 {
 	// Pattern 1: string value  'key' => './path'
-	const stringRegex = new RegExp(`'${key}'\\s*=>\\s*['"]([^'"]+)['"]`);
+	const stringRegex = new RegExp(`['"]${key}['"]\\s*=>\\s*['"]([^'"]+)['"]`);
 	const stringMatch = phpSource.match(stringRegex);
 	if (stringMatch)
 	{
@@ -88,7 +110,7 @@ export function parseBundlePath(phpSource: string, key: 'js' | 'css'): string | 
 	}
 
 	// Pattern 2: array value  'key' => ['./path']
-	const arrayRegex = new RegExp(`'${key}'\\s*=>\\s*\\[\\s*['"]([^'"]+)['"]`);
+	const arrayRegex = new RegExp(`['"]${key}['"]\\s*=>\\s*\\[\\s*['"]([^'"]+)['"]`);
 	const arrayMatch = phpSource.match(arrayRegex);
 	if (arrayMatch)
 	{
@@ -96,7 +118,7 @@ export function parseBundlePath(phpSource: string, key: 'js' | 'css'): string | 
 	}
 
 	// Pattern 3: variable  'key' => $key  with  $key = './path';
-	const varUsageRegex = new RegExp(`'${key}'\\s*=>\\s*\\$(${key})\\b`);
+	const varUsageRegex = new RegExp(`['"]${key}['"]\\s*=>\\s*\\$(\\w+)\\b`);
 	const varUsageMatch = phpSource.match(varUsageRegex);
 	if (varUsageMatch)
 	{

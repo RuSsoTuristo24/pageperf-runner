@@ -1508,13 +1508,20 @@ textarea {
 	border-radius: 3px;
 	line-height: 1.3;
 }
+.dep-tree-conditional {
+	background: rgba(99, 179, 237, 0.12);
+	color: rgba(99, 179, 237, 0.8);
+	cursor: help;
+}
 .dep-tree-circular {
 	background: rgba(241, 196, 15, 0.12);
 	color: rgba(241, 196, 15, 0.8);
+	cursor: help;
 }
 .dep-tree-not-found {
 	background: rgba(231, 76, 60, 0.1);
 	color: rgba(231, 76, 60, 0.7);
+	cursor: help;
 }
 
 /* ── Sidebar settings ── */
