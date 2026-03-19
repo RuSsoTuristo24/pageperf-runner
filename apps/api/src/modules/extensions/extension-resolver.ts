@@ -7,10 +7,12 @@ export type DependencyNode = {
 	name: string;
 	circular?: boolean;
 	notFound?: boolean;
-	/** Number of conditional rel branches in config.php (>1 = conditional deps) */
-	branches?: number;
+	/** Alternative dep branches from conditional config.php (non-empty = has alternatives) */
+	altBranches?: string[][];
 	children: DependencyNode[];
 	bundleSize?: { js: number; css: number };
+	/** Cumulative size: own + all children (non-circular, non-notFound) */
+	totalSize?: { js: number; css: number };
 };
 
 export type FlatDependency = {
@@ -112,12 +114,33 @@ export class ExtensionResolver
 
 		const children = parsed.deps.map((dep) => this.resolveTreeRecursive(dep, visited));
 
-		return {
+		const ownJs = bundleSize?.js ?? 0;
+		const ownCss = bundleSize?.css ?? 0;
+		let totalJs = ownJs;
+		let totalCss = ownCss;
+
+		for (const child of children)
+		{
+			if (!child.circular && !child.notFound && child.totalSize)
+			{
+				totalJs += child.totalSize.js;
+				totalCss += child.totalSize.css;
+			}
+		}
+
+		const node: DependencyNode = {
 			name: extensionName,
-			...(parsed.branches > 1 ? { branches: parsed.branches } : {}),
 			children,
 			bundleSize,
+			totalSize: { js: totalJs, css: totalCss },
 		};
+
+		if (parsed.altBranches.length > 0)
+		{
+			node.altBranches = parsed.altBranches;
+		}
+
+		return node;
 	}
 
 	private collectFlat(node: DependencyNode, seen: Set<string>, result: FlatDependency[]): void

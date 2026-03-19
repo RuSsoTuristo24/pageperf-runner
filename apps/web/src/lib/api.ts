@@ -834,10 +834,12 @@ export type ApiDependencyNode = {
 	name: string;
 	circular?: boolean;
 	notFound?: boolean;
-	/** >1 means config.php has conditional branches — deps are a union */
-	branches?: number;
+	/** Alternative dep branches from conditional config.php */
+	altBranches?: string[][];
 	children: ApiDependencyNode[];
 	bundleSize?: { js: number; css: number };
+	/** Cumulative size: own + all children */
+	totalSize?: { js: number; css: number };
 };
 
 export type ApiExtensionDeps = {

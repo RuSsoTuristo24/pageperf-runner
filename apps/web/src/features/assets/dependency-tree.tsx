@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import { fetchExtensionDeps, type ApiDependencyNode, type ApiExtensionDeps } from '../../lib/api.js';
 import { formatBytes } from '../../lib/format.js';
@@ -7,7 +7,7 @@ type DependencyTreeProps = {
 	extensionName: string;
 };
 
-function formatNodeSize(bundleSize?: { js: number; css: number }): string | null
+function formatSizeLabel(bundleSize?: { js: number; css: number }): string | null
 {
 	if (!bundleSize)
 	{
@@ -18,7 +18,7 @@ function formatNodeSize(bundleSize?: { js: number; css: number }): string | null
 
 	if (bundleSize.js > 0)
 	{
-		parts.push(formatBytes(bundleSize.js));
+		parts.push(formatBytes(bundleSize.js) + ' js');
 	}
 
 	if (bundleSize.css > 0)
@@ -29,28 +29,74 @@ function formatNodeSize(bundleSize?: { js: number; css: number }): string | null
 	return parts.length > 0 ? parts.join(' + ') : null;
 }
 
+function formatTotalLabel(totalSize?: { js: number; css: number }): string | null
+{
+	if (!totalSize)
+	{
+		return null;
+	}
+
+	const parts: string[] = [];
+
+	if (totalSize.js > 0)
+	{
+		parts.push(formatBytes(totalSize.js) + ' js');
+	}
+
+	if (totalSize.css > 0)
+	{
+		parts.push(formatBytes(totalSize.css) + ' css');
+	}
+
+	return parts.length > 0 ? parts.join(' + ') : null;
+}
+
 function TreeNode({ node, isLast }: { node: ApiDependencyNode; isLast: boolean })
 {
-	const sizeLabel = formatNodeSize(node.bundleSize);
+	const [showAlt, setShowAlt] = useState(false);
+	const ownLabel = formatSizeLabel(node.bundleSize);
+	const totalLabel = formatTotalLabel(node.totalSize);
 	const hasChildren = node.children.length > 0;
+	const hasAlt = node.altBranches && node.altBranches.length > 0;
+
+	// Show total only if it differs from own (i.e. has deps with size)
+	const showTotal = totalLabel && totalLabel !== ownLabel;
 
 	return (
 		<li className={`dep-tree-node ${isLast ? 'dep-tree-node-last' : ''}`}>
 			<span className="dep-tree-connector">{isLast ? '\u2514' : '\u251C'}</span>
 			<span className="dep-tree-label">
 				<span className="dep-tree-name">{node.name}</span>
-				{sizeLabel ? <span className="dep-tree-size">{sizeLabel}</span> : null}
-				{node.branches && node.branches > 1 ? (
-					<span
+				{ownLabel ? <span className="dep-tree-size">{ownLabel}</span> : null}
+				{showTotal ? <span className="dep-tree-total" title="Суммарный размер со всеми зависимостями">({totalLabel})</span> : null}
+				{hasAlt ? (
+					<button
+						type="button"
 						className="dep-tree-badge dep-tree-conditional"
-						title={`В config.php ${node.branches} условных ветки с разными зависимостями. Показан union всех веток. Реальный набор зависит от PHP-условий на сервере.`}
+						title={`В config.php есть ${node.altBranches!.length + 1} условных ветки. Показана основная (prod). Нажмите чтобы увидеть альтернативные.`}
+						onClick={() => setShowAlt((v) => !v)}
 					>
-						{node.branches} ветки
-					</span>
+						{node.altBranches!.length + 1} ветки
+					</button>
 				) : null}
 				{node.circular ? <span className="dep-tree-badge dep-tree-circular" title="Циклическая зависимость: этот экстеншен уже есть выше в дереве. Bitrix загрузит его один раз.">circular</span> : null}
 				{node.notFound ? <span className="dep-tree-badge dep-tree-not-found" title="Экстеншен объявлен как зависимость, но его config.php не найден в исходниках. Возможно, он регистрируется динамически или через другой модуль.">not in source</span> : null}
 			</span>
+			{hasAlt && showAlt ? (
+				<div className="dep-tree-alt-panel">
+					{node.altBranches!.map((branch, branchIndex) => (
+						<div key={branchIndex} className="dep-tree-alt-branch">
+							<span className="dep-tree-alt-label">Ветка {branchIndex + 1}:</span>
+							{branch.map((dep, depIndex) => (
+								<Fragment key={dep}>
+									{depIndex > 0 ? <span className="dep-tree-alt-sep">,</span> : null}
+									<code className="dep-tree-alt-dep">{dep}</code>
+								</Fragment>
+							))}
+						</div>
+					))}
+				</div>
+			) : null}
 			{hasChildren ? (
 				<ul className="dep-tree-children">
 					{node.children.map((child, index) => (
@@ -131,8 +177,7 @@ export function DependencyTree({ extensionName }: DependencyTreeProps)
 		return <div className="dep-tree-panel dep-tree-empty">No dependencies</div>;
 	}
 
-	const totalJs = data.flat.reduce((sum, dep) => sum + (dep.bundleSize?.js ?? 0), 0);
-	const totalCss = data.flat.reduce((sum, dep) => sum + (dep.bundleSize?.css ?? 0), 0);
+	const totalLabel = formatTotalLabel(data.tree.totalSize);
 
 	return (
 		<div className="dep-tree-panel">
@@ -140,8 +185,7 @@ export function DependencyTree({ extensionName }: DependencyTreeProps)
 				<span className="dep-tree-header-name">{data.extension}</span>
 				<span className="dep-tree-header-stats">
 					{data.totalDeps} dep{data.totalDeps !== 1 ? 's' : ''}
-					{totalJs > 0 ? <span className="dep-tree-header-size">JS {formatBytes(totalJs)}</span> : null}
-					{totalCss > 0 ? <span className="dep-tree-header-size">CSS {formatBytes(totalCss)}</span> : null}
+					{totalLabel ? <span className="dep-tree-header-size">{totalLabel}</span> : null}
 				</span>
 			</div>
 			<ul className="dep-tree-root">

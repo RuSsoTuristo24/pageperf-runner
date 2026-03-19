@@ -1540,10 +1540,49 @@ textarea {
 	border-radius: 3px;
 	line-height: 1.3;
 }
+.dep-tree-total {
+	font-size: 11px;
+	color: rgba(255, 255, 255, 0.25);
+	cursor: help;
+}
 .dep-tree-conditional {
 	background: rgba(99, 179, 237, 0.12);
 	color: rgba(99, 179, 237, 0.8);
-	cursor: help;
+	cursor: pointer;
+	border: none;
+	font-family: inherit;
+}
+.dep-tree-conditional:hover {
+	background: rgba(99, 179, 237, 0.2);
+}
+.dep-tree-alt-panel {
+	margin: 4px 0 4px 4px;
+	padding: 6px 10px;
+	border-left: 2px solid rgba(99, 179, 237, 0.25);
+	background: rgba(99, 179, 237, 0.04);
+	border-radius: 0 4px 4px 0;
+	font-size: 11px;
+}
+.dep-tree-alt-branch {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 4px;
+	padding: 2px 0;
+}
+.dep-tree-alt-label {
+	color: rgba(255, 255, 255, 0.4);
+	flex-shrink: 0;
+}
+.dep-tree-alt-dep {
+	color: rgba(255, 255, 255, 0.7);
+	background: rgba(255, 255, 255, 0.06);
+	padding: 1px 4px;
+	border-radius: 3px;
+	font-size: 11px;
+}
+.dep-tree-alt-sep {
+	color: rgba(255, 255, 255, 0.2);
 }
 .dep-tree-circular {
 	background: rgba(241, 196, 15, 0.12);

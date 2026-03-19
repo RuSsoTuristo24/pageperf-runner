@@ -22,10 +22,10 @@ function extractNames(arrayContent: string): string[]
 }
 
 export type RelParseResult = {
-	/** Union of all dependencies from all branches */
+	/** Primary (default/prod) branch — the last rel in the file */
 	deps: string[];
-	/** Number of distinct rel branches found (>1 means conditional config) */
-	branches: number;
+	/** Alternative branches (all except the last), empty if only one branch */
+	altBranches: string[][];
 };
 
 /**
@@ -68,26 +68,14 @@ export function parseRelDependencies(phpSource: string): RelParseResult
 
 	if (allBranches.length === 0)
 	{
-		return { deps: [], branches: 0 };
+		return { deps: [], altBranches: [] };
 	}
 
-	// Deduplicate: union of all branches
-	const seen = new Set<string>();
-	const deps: string[] = [];
+	// Last branch is primary (default/prod — the else branch in PHP conditionals)
+	const primary = allBranches[allBranches.length - 1];
+	const altBranches = allBranches.slice(0, -1);
 
-	for (const branch of allBranches)
-	{
-		for (const dep of branch)
-		{
-			if (!seen.has(dep))
-			{
-				seen.add(dep);
-				deps.push(dep);
-			}
-		}
-	}
-
-	return { deps, branches: allBranches.length };
+	return { deps: primary, altBranches };
 }
 
 /**
