@@ -85,18 +85,6 @@ export function AssetTops({ requests, jsExecByUrl, targetUrl }: AssetTopsProps)
 		})),
 	);
 
-	// Top: slowest by duration
-	const slowest = buildTopList(
-		requests
-			.filter((r) => r.durationMs !== undefined && r.durationMs > 0)
-			.map((r) => ({
-				url: r.url,
-				label: getResourceLabel(r.url),
-				value: formatMetricValue('duration', r.durationMs!),
-				sortValue: r.durationMs!,
-			})),
-	);
-
 	// Top: longest eval
 	const longestEval = buildTopList(
 		requests
@@ -204,12 +192,6 @@ export function AssetTops({ requests, jsExecByUrl, targetUrl }: AssetTopsProps)
 					title="Самый долгий eval"
 					hint="Время исполнения JS на main thread (из Chrome trace)"
 					items={longestEval}
-				/>
-
-				<TopSection
-					title="Самые медленные по загрузке"
-					hint="Полное время от начала запроса до получения последнего байта"
-					items={slowest}
 				/>
 
 				<TopSection
