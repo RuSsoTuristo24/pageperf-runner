@@ -1,10 +1,11 @@
 node_modules/
 dist/
-coverage/
-.turbo/
-.pnpm-store/
+build/
+
 .env
 .env.local
-playwright-report/
-test-results/
-storage/artifacts/
+
+storage/logs/
+storage/data/
+apps/api/storage/artifacts/
+tmp-playwright-requests.txt
