@@ -601,6 +601,12 @@ export function App()
 	const activeCoverageSummary = activePass?.coverageSummary ?? activePage?.coverageSummary ?? selectedRunDetails?.coverageSummary;
 	const activeDiagnostics = activePass?.pageDiagnostics ?? activePage?.pageDiagnostics ?? selectedRunDetails?.pageDiagnostics;
 	const deepMetricItems = buildDeepMetricItems(metricMap, activeTraceSummary, activeCoverageSummary, activeDiagnostics);
+	const jsExecByUrl = new Map(
+		(activeJsExecutionSummary?.resources ?? []).map((resource) => [
+			resource.url,
+			{ evalMs: resource.evaluateMs, confidence: resource.attributionConfidence },
+		]),
+	);
 	const assetIssuesByKey = new Map(assetIssues.map((issue) => [issue.assetKey, issue]));
 	const totalEncodedBytes = selectedRequests.reduce((sum, request) => sum + request.encodedBodySize, 0);
 	const totalDecodedBytes = selectedRequests.reduce((sum, request) => sum + request.decodedBodySize, 0);
@@ -1199,6 +1205,7 @@ export function App()
 						isSavingAssetKey={savingAssetKey}
 						targetUrl={activePage?.url ?? selectedProfile?.url}
 						urlIndex={urlIndex}
+						jsExecByUrl={jsExecByUrl}
 						onAssetTypeChange={setAssetType}
 						onHeavyAssetThresholdMbChange={setHeavyAssetThresholdMb}
 						onSaveIssue={handleSaveAssetIssue}

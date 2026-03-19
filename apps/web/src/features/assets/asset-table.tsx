@@ -1,6 +1,7 @@
 import { Fragment, useState } from 'react';
 
 import type { ApiAssetIssue } from '../../lib/api.js';
+import { formatMetricValue } from '../../lib/format.js';
 import { getDisplayUrl, getResourceLabel, getResourceTypeLabel, getTargetOrigin } from '../../lib/url.js';
 import { AssetIssueEditor } from '../asset-issues/asset-issue-editor.js';
 import { DependencyTree } from './dependency-tree.js';
@@ -22,6 +23,11 @@ type AssetItem = {
 	issue?: ApiAssetIssue;
 };
 
+type JsExecEntry = {
+	evalMs: number;
+	confidence: 'high' | 'medium' | 'low';
+};
+
 type AssetTableProps = {
 	assetType: string;
 	assets: AssetItem[];
@@ -31,6 +37,7 @@ type AssetTableProps = {
 	isSavingAssetKey: string | null;
 	targetUrl?: string;
 	urlIndex: Record<string, string>;
+	jsExecByUrl: Map<string, JsExecEntry>;
 	onAssetTypeChange: (value: string) => void;
 	onHeavyAssetThresholdMbChange: (value: string) => void;
 	onSaveIssue: (input: {
@@ -44,12 +51,13 @@ type AssetTableProps = {
 	onDeleteIssue: (assetKey: string) => Promise<void>;
 };
 
-type AssetSortKey = 'url' | 'type' | 'duration' | 'encoded' | 'decoded' | 'expansion' | 'compression';
+type AssetSortKey = 'url' | 'type' | 'duration' | 'eval' | 'encoded' | 'decoded' | 'expansion' | 'compression';
 
 const COLUMN_TOOLTIPS: Record<AssetSortKey, string> = {
 	url: 'URL ресурса',
 	type: 'Тип ресурса (JS, CSS, изображение и т.д.)',
 	duration: 'Время загрузки ресурса в миллисекундах',
+	eval: 'Время исполнения JS на главном потоке (из Chrome trace, best-effort атрибуция)',
 	encoded: 'Размер тела ответа после сжатия (gzip/br)',
 	decoded: 'Размер тела ответа после декомпрессии',
 	expansion: 'Коэффициент расширения decoded/encoded',
@@ -69,7 +77,7 @@ function resolveExtensionName(assetUrl: string, urlIndex: Record<string, string>
 	}
 }
 
-function sortAssets(assets: AssetItem[], sortKey: AssetSortKey, sortDirection: 'asc' | 'desc'): AssetItem[]
+function sortAssets(assets: AssetItem[], sortKey: AssetSortKey, sortDirection: 'asc' | 'desc', jsExecByUrl: Map<string, JsExecEntry>): AssetItem[]
 {
 	const sortedAssets = [...assets];
 	const sortFactor = sortDirection === 'asc' ? 1 : -1;
@@ -81,6 +89,8 @@ function sortAssets(assets: AssetItem[], sortKey: AssetSortKey, sortDirection: '
 				return getResourceTypeLabel(left.resourceType).localeCompare(getResourceTypeLabel(right.resourceType)) * sortFactor;
 			case 'duration':
 				return (left.durationMs - right.durationMs) * sortFactor;
+			case 'eval':
+				return ((jsExecByUrl.get(left.url)?.evalMs ?? 0) - (jsExecByUrl.get(right.url)?.evalMs ?? 0)) * sortFactor;
 			case 'encoded':
 				return (left.encodedBytes - right.encodedBytes) * sortFactor;
 			case 'decoded':
@@ -107,6 +117,7 @@ export function AssetTable({
 	isSavingAssetKey,
 	targetUrl,
 	urlIndex,
+	jsExecByUrl,
 	onAssetTypeChange,
 	onHeavyAssetThresholdMbChange,
 	onSaveIssue,
@@ -121,7 +132,7 @@ export function AssetTable({
 	const heavyAssetLabel = Number(heavyAssetThresholdMb) > 0
 		? `> ${Number(heavyAssetThresholdMb).toFixed(2)} МБ`
 		: 'disabled';
-	const sortedAssets = sortAssets(assets, sortKey, sortDirection);
+	const sortedAssets = sortAssets(assets, sortKey, sortDirection, jsExecByUrl);
 
 	function handleSort(nextSortKey: AssetSortKey): void
 	{
@@ -194,6 +205,7 @@ export function AssetTable({
 						<col className="col-resource-primary" />
 						<col className="col-type" />
 						<col className="col-duration" />
+						<col className="col-duration" />
 						<col className="col-size" />
 						<col className="col-size" />
 						<col className="col-expansion" />
@@ -215,6 +227,11 @@ export function AssetTable({
 							<th>
 								<button type="button" className="table-sort-button" title={COLUMN_TOOLTIPS.duration} onClick={() => handleSort('duration')}>
 									Dur{getSortIndicator('duration')}
+								</button>
+							</th>
+							<th>
+								<button type="button" className="table-sort-button" title={COLUMN_TOOLTIPS.eval} onClick={() => handleSort('eval')}>
+									Eval{getSortIndicator('eval')}
 								</button>
 							</th>
 							<th>
@@ -243,7 +260,7 @@ export function AssetTable({
 					<tbody>
 						{sortedAssets.length === 0 ? (
 							<tr>
-								<td colSpan={8} className="empty-cell">Нет ресурсов для данного фильтра.</td>
+								<td colSpan={9} className="empty-cell">Нет ресурсов для данного фильтра.</td>
 							</tr>
 						) : null}
 						{sortedAssets.map((asset) => (
@@ -280,6 +297,21 @@ export function AssetTable({
 									</td>
 									<td><span className="table-pill">{getResourceTypeLabel(asset.resourceType)}</span></td>
 									<td>{asset.duration}</td>
+									<td>
+										{(() => {
+											const exec = jsExecByUrl.get(asset.url);
+											if (!exec || asset.resourceType !== 'script')
+											{
+												return <span className="eval-na">{asset.resourceType === 'script' ? '—' : ''}</span>;
+											}
+
+											return (
+												<span className={`eval-value eval-confidence-${exec.confidence}`} title={`Confidence: ${exec.confidence}`}>
+													{formatMetricValue('duration', exec.evalMs)}
+												</span>
+											);
+										})()}
+									</td>
 									<td>{asset.encoded}</td>
 									<td>
 										<span>{asset.decoded}</span>
@@ -295,7 +327,7 @@ export function AssetTable({
 								</tr>
 								{editingAssetKey === asset.assetKey ? (
 									<tr className="issue-editor-row">
-										<td colSpan={8}>
+										<td colSpan={9}>
 											<AssetIssueEditor
 												assetUrl={asset.url}
 												resourceType={asset.resourceType}
@@ -316,7 +348,7 @@ export function AssetTable({
 								) : null}
 								{depsAssetKey === asset.assetKey ? (
 									<tr className="dep-tree-row">
-										<td colSpan={8}>
+										<td colSpan={9}>
 											<DependencyTree extensionName={resolveExtensionName(asset.url, urlIndex)!} />
 										</td>
 									</tr>
