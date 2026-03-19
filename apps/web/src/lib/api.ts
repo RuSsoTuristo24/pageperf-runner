@@ -829,3 +829,28 @@ export function fetchLlmReport(
 
 	return fetchJson<ApiLlmReport>(`/api/runs/${runId}/llm-report${suffix}`);
 }
+
+export type ApiDependencyNode = {
+	name: string;
+	circular?: boolean;
+	notFound?: boolean;
+	children: ApiDependencyNode[];
+	bundleSize?: { js: number; css: number };
+};
+
+export type ApiExtensionDeps = {
+	extension: string;
+	tree: ApiDependencyNode;
+	flat: Array<{ name: string; bundleSize?: { js: number; css: number } }>;
+	totalDeps: number;
+};
+
+export function fetchExtensionDeps(extensionName: string): Promise<ApiExtensionDeps>
+{
+	return fetchJson<ApiExtensionDeps>(`/api/extensions/${encodeURIComponent(extensionName)}/dependencies`);
+}
+
+export function fetchUrlIndex(): Promise<Record<string, string>>
+{
+	return fetchJson<Record<string, string>>('/api/extensions/url-index');
+}

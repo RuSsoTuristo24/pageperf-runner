@@ -25,6 +25,7 @@ import {
 	fetchProfiles,
 	fetchRunDetails,
 	fetchRuns,
+	fetchUrlIndex,
 	startRun,
 	type ApiAuthSession,
 	type ApiAssetIssue,
@@ -369,6 +370,7 @@ export function App()
 	const [draftThrottling, setDraftThrottling] = useState('native');
 	const [draftCacheMode, setDraftCacheMode] = useState<'cold' | 'warm' | 'both'>('cold');
 	const [copyFeedback, setCopyFeedback] = useState(false);
+	const [urlIndex, setUrlIndex] = useState<Record<string, string>>({});
 
 	useEffect(() => {
 		let isCancelled = false;
@@ -380,11 +382,12 @@ export function App()
 				setIsBootstrapping(true);
 				setErrorMessage(null);
 
-				const [loadedProfiles, loadedRuns, loadedAuthSession, loadedAssetIssues] = await Promise.all([
+				const [loadedProfiles, loadedRuns, loadedAuthSession, loadedAssetIssues, loadedUrlIndex] = await Promise.all([
 					fetchProfiles(),
 					fetchRuns(),
 					fetchAuthSession(),
 					fetchAssetIssues(),
+					fetchUrlIndex(),
 				]);
 
 				if (isCancelled)
@@ -396,6 +399,7 @@ export function App()
 				setRuns(loadedRuns);
 				setAuthSession(loadedAuthSession);
 				setAssetIssues(loadedAssetIssues);
+				setUrlIndex(loadedUrlIndex);
 				setUseAuthSession(loadedAuthSession.status === 'ready');
 				setSelectedRunId((currentSelectedRunId) => currentSelectedRunId ?? pickDefaultRunId(loadedRuns));
 			}
@@ -1099,6 +1103,7 @@ export function App()
 						heavyAssetThresholdMb={heavyAssetThresholdMb}
 						isSavingAssetKey={savingAssetKey}
 						targetUrl={activePage?.url ?? selectedProfile?.url}
+						urlIndex={urlIndex}
 						onAssetTypeChange={setAssetType}
 						onHeavyAssetThresholdMbChange={setHeavyAssetThresholdMb}
 						onSaveIssue={handleSaveAssetIssue}

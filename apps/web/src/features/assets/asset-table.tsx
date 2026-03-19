@@ -3,6 +3,7 @@ import { Fragment, useState } from 'react';
 import type { ApiAssetIssue } from '../../lib/api.js';
 import { getDisplayUrl, getResourceLabel, getResourceTypeLabel, getTargetOrigin } from '../../lib/url.js';
 import { AssetIssueEditor } from '../asset-issues/asset-issue-editor.js';
+import { DependencyTree } from './dependency-tree.js';
 
 type AssetItem = {
 	assetKey: string;
@@ -29,6 +30,7 @@ type AssetTableProps = {
 	heavyAssetThresholdMb: string;
 	isSavingAssetKey: string | null;
 	targetUrl?: string;
+	urlIndex: Record<string, string>;
 	onAssetTypeChange: (value: string) => void;
 	onHeavyAssetThresholdMbChange: (value: string) => void;
 	onSaveIssue: (input: {
@@ -53,6 +55,19 @@ const COLUMN_TOOLTIPS: Record<AssetSortKey, string> = {
 	expansion: 'Коэффициент расширения decoded/encoded',
 	compression: 'Алгоритм сжатия (gzip, br, none)',
 };
+
+function resolveExtensionName(assetUrl: string, urlIndex: Record<string, string>): string | null
+{
+	try
+	{
+		const pathname = new URL(assetUrl).pathname;
+		return urlIndex[pathname] ?? null;
+	}
+	catch
+	{
+		return null;
+	}
+}
 
 function sortAssets(assets: AssetItem[], sortKey: AssetSortKey, sortDirection: 'asc' | 'desc'): AssetItem[]
 {
@@ -91,6 +106,7 @@ export function AssetTable({
 	heavyAssetThresholdMb,
 	isSavingAssetKey,
 	targetUrl,
+	urlIndex,
 	onAssetTypeChange,
 	onHeavyAssetThresholdMbChange,
 	onSaveIssue,
@@ -100,6 +116,7 @@ export function AssetTable({
 	const [sortKey, setSortKey] = useState<AssetSortKey>('decoded');
 	const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 	const [editingAssetKey, setEditingAssetKey] = useState<string | null>(null);
+	const [depsAssetKey, setDepsAssetKey] = useState<string | null>(null);
 	const targetOrigin = getTargetOrigin(targetUrl);
 	const heavyAssetLabel = Number(heavyAssetThresholdMb) > 0
 		? `> ${Number(heavyAssetThresholdMb).toFixed(2)} МБ`
@@ -261,6 +278,11 @@ export function AssetTable({
 										<button className="secondary-button secondary-button-compact" type="button" onClick={() => setEditingAssetKey((current) => current === asset.assetKey ? null : asset.assetKey)}>
 											{asset.issue ? 'Изменить' : 'Отслеживать'}
 										</button>
+										{resolveExtensionName(asset.url, urlIndex) ? (
+											<button className="secondary-button secondary-button-compact" type="button" onClick={() => setDepsAssetKey((current) => current === asset.assetKey ? null : asset.assetKey)}>
+												Deps
+											</button>
+										) : null}
 									</td>
 								</tr>
 								{editingAssetKey === asset.assetKey ? (
@@ -281,6 +303,13 @@ export function AssetTable({
 													setEditingAssetKey(null);
 												}}
 											/>
+										</td>
+									</tr>
+								) : null}
+								{depsAssetKey === asset.assetKey ? (
+									<tr className="issue-editor-row">
+										<td colSpan={8}>
+											<DependencyTree extensionName={resolveExtensionName(asset.url, urlIndex)!} />
 										</td>
 									</tr>
 								) : null}

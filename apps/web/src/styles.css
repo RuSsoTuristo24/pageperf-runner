@@ -1357,3 +1357,71 @@ textarea {
 		justify-items: start;
 	}
 }
+
+/* ── Dependency tree ── */
+.dep-tree-panel {
+	padding: 12px 16px;
+	font-size: 13px;
+	line-height: 1.5;
+}
+.dep-tree-error {
+	color: var(--color-danger, #e74c3c);
+}
+.dep-tree-header {
+	display: flex;
+	align-items: baseline;
+	gap: 12px;
+	margin-bottom: 8px;
+}
+.dep-tree-summary {
+	font-size: 12px;
+	opacity: 0.6;
+}
+.dep-tree-root,
+.dep-tree-children {
+	list-style: none;
+	padding-left: 20px;
+	margin: 0;
+}
+.dep-tree-root {
+	padding-left: 0;
+}
+.dep-tree-node {
+	position: relative;
+	padding: 1px 0;
+}
+.dep-tree-children .dep-tree-node::before {
+	content: '';
+	position: absolute;
+	left: -14px;
+	top: 0;
+	bottom: 0;
+	width: 1px;
+	background: var(--color-border, #333);
+	opacity: 0.3;
+}
+.dep-tree-name {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 6px;
+	font-family: var(--font-mono, monospace);
+	font-size: 12px;
+}
+.dep-tree-size {
+	font-size: 11px;
+	opacity: 0.5;
+}
+.dep-tree-badge {
+	font-size: 10px;
+	padding: 0 4px;
+	border-radius: 3px;
+	font-family: var(--font-sans, sans-serif);
+}
+.dep-tree-circular {
+	background: rgba(241, 196, 15, 0.2);
+	color: #f1c40f;
+}
+.dep-tree-not-found {
+	background: rgba(231, 76, 60, 0.15);
+	color: #e74c3c;
+}
