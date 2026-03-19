@@ -71,9 +71,10 @@ export function parseRelDependencies(phpSource: string): RelParseResult
 		return { deps: [], altBranches: [] };
 	}
 
-	// Last branch is primary (default/prod — the else branch in PHP conditionals)
-	const primary = allBranches[allBranches.length - 1];
-	const altBranches = allBranches.slice(0, -1);
+	// First branch is primary — in Bitrix PHP conventions the if-branch
+	// is the target behavior, else is legacy/fallback
+	const primary = allBranches[0];
+	const altBranches = allBranches.slice(1);
 
 	return { deps: primary, altBranches };
 }
