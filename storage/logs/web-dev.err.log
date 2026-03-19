@@ -1,0 +1,463 @@
+[2m14:11:59[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "./features/runs/js-execution-panel.js" from "src/app.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/app.tsx[39m:7:33
+[33m  6  |  import { AssetTable } from "./features/assets/asset-table.js";
+  7  |  import { RequestTable } from "./features/requests/request-table.js";
+  8  |  import { JsExecutionPanel } from "./features/runs/js-execution-panel.js";
+     |                                    ^
+  9  |  import { RunLaunchForm } from "./features/runs/run-launch-form.js";
+  10 |  import { RunList } from "./features/runs/run-list.js";[39m
+      at TransformPluginContext._formatLog (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:28999:43)
+      at TransformPluginContext.error (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:28996:14)
+      at normalizeUrl (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:27119:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:27177:32
+      at async Promise.all (index 6)
+      at async TransformPluginContext.transform (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:27145:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:28797:14)
+      at async loadAndTransform (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:22670:26)
+[2m14:11:59[22m [31m[1m[vite][22m[39m [31mInternal server error: Failed to resolve import "./features/runs/js-execution-panel.js" from "src/app.tsx". Does the file exist?[39m
+  Plugin: [35mvite:import-analysis[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/app.tsx[39m:7:33
+[33m  6  |  import { AssetTable } from "./features/assets/asset-table.js";
+  7  |  import { RequestTable } from "./features/requests/request-table.js";
+  8  |  import { JsExecutionPanel } from "./features/runs/js-execution-panel.js";
+     |                                    ^
+  9  |  import { RunLaunchForm } from "./features/runs/run-launch-form.js";
+  10 |  import { RunList } from "./features/runs/run-list.js";[39m
+      at TransformPluginContext._formatLog (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:28999:43)
+      at TransformPluginContext.error (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:28996:14)
+      at normalizeUrl (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:27119:18)
+      at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+      at async file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:27177:32
+      at async Promise.all (index 6)
+      at async TransformPluginContext.transform (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:27145:4)
+      at async EnvironmentPluginContainer.transform (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:28797:14)
+      at async loadAndTransform (file:///C:/bitrix_repos/webperf-hub/node_modules/.pnpm/vite@7.3.1_tsx@4.21.0/node_modules/vite/dist/node/chunks/config.js:22670:26)
+[2m15:21:09[22m [31m[1m[vite][22m[39m [31mInternal server error: Duplicate declaration "getTargetOrigin"
+[0m [90m 52 |[31m }
+ [90m 53 |[31m
+[31m[1m>[22m[31m[90m 54 |[31m [36mfunction[31m getTargetOrigin(targetUrl[33m?[31m[33m:[31m string)[33m:[31m string [33m|[31m undefined
+ [90m    |[31m          [31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m
+ [90m 55 |[31m {
+ [90m 56 |[31m 	[36mif[31m ([33m![31mtargetUrl)
+ [90m 57 |[31m 	{[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/features/requests/request-waterfall.tsx[39m
+      at File.buildCodeFrameError (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:189:12)
+      at Scope.checkBlockScopedCollisions (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:433:27)
+      at Scope.registerBinding (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:530:16)
+      at Scope.registerDeclaration (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:475:12)
+      at Object.BlockScoped (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:276:12)
+      at Object.newFn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\visitors.js:203:17)
+      at NodePath._call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:50:20)
+      at NodePath.call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:40:18)
+      at NodePath.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:87:31)
+      at TraversalContext.visitQueue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:96:16)
+      at TraversalContext.visitMultiple (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:68:17)
+      at TraversalContext.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:117:19)
+      at traverseNode (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\traverse-node.js:130:17)
+      at traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\index.js:53:34)
+      at NodePath.traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\index.js:120:24)
+      at Scope.crawl (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:695:10)
+      at Scope.init (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:661:12)
+      at NodePath.setScope (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:139:55)
+      at NodePath.setContext (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:151:12)
+      at new File (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:80:8)
+      at normalizeFile (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\normalize-file.js:96:10)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:287:14)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+[2m15:21:09[22m [31m[1m[vite][22m[39m [31mInternal server error: Duplicate declaration "getTargetOrigin"
+[0m [90m 52 |[31m }
+ [90m 53 |[31m
+[31m[1m>[22m[31m[90m 54 |[31m [36mfunction[31m getTargetOrigin(targetUrl[33m?[31m[33m:[31m string)[33m:[31m string [33m|[31m undefined
+ [90m    |[31m          [31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m
+ [90m 55 |[31m {
+ [90m 56 |[31m 	[36mif[31m ([33m![31mtargetUrl)
+ [90m 57 |[31m 	{[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/features/requests/request-waterfall.tsx[39m
+      at File.buildCodeFrameError (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:189:12)
+      at Scope.checkBlockScopedCollisions (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:433:27)
+      at Scope.registerBinding (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:530:16)
+      at Scope.registerDeclaration (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:475:12)
+      at Object.BlockScoped (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:276:12)
+      at Object.newFn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\visitors.js:203:17)
+      at NodePath._call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:50:20)
+      at NodePath.call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:40:18)
+      at NodePath.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:87:31)
+      at TraversalContext.visitQueue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:96:16)
+      at TraversalContext.visitMultiple (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:68:17)
+      at TraversalContext.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:117:19)
+      at traverseNode (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\traverse-node.js:130:17)
+      at traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\index.js:53:34)
+      at NodePath.traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\index.js:120:24)
+      at Scope.crawl (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:695:10)
+      at Scope.init (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:661:12)
+      at NodePath.setScope (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:139:55)
+      at NodePath.setContext (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:151:12)
+      at new File (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:80:8)
+      at normalizeFile (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\normalize-file.js:96:10)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:287:14)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+[2m15:21:27[22m [31m[1m[vite][22m[39m [31mInternal server error: Duplicate declaration "getResourceLabel"
+[0m [90m 77 |[31m }[33m;[31m
+ [90m 78 |[31m
+[31m[1m>[22m[31m[90m 79 |[31m [36mfunction[31m getResourceLabel(url[33m:[31m string)[33m:[31m string
+ [90m    |[31m          [31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m
+ [90m 80 |[31m {
+ [90m 81 |[31m 	[36mconst[31m cleanUrl [33m=[31m url[33m.[31msplit([32m'?'[31m)[[35m0[31m] [33m?[31m[33m?[31m url[33m;[31m
+ [90m 82 |[31m 	[36mconst[31m segments [33m=[31m cleanUrl[33m.[31msplit([32m'/'[31m)[33m.[31mfilter([33mBoolean[31m)[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/features/requests/request-table.tsx[39m
+      at File.buildCodeFrameError (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:189:12)
+      at Scope.checkBlockScopedCollisions (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:433:27)
+      at Scope.registerBinding (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:530:16)
+      at Scope.registerDeclaration (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:475:12)
+      at Object.BlockScoped (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:276:12)
+      at Object.newFn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\visitors.js:203:17)
+      at NodePath._call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:50:20)
+      at NodePath.call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:40:18)
+      at NodePath.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:87:31)
+      at TraversalContext.visitQueue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:96:16)
+      at TraversalContext.visitMultiple (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:68:17)
+      at TraversalContext.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:117:19)
+      at traverseNode (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\traverse-node.js:130:17)
+      at traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\index.js:53:34)
+      at NodePath.traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\index.js:120:24)
+      at Scope.crawl (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:695:10)
+      at Scope.init (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:661:12)
+      at NodePath.setScope (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:139:55)
+      at NodePath.setContext (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:151:12)
+      at new File (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:80:8)
+      at normalizeFile (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\normalize-file.js:96:10)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:287:14)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+[2m15:21:27[22m [31m[1m[vite][22m[39m [31mInternal server error: Duplicate declaration "getResourceLabel"
+[0m [90m 77 |[31m }[33m;[31m
+ [90m 78 |[31m
+[31m[1m>[22m[31m[90m 79 |[31m [36mfunction[31m getResourceLabel(url[33m:[31m string)[33m:[31m string
+ [90m    |[31m          [31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m
+ [90m 80 |[31m {
+ [90m 81 |[31m 	[36mconst[31m cleanUrl [33m=[31m url[33m.[31msplit([32m'?'[31m)[[35m0[31m] [33m?[31m[33m?[31m url[33m;[31m
+ [90m 82 |[31m 	[36mconst[31m segments [33m=[31m cleanUrl[33m.[31msplit([32m'/'[31m)[33m.[31mfilter([33mBoolean[31m)[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/features/requests/request-table.tsx[39m
+      at File.buildCodeFrameError (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:189:12)
+      at Scope.checkBlockScopedCollisions (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:433:27)
+      at Scope.registerBinding (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:530:16)
+      at Scope.registerDeclaration (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:475:12)
+      at Object.BlockScoped (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:276:12)
+      at Object.newFn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\visitors.js:203:17)
+      at NodePath._call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:50:20)
+      at NodePath.call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:40:18)
+      at NodePath.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:87:31)
+      at TraversalContext.visitQueue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:96:16)
+      at TraversalContext.visitMultiple (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:68:17)
+      at TraversalContext.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:117:19)
+      at traverseNode (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\traverse-node.js:130:17)
+      at traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\index.js:53:34)
+      at NodePath.traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\index.js:120:24)
+      at Scope.crawl (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:695:10)
+      at Scope.init (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:661:12)
+      at NodePath.setScope (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:139:55)
+      at NodePath.setContext (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:151:12)
+      at new File (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:80:8)
+      at normalizeFile (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\normalize-file.js:96:10)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:287:14)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+[2m15:21:35[22m [31m[1m[vite][22m[39m [31mInternal server error: Duplicate declaration "getTargetOrigin"
+[0m [90m 106 |[31m }
+ [90m 107 |[31m
+[31m[1m>[22m[31m[90m 108 |[31m [36mfunction[31m getTargetOrigin(targetUrl[33m?[31m[33m:[31m string)[33m:[31m string [33m|[31m undefined
+ [90m     |[31m          [31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m
+ [90m 109 |[31m {
+ [90m 110 |[31m 	[36mif[31m ([33m![31mtargetUrl)
+ [90m 111 |[31m 	{[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/features/requests/request-table.tsx[39m
+      at File.buildCodeFrameError (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:189:12)
+      at Scope.checkBlockScopedCollisions (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:433:27)
+      at Scope.registerBinding (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:530:16)
+      at Scope.registerDeclaration (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:475:12)
+      at Object.BlockScoped (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:276:12)
+      at Object.newFn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\visitors.js:203:17)
+      at NodePath._call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:50:20)
+      at NodePath.call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:40:18)
+      at NodePath.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:87:31)
+      at TraversalContext.visitQueue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:96:16)
+      at TraversalContext.visitMultiple (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:68:17)
+      at TraversalContext.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:117:19)
+      at traverseNode (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\traverse-node.js:130:17)
+      at traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\index.js:53:34)
+      at NodePath.traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\index.js:120:24)
+      at Scope.crawl (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:695:10)
+      at Scope.init (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:661:12)
+      at NodePath.setScope (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:139:55)
+      at NodePath.setContext (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:151:12)
+      at new File (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:80:8)
+      at normalizeFile (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\normalize-file.js:96:10)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:287:14)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+[2m15:21:35[22m [31m[1m[vite][22m[39m [31mInternal server error: Duplicate declaration "getTargetOrigin"
+[0m [90m 106 |[31m }
+ [90m 107 |[31m
+[31m[1m>[22m[31m[90m 108 |[31m [36mfunction[31m getTargetOrigin(targetUrl[33m?[31m[33m:[31m string)[33m:[31m string [33m|[31m undefined
+ [90m     |[31m          [31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m
+ [90m 109 |[31m {
+ [90m 110 |[31m 	[36mif[31m ([33m![31mtargetUrl)
+ [90m 111 |[31m 	{[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/features/requests/request-table.tsx[39m
+      at File.buildCodeFrameError (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:189:12)
+      at Scope.checkBlockScopedCollisions (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:433:27)
+      at Scope.registerBinding (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:530:16)
+      at Scope.registerDeclaration (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:475:12)
+      at Object.BlockScoped (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:276:12)
+      at Object.newFn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\visitors.js:203:17)
+      at NodePath._call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:50:20)
+      at NodePath.call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:40:18)
+      at NodePath.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:87:31)
+      at TraversalContext.visitQueue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:96:16)
+      at TraversalContext.visitMultiple (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:68:17)
+      at TraversalContext.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:117:19)
+      at traverseNode (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\traverse-node.js:130:17)
+      at traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\index.js:53:34)
+      at NodePath.traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\index.js:120:24)
+      at Scope.crawl (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:695:10)
+      at Scope.init (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:661:12)
+      at NodePath.setScope (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:139:55)
+      at NodePath.setContext (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:151:12)
+      at new File (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:80:8)
+      at normalizeFile (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\normalize-file.js:96:10)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:287:14)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+[2m15:21:54[22m [31m[1m[vite][22m[39m [31mInternal server error: Duplicate declaration "getResourceLabel"
+[0m [90m 45 |[31m type [33mAssetSortKey[31m [33m=[31m [32m'url'[31m [33m|[31m [32m'type'[31m [33m|[31m [32m'duration'[31m [33m|[31m [32m'encoded'[31m [33m|[31m [32m'decoded'[31m [33m|[31m [32m'expansion'[31m [33m|[31m [32m'compression'[31m[33m;[31m
+ [90m 46 |[31m
+[31m[1m>[22m[31m[90m 47 |[31m [36mfunction[31m getResourceLabel(url[33m:[31m string)[33m:[31m string
+ [90m    |[31m          [31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m
+ [90m 48 |[31m {
+ [90m 49 |[31m 	[36mconst[31m cleanUrl [33m=[31m url[33m.[31msplit([32m'?'[31m)[[35m0[31m] [33m?[31m[33m?[31m url[33m;[31m
+ [90m 50 |[31m 	[36mconst[31m segments [33m=[31m cleanUrl[33m.[31msplit([32m'/'[31m)[33m.[31mfilter([33mBoolean[31m)[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/features/assets/asset-table.tsx[39m
+      at File.buildCodeFrameError (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:189:12)
+      at Scope.checkBlockScopedCollisions (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:433:27)
+      at Scope.registerBinding (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:530:16)
+      at Scope.registerDeclaration (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:475:12)
+      at Object.BlockScoped (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:276:12)
+      at Object.newFn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\visitors.js:203:17)
+      at NodePath._call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:50:20)
+      at NodePath.call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:40:18)
+      at NodePath.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:87:31)
+      at TraversalContext.visitQueue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:96:16)
+      at TraversalContext.visitMultiple (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:68:17)
+      at TraversalContext.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:117:19)
+      at traverseNode (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\traverse-node.js:130:17)
+      at traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\index.js:53:34)
+      at NodePath.traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\index.js:120:24)
+      at Scope.crawl (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:695:10)
+      at Scope.init (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:661:12)
+      at NodePath.setScope (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:139:55)
+      at NodePath.setContext (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:151:12)
+      at new File (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:80:8)
+      at normalizeFile (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\normalize-file.js:96:10)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:287:14)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+[2m15:21:54[22m [31m[1m[vite][22m[39m [31mInternal server error: Duplicate declaration "getResourceLabel"
+[0m [90m 45 |[31m type [33mAssetSortKey[31m [33m=[31m [32m'url'[31m [33m|[31m [32m'type'[31m [33m|[31m [32m'duration'[31m [33m|[31m [32m'encoded'[31m [33m|[31m [32m'decoded'[31m [33m|[31m [32m'expansion'[31m [33m|[31m [32m'compression'[31m[33m;[31m
+ [90m 46 |[31m
+[31m[1m>[22m[31m[90m 47 |[31m [36mfunction[31m getResourceLabel(url[33m:[31m string)[33m:[31m string
+ [90m    |[31m          [31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m[31m[1m^[22m[31m
+ [90m 48 |[31m {
+ [90m 49 |[31m 	[36mconst[31m cleanUrl [33m=[31m url[33m.[31msplit([32m'?'[31m)[[35m0[31m] [33m?[31m[33m?[31m url[33m;[31m
+ [90m 50 |[31m 	[36mconst[31m segments [33m=[31m cleanUrl[33m.[31msplit([32m'/'[31m)[33m.[31mfilter([33mBoolean[31m)[33m;[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/features/assets/asset-table.tsx[39m
+      at File.buildCodeFrameError (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:189:12)
+      at Scope.checkBlockScopedCollisions (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:433:27)
+      at Scope.registerBinding (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:530:16)
+      at Scope.registerDeclaration (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:475:12)
+      at Object.BlockScoped (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:276:12)
+      at Object.newFn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\visitors.js:203:17)
+      at NodePath._call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:50:20)
+      at NodePath.call (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:40:18)
+      at NodePath.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:87:31)
+      at TraversalContext.visitQueue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:96:16)
+      at TraversalContext.visitMultiple (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:68:17)
+      at TraversalContext.visit (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\context.js:117:19)
+      at traverseNode (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\traverse-node.js:130:17)
+      at traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\index.js:53:34)
+      at NodePath.traverse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\index.js:120:24)
+      at Scope.crawl (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:695:10)
+      at Scope.init (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\scope\index.js:661:12)
+      at NodePath.setScope (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:139:55)
+      at NodePath.setContext (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+traverse@7.29.0\node_modules\@babel\traverse\lib\path\context.js:151:12)
+      at new File (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\file\file.js:80:8)
+      at normalizeFile (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\normalize-file.js:96:10)
+      at normalizeFile.next (<anonymous>)
+      at run (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+core@7.29.0\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+      at step (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:287:14)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+[2m19:19:36[22m [31m[1m[vite][22m[39m [31mInternal server error: C:\bitrix_repos\webperf-hub\apps\web\src\app.tsx: JSX attributes must only be assigned a non-empty expression. (1013:17)
+
+[0m [90m 1011 |[31m 							role[33m=[31m[32m"tab"[31m
+ [90m 1012 |[31m 							aria[33m-[31mselected[33m=[31m{workspaceTab [33m===[31m tab}
+[31m[1m>[22m[31m[90m 1013 |[31m 							className[33m=[31m{}
+ [90m      |[31m 							          [31m[1m^[22m[31m
+ [90m 1014 |[31m 							onClick[33m=[31m{() [33m=>[31m setWorkspaceTab(tab)}
+ [90m 1015 |[31m 						[33m>[31m
+ [90m 1016 |[31m 							{label}{count [33m!==[31m [36mnull[31m [33m?[31m [33m<[31m[33m>[31m [33m<[31m[33mspan[31m className[33m=[31m[32m"tab-count"[31m[33m>[31m({count})[33m<[31m[35m/span></[31m[33m>[31m [33m:[31m [36mnull[31m}[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mC:/bitrix_repos/webperf-hub/apps/web/src/app.tsx[39m:1013:17
+[33m  1044 |  
+  1045 |  						{llmReport ? (
+  1046 |  							<section className="panel panel-llm-report" aria-labelledby="llm-report-heading">
+       |                                                                 ^
+  1047 |  								<div className="panel-heading panel-heading-inline">
+  1048 |  									<div>[39m
+      at constructor (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:6599:19)
+      at TypeScriptParserMixin.jsxParseAttributeValue (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4606:16)
+      at TypeScriptParserMixin.jsxParseAttribute (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4653:38)
+      at TypeScriptParserMixin.jsxParseOpeningElementAfterName (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4667:28)
+      at TypeScriptParserMixin.jsxParseOpeningElementAfterName (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10043:18)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4662:17)
+      at TypeScriptParserMixin.jsxParseElementAt (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4686:33)
+      at TypeScriptParserMixin.jsxParseElement (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4749:17)
+      at TypeScriptParserMixin.parseExprAtom (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4759:19)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10831:21)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:9775:39
+      at TypeScriptParserMixin.tryParse (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:6907:20)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:9775:18)
+      at C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10800:39
+      at TypeScriptParserMixin.allowInAnd (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:12426:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10800:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:12493:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11675:28)
+      at TypeScriptParserMixin.parseExprAtom (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11331:23)
+      at TypeScriptParserMixin.parseExprAtom (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10831:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:9786:20)
+      at TypeScriptParserMixin.parseFunctionBody (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:12093:24)
+      at TypeScriptParserMixin.parseArrowExpression (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:12075:10)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11687:12)
+      at TypeScriptParserMixin.parseExprAtom (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11331:23)
+      at TypeScriptParserMixin.parseExprAtom (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:4764:20)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11081:23)
+      at TypeScriptParserMixin.parseUpdate (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11066:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:11046:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:9837:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10899:61)
+      at TypeScriptParserMixin.parseExprOps (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10904:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10881:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\bitrix_repos\webperf-hub\node_modules\.pnpm\@babel+parser@7.29.0\node_modules\@babel\parser\lib\index.js:10831:21)

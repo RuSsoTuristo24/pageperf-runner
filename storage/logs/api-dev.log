@@ -1,0 +1,8 @@
+
+> @webperf/api@0.0.0 dev C:\bitrix_repos\webperf-hub\apps\api
+> corepack pnpm exec tsx src/server.ts
+
+C:\bitrix_repos\webperf-hub\apps\api:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @webperf/api@0.0.0 dev: `corepack pnpm exec tsx src/server.ts`
+Exit status 1
+94967295

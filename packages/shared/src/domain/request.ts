@@ -1,0 +1,40 @@
+import { z } from 'zod';
+
+export const requestSchema = z.object({
+	url: z.string().url(),
+	method: z.string().min(1),
+	status: z.number().int().nonnegative().optional(),
+	resourceType: z.string().min(1),
+	contentEncoding: z.string().min(1).nullable().optional(),
+	fromDiskCache: z.boolean().optional(),
+	fromMemoryCache: z.boolean().optional(),
+	revalidated: z.boolean().optional(),
+	transferSize: z.number().int().nonnegative(),
+	encodedBodySize: z.number().int().nonnegative(),
+	decodedBodySize: z.number().int().nonnegative(),
+	durationMs: z.number().nonnegative().optional(),
+	startTimeMs: z.number().nonnegative().optional(),
+	endTimeMs: z.number().nonnegative().optional(),
+	queueingMs: z.number().nonnegative().optional(),
+	dnsMs: z.number().nonnegative().optional(),
+	connectMs: z.number().nonnegative().optional(),
+	sslMs: z.number().nonnegative().optional(),
+	requestSentMs: z.number().nonnegative().optional(),
+	waitingMs: z.number().nonnegative().optional(),
+	downloadMs: z.number().nonnegative().optional(),
+	initiatorType: z.enum([
+		'parser',
+		'script',
+		'preload',
+		'fetch',
+		'xmlhttprequest',
+		'other',
+	]).optional(),
+	initiatorUrl: z.string().url().optional(),
+	redirectParentUrl: z.string().url().optional(),
+	protocol: z.string().min(1).optional(),
+	priority: z.string().min(1).optional(),
+	responseHeaders: z.record(z.string(), z.string()).optional(),
+});
+
+export type WebPerfRequest = z.infer<typeof requestSchema>;

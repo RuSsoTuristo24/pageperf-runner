@@ -1,0 +1,24 @@
+{
+  "name": "@webperf/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "node -e \"console.log('worker: build placeholder')\"",
+    "profile:live": "tsx src/dev/run-live.ts",
+    "test": "vitest run",
+    "lint": "node -e \"console.log('worker: lint placeholder')\""
+  },
+  "dependencies": {
+    "@webperf/shared": "workspace:*",
+    "playwright": "^1.55.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

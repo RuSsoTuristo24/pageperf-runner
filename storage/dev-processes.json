@@ -1,0 +1,9 @@
+{
+    "webLog":  "C:\\bitrix_repos\\webperf-hub\\storage\\logs\\web-dev.log",
+    "webErrorLog":  "C:\\bitrix_repos\\webperf-hub\\storage\\logs\\web-dev.err.log",
+    "apiPid":  27084,
+    "webPid":  24456,
+    "startedAt":  "2026-03-13T13:27:54.2051502+02:00",
+    "apiErrorLog":  "C:\\bitrix_repos\\webperf-hub\\storage\\logs\\api-dev.err.log",
+    "apiLog":  "C:\\bitrix_repos\\webperf-hub\\storage\\logs\\api-dev.log"
+}

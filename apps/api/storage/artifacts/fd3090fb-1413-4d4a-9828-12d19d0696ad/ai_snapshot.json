@@ -1,0 +1,50 @@
+{
+  "runId": "fd3090fb-1413-4d4a-9828-12d19d0696ad",
+  "status": "completed",
+  "summary": {
+    "metrics": {
+      "ttfb": 111.1,
+      "load": 222.2
+    },
+    "requestCount": 1,
+    "encodedBytes": 1200,
+    "decodedBytes": 2400
+  },
+  "heavyAssets": [
+    {
+      "url": "https://example.com",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "document",
+      "contentEncoding": "gzip",
+      "fromDiskCache": false,
+      "fromMemoryCache": false,
+      "revalidated": false,
+      "transferSize": 1234,
+      "encodedBodySize": 1200,
+      "decodedBodySize": 2400
+    }
+  ],
+  "slowRequests": [
+    {
+      "url": "https://example.com",
+      "method": "GET",
+      "status": 200,
+      "resourceType": "document",
+      "contentEncoding": "gzip",
+      "fromDiskCache": false,
+      "fromMemoryCache": false,
+      "revalidated": false,
+      "transferSize": 1234,
+      "encodedBodySize": 1200,
+      "decodedBodySize": 2400
+    }
+  ],
+  "issues": [
+    {
+      "code": "weak-warm-cache-improvement",
+      "severity": "warning",
+      "evidence": "Warm load is too close to cold load"
+    }
+  ]
+}
