@@ -854,3 +854,17 @@ export function fetchUrlIndex(): Promise<Record<string, string>>
 {
 	return fetchJson<Record<string, string>>('/api/extensions/url-index');
 }
+
+export type ApiSettings = {
+	modulesRoot: string;
+};
+
+export function fetchSettings(): Promise<ApiSettings>
+{
+	return fetchJson<ApiSettings>('/api/settings');
+}
+
+export function updateSettings(patch: Partial<ApiSettings>): Promise<ApiSettings>
+{
+	return sendJson<ApiSettings>('/api/settings', 'PATCH', patch);
+}

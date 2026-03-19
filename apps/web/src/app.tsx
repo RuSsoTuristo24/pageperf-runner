@@ -25,14 +25,17 @@ import {
 	fetchProfiles,
 	fetchRunDetails,
 	fetchRuns,
+	fetchSettings,
 	fetchUrlIndex,
 	startRun,
+	updateSettings,
 	type ApiAuthSession,
 	type ApiAssetIssue,
 	type ApiLlmReport,
 	type ApiProfile,
 	type ApiRun,
 	type ApiRunDetails,
+	type ApiSettings,
 	updateAssetIssue,
 } from './lib/api.js';
 import {
@@ -371,6 +374,11 @@ export function App()
 	const [draftCacheMode, setDraftCacheMode] = useState<'cold' | 'warm' | 'both'>('cold');
 	const [copyFeedback, setCopyFeedback] = useState(false);
 	const [urlIndex, setUrlIndex] = useState<Record<string, string>>({});
+	const [settings, setSettings] = useState<ApiSettings | null>(null);
+	const [draftModulesRoot, setDraftModulesRoot] = useState('');
+	const [isSavingSettings, setIsSavingSettings] = useState(false);
+	const [settingsError, setSettingsError] = useState<string | null>(null);
+	const [showSettings, setShowSettings] = useState(false);
 
 	useEffect(() => {
 		let isCancelled = false;
@@ -382,12 +390,13 @@ export function App()
 				setIsBootstrapping(true);
 				setErrorMessage(null);
 
-				const [loadedProfiles, loadedRuns, loadedAuthSession, loadedAssetIssues, loadedUrlIndex] = await Promise.all([
+				const [loadedProfiles, loadedRuns, loadedAuthSession, loadedAssetIssues, loadedUrlIndex, loadedSettings] = await Promise.all([
 					fetchProfiles(),
 					fetchRuns(),
 					fetchAuthSession(),
 					fetchAssetIssues(),
-					fetchUrlIndex(),
+					fetchUrlIndex().catch(() => ({} as Record<string, string>)),
+					fetchSettings(),
 				]);
 
 				if (isCancelled)
@@ -400,6 +409,8 @@ export function App()
 				setAuthSession(loadedAuthSession);
 				setAssetIssues(loadedAssetIssues);
 				setUrlIndex(loadedUrlIndex);
+				setSettings(loadedSettings);
+				setDraftModulesRoot(loadedSettings.modulesRoot);
 				setUseAuthSession(loadedAuthSession.status === 'ready');
 				setSelectedRunId((currentSelectedRunId) => currentSelectedRunId ?? pickDefaultRunId(loadedRuns));
 			}
@@ -883,6 +894,31 @@ export function App()
 		}
 	}
 
+	async function handleSaveSettings(): Promise<void>
+	{
+		try
+		{
+			setIsSavingSettings(true);
+			setSettingsError(null);
+
+			const updated = await updateSettings({ modulesRoot: draftModulesRoot });
+
+			setSettings(updated);
+
+			// Reload URL index with new modules root
+			const newUrlIndex = await fetchUrlIndex().catch(() => ({} as Record<string, string>));
+			setUrlIndex(newUrlIndex);
+		}
+		catch (error)
+		{
+			setSettingsError(error instanceof Error ? error.message : 'Failed to save settings');
+		}
+		finally
+		{
+			setIsSavingSettings(false);
+		}
+	}
+
 	async function handleCopyLlmReport(): Promise<void>
 	{
 		if (!llmReport || typeof navigator === 'undefined' || !navigator.clipboard?.writeText)
@@ -937,6 +973,42 @@ export function App()
 					selectedRunId={selectedRunId}
 					onRunSelect={setSelectedRunId}
 				/>
+
+				<div className="sidebar-settings">
+					<button
+						type="button"
+						className="settings-toggle"
+						onClick={() => setShowSettings((v) => !v)}
+						aria-expanded={showSettings}
+					>
+						<span className="settings-icon">&#9881;</span>
+						Настройки
+					</button>
+					{showSettings ? (
+						<div className="settings-panel">
+							<label className="settings-field">
+								<span className="settings-label">Путь к модулям Bitrix</span>
+								<input
+									type="text"
+									className="settings-input"
+									placeholder="/home/user/bitrix/modules или C:/bitrix_repos/modules"
+									value={draftModulesRoot}
+									onChange={(event) => setDraftModulesRoot(event.target.value)}
+								/>
+								<span className="settings-hint">Абсолютный путь к директории с модулями (содержит main/, ui/, crm/ и т.д.)</span>
+							</label>
+							{settingsError ? <p className="settings-error">{settingsError}</p> : null}
+							<button
+								type="button"
+								className="secondary-button secondary-button-compact"
+								disabled={isSavingSettings || draftModulesRoot === (settings?.modulesRoot ?? '')}
+								onClick={() => { void handleSaveSettings(); }}
+							>
+								{isSavingSettings ? 'Сохраняю...' : 'Сохранить'}
+							</button>
+						</div>
+					) : null}
+				</div>
 			</aside>
 
 			<section className="workspace">

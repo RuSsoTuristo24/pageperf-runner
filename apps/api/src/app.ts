@@ -23,6 +23,8 @@ import { InMemoryRunRepository } from './modules/runs/run.repository.js';
 import { registerRunRoutes } from './modules/runs/run.routes.js';
 import { ExtensionResolver } from './modules/extensions/extension-resolver.js';
 import { registerExtensionRoutes } from './modules/extensions/extension.routes.js';
+import { SettingsRepository } from './modules/settings/settings.repository.js';
+import { registerSettingsRoutes } from './modules/settings/settings.routes.js';
 import { registerHealthRoutes } from './routes/health.js';
 
 type AppOptions = {
@@ -71,10 +73,19 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 		authSessionService,
 	);
 
-	const extensionResolver = new ExtensionResolver(options.modulesRoot ?? 'C:/bitrix_repos/modules');
+	const settingsRepository = new SettingsRepository(storageRoot);
+	const savedSettings = settingsRepository.get();
+	const effectiveModulesRoot = savedSettings.modulesRoot || options.modulesRoot || '';
+
+	// Mutable holder so the resolver can be swapped when settings change
+	const resolverHolder = { current: effectiveModulesRoot ? new ExtensionResolver(effectiveModulesRoot) : null };
 
 	registerHealthRoutes(app);
-	registerExtensionRoutes(app, extensionResolver);
+	registerSettingsRoutes(app, settingsRepository, (newRoot) =>
+	{
+		resolverHolder.current = new ExtensionResolver(newRoot);
+	});
+	registerExtensionRoutes(app, resolverHolder);
 	registerAssetIssueRoutes(app, assetIssueService);
 	registerAuthSessionRoutes(app, authSessionService);
 	registerProfileRoutes(app, profileService);

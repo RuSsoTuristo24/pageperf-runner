@@ -1516,3 +1516,73 @@ textarea {
 	background: rgba(231, 76, 60, 0.1);
 	color: rgba(231, 76, 60, 0.7);
 }
+
+/* ── Sidebar settings ── */
+.sidebar-settings {
+	margin-top: auto;
+	padding-top: 16px;
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.settings-toggle {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 100%;
+	padding: 8px 0;
+	border: none;
+	background: none;
+	color: rgba(255, 255, 255, 0.45);
+	font-size: 12px;
+	cursor: pointer;
+	transition: color 0.15s;
+}
+.settings-toggle:hover {
+	color: rgba(255, 255, 255, 0.8);
+}
+.settings-icon {
+	font-size: 14px;
+}
+.settings-panel {
+	padding: 10px 0 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.settings-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.settings-label {
+	font-size: 11px;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.6);
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+}
+.settings-input {
+	padding: 6px 8px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.04);
+	color: rgba(255, 255, 255, 0.9);
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 12px;
+}
+.settings-input:focus {
+	outline: none;
+	border-color: rgba(99, 179, 237, 0.5);
+}
+.settings-input::placeholder {
+	color: rgba(255, 255, 255, 0.25);
+}
+.settings-hint {
+	font-size: 11px;
+	color: rgba(255, 255, 255, 0.3);
+	line-height: 1.4;
+}
+.settings-error {
+	font-size: 12px;
+	color: #e74c3c;
+	margin: 0;
+}
