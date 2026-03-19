@@ -591,6 +591,11 @@ export function App()
 		?? null;
 	const metricMap = getMetricMap(activePass?.pageMetrics ?? []);
 	const selectedRequests = activePass?.requests ?? [];
+	const vue2Request = selectedRequests.find((request) =>
+		request.url.includes('/bitrix/js/ui/vue/vue2/')
+		|| request.url.includes('/bitrix/js/ui/vue/vuex/')
+	);
+	const vue2Initiator = vue2Request?.initiatorUrl ?? null;
 	const activeTraceSummary = activePass?.traceSummary ?? activePage?.traceSummary ?? selectedRunDetails?.traceSummary;
 	const activeJsExecutionSummary = activePass?.jsExecutionSummary ?? activePage?.jsExecutionSummary ?? selectedRunDetails?.jsExecutionSummary;
 	const activeCoverageSummary = activePass?.coverageSummary ?? activePage?.coverageSummary ?? selectedRunDetails?.coverageSummary;
@@ -1072,6 +1077,22 @@ export function App()
 				</header>
 
 				{errorMessage ? <p className="message-banner message-banner-error">{errorMessage}</p> : null}
+				{vue2Request ? (
+					<div className="message-banner message-banner-vue2">
+						<strong>Vue 2 обнаружен на странице</strong>
+						<span className="vue2-details">
+							{vue2Request.url.split('?')[0].replace(/https?:\/\/[^/]+/, '')}
+							{' '}{formatBytes(vue2Request.decodedBodySize)}
+							{vue2Initiator ? (
+								<>
+									{' — загружен из '}
+									<code>{vue2Initiator.split('?')[0].replace(/https?:\/\/[^/]+/, '')}</code>
+								</>
+							) : null}
+						</span>
+						<span className="vue2-hint">Vue 2 deprecated. Компоненты должны мигрировать на ui.vue3 (BX.Vue3).</span>
+					</div>
+				) : null}
 				{isBootstrapping ? <p className="message-banner">Загрузка прогонов…</p> : null}
 				{selectedRunId && isLoadingDetails ? <p className="message-banner">Загрузка данных прогона…</p> : null}
 
