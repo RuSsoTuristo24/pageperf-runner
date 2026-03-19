@@ -348,7 +348,7 @@ export function App()
 	const [assetIssues, setAssetIssues] = useState<ApiAssetIssue[]>([]);
 	const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 	const [selectedRunDetails, setSelectedRunDetails] = useState<ApiRunDetails | null>(null);
-	const [workspaceTab, setWorkspaceTab] = useState<WorkspaceTab>('requests');
+	const [workspaceTab, setWorkspaceTab] = useState<WorkspaceTab>('assets');
 	const [requestType, setRequestType] = useState('all');
 	const [assetType, setAssetType] = useState('all');
 	const [heavyAssetThresholdMb, setHeavyAssetThresholdMb] = useState('1');
@@ -1003,10 +1003,10 @@ export function App()
 
 				<div className="resource-tabs workspace-tabs" role="tablist" aria-label="Workspace tabs">
 					{([
+						['assets', 'Ресурсы', filteredAssets.length],
 						['requests', 'Запросы', filteredRequests.length],
 						['overview', 'Обзор', null],
 						['analysis', 'Анализ', null],
-						['assets', 'Ресурсы', filteredAssets.length],
 						['mantis', 'Mantis-трекер', assetIssues.length],
 					] as const).map(([tab, label, count]) => (
 						<button

@@ -256,7 +256,20 @@ export function AssetTable({
 									].filter(Boolean).join(' ') || undefined}
 								>
 									<td className="resource-url-cell">
-										<strong className="resource-primary">{getResourceLabel(asset.url)}</strong>
+										<span className="resource-name-row">
+											{resolveExtensionName(asset.url, urlIndex) ? (
+												<button
+													type="button"
+													className={`dep-toggle-button ${depsAssetKey === asset.assetKey ? 'is-expanded' : ''}`}
+													title="Показать зависимости"
+													onClick={() => setDepsAssetKey((current) => current === asset.assetKey ? null : asset.assetKey)}
+													aria-expanded={depsAssetKey === asset.assetKey}
+												>
+													{depsAssetKey === asset.assetKey ? '\u2212' : '+'}
+												</button>
+											) : null}
+											<strong className="resource-primary">{getResourceLabel(asset.url)}</strong>
+										</span>
 										<span className="resource-meta">{getDisplayUrl(asset.url, targetOrigin)}</span>
 										{asset.issue ? (
 											<span className="resource-badges">
@@ -278,11 +291,6 @@ export function AssetTable({
 										<button className="secondary-button secondary-button-compact" type="button" onClick={() => setEditingAssetKey((current) => current === asset.assetKey ? null : asset.assetKey)}>
 											{asset.issue ? 'Изменить' : 'Отслеживать'}
 										</button>
-										{resolveExtensionName(asset.url, urlIndex) ? (
-											<button className="secondary-button secondary-button-compact" type="button" onClick={() => setDepsAssetKey((current) => current === asset.assetKey ? null : asset.assetKey)}>
-												Deps
-											</button>
-										) : null}
 									</td>
 								</tr>
 								{editingAssetKey === asset.assetKey ? (
@@ -307,7 +315,7 @@ export function AssetTable({
 									</tr>
 								) : null}
 								{depsAssetKey === asset.assetKey ? (
-									<tr className="issue-editor-row">
+									<tr className="dep-tree-row">
 										<td colSpan={8}>
 											<DependencyTree extensionName={resolveExtensionName(asset.url, urlIndex)!} />
 										</td>

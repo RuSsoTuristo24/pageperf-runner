@@ -7,28 +7,50 @@ type DependencyTreeProps = {
 	extensionName: string;
 };
 
-function TreeNode({ node }: { node: ApiDependencyNode })
+function formatNodeSize(bundleSize?: { js: number; css: number }): string | null
 {
+	if (!bundleSize)
+	{
+		return null;
+	}
+
+	const parts: string[] = [];
+
+	if (bundleSize.js > 0)
+	{
+		parts.push(formatBytes(bundleSize.js));
+	}
+
+	if (bundleSize.css > 0)
+	{
+		parts.push(formatBytes(bundleSize.css) + ' css');
+	}
+
+	return parts.length > 0 ? parts.join(' + ') : null;
+}
+
+function TreeNode({ node, isLast }: { node: ApiDependencyNode; isLast: boolean })
+{
+	const sizeLabel = formatNodeSize(node.bundleSize);
+	const hasChildren = node.children.length > 0;
+
 	return (
-		<li className="dep-tree-node">
-			<span className="dep-tree-name">
-				{node.name}
-				{node.bundleSize ? (
-					<span className="dep-tree-size">
-						{formatBytes(node.bundleSize.js)} JS / {formatBytes(node.bundleSize.css)} CSS
-					</span>
-				) : null}
-				{node.circular ? (
-					<span className="dep-tree-badge dep-tree-circular">circular</span>
-				) : null}
-				{node.notFound ? (
-					<span className="dep-tree-badge dep-tree-not-found">not found</span>
-				) : null}
+		<li className={`dep-tree-node ${isLast ? 'dep-tree-node-last' : ''}`}>
+			<span className="dep-tree-connector">{isLast ? '\u2514' : '\u251C'}</span>
+			<span className="dep-tree-label">
+				<span className="dep-tree-name">{node.name}</span>
+				{sizeLabel ? <span className="dep-tree-size">{sizeLabel}</span> : null}
+				{node.circular ? <span className="dep-tree-badge dep-tree-circular">circular</span> : null}
+				{node.notFound ? <span className="dep-tree-badge dep-tree-not-found">not in source</span> : null}
 			</span>
-			{node.children.length > 0 ? (
+			{hasChildren ? (
 				<ul className="dep-tree-children">
 					{node.children.map((child, index) => (
-						<TreeNode key={`${child.name}-${index}`} node={child} />
+						<TreeNode
+							key={`${child.name}-${index}`}
+							node={child}
+							isLast={index === node.children.length - 1}
+						/>
 					))}
 				</ul>
 			) : null}
@@ -88,7 +110,7 @@ export function DependencyTree({ extensionName }: DependencyTreeProps)
 
 	if (isLoading)
 	{
-		return <div className="dep-tree-panel">Loading dependencies...</div>;
+		return <div className="dep-tree-panel dep-tree-loading">Loading dependencies...</div>;
 	}
 
 	if (error)
@@ -96,9 +118,9 @@ export function DependencyTree({ extensionName }: DependencyTreeProps)
 		return <div className="dep-tree-panel dep-tree-error">{error}</div>;
 	}
 
-	if (!data)
+	if (!data || data.tree.children.length === 0)
 	{
-		return null;
+		return <div className="dep-tree-panel dep-tree-empty">No dependencies</div>;
 	}
 
 	const totalJs = data.flat.reduce((sum, dep) => sum + (dep.bundleSize?.js ?? 0), 0);
@@ -107,13 +129,21 @@ export function DependencyTree({ extensionName }: DependencyTreeProps)
 	return (
 		<div className="dep-tree-panel">
 			<div className="dep-tree-header">
-				<strong>{data.extension}</strong>
-				<span className="dep-tree-summary">
-					{data.totalDeps} deps / {formatBytes(totalJs)} JS / {formatBytes(totalCss)} CSS
+				<span className="dep-tree-header-name">{data.extension}</span>
+				<span className="dep-tree-header-stats">
+					{data.totalDeps} dep{data.totalDeps !== 1 ? 's' : ''}
+					{totalJs > 0 ? <span className="dep-tree-header-size">JS {formatBytes(totalJs)}</span> : null}
+					{totalCss > 0 ? <span className="dep-tree-header-size">CSS {formatBytes(totalCss)}</span> : null}
 				</span>
 			</div>
 			<ul className="dep-tree-root">
-				<TreeNode node={data.tree} />
+				{data.tree.children.map((child, index) => (
+					<TreeNode
+						key={`${child.name}-${index}`}
+						node={child}
+						isLast={index === data.tree.children.length - 1}
+					/>
+				))}
 			</ul>
 		</div>
 	);
