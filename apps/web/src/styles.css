@@ -891,7 +891,7 @@ textarea {
 }
 
 .data-table-assets {
-	min-width: 900px;
+	min-width: 1100px;
 }
 
 .data-table-requests {
@@ -931,7 +931,7 @@ textarea {
 }
 
 .col-action {
-	width: 9%;
+	width: 11%;
 }
 
 .data-table th {
@@ -945,11 +945,16 @@ textarea {
 
 .data-table th:first-child {
 	text-align: left;
-	padding-left: 0;
+	padding-left: 14px;
 }
 
 .data-table th:last-child {
 	text-align: center;
+	padding-right: 14px;
+}
+
+.data-table td:last-child {
+	padding-right: 14px;
 }
 
 .table-sort-button {
@@ -977,7 +982,7 @@ textarea {
 
 .data-table td:first-child {
 	text-align: left;
-	padding-left: 0;
+	padding-left: 14px;
 }
 
 
