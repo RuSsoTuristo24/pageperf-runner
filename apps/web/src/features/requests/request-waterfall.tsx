@@ -81,59 +81,59 @@ export function hasWaterfallTiming(requests: RequestWaterfallItem[]): boolean
 }
 
 const RESOURCE_TYPE_HINTS: Record<string, string> = {
-	document: 'Тип: HTML-документ страницы. Основной запрос, с которого начинается загрузка. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	script: 'Тип: JavaScript-файл. Загружается через <script> или динамически. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	stylesheet: 'Тип: CSS-файл. Загружается через <link rel="stylesheet">. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	image: 'Тип: Изображение (PNG, JPG, SVG, WebP и т.д.). Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	font: 'Тип: Шрифт (WOFF2, TTF и т.д.). Загружается через @font-face. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	fetch: 'Тип: запрос через fetch() API. Обычно AJAX-запрос к бэкенду. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	xmlhttprequest: 'Тип: XMLHttpRequest (XHR). Устаревший AJAX, до fetch(). Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	media: 'Тип: Аудио или видео. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	websocket: 'Тип: WebSocket-соединение. Постоянный двусторонний канал. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
-	other: 'Тип: Прочий ресурс (manifest, favicon и т.д.). Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	document: 'HTML-документ страницы. Основной запрос, с которого начинается загрузка.',
+	script: 'JavaScript-файл. Загружается через <script> или динамически.',
+	stylesheet: 'CSS-файл. Загружается через <link rel="stylesheet">.',
+	image: 'Изображение (PNG, JPG, SVG, WebP и т.д.).',
+	font: 'Шрифт (WOFF2, TTF и т.д.). Загружается через @font-face.',
+	fetch: 'Запрос через fetch() API. Обычно AJAX-запрос к бэкенду.',
+	xmlhttprequest: 'XMLHttpRequest (XHR). Устаревший AJAX, до fetch().',
+	media: 'Аудио или видео.',
+	websocket: 'WebSocket-соединение. Постоянный двусторонний канал.',
+	other: 'Прочий ресурс (manifest, favicon и т.д.).',
 };
 
 function getResourceTypeHint(resourceType: string): string
 {
-	return RESOURCE_TYPE_HINTS[resourceType] ?? `Тип ресурса: ${resourceType}. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.`;
+	return RESOURCE_TYPE_HINTS[resourceType] ?? `Тип ресурса: ${resourceType}`;
 }
 
 const INITIATOR_TYPE_HINTS: Record<string, string> = {
-	parser: 'Инициатор: HTML-парсер. Ресурс найден при разборе HTML (теги <script>, <link>, <img>). Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
-	script: 'Инициатор: JavaScript. Ресурс загружен динамически из JS-кода (createElement, import(), fetch). Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
-	preload: 'Инициатор: <link rel="preload">. Ресурс загружен заранее по подсказке разработчика. Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
-	fetch: 'Инициатор: fetch() API. Программный запрос данных. Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
-	xmlhttprequest: 'Инициатор: XMLHttpRequest. Программный запрос данных (устаревший API). Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
-	other: 'Инициатор: Другой источник (redirect, serviceworker и т.д.). Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
+	parser: 'HTML-парсер. Ресурс найден при разборе HTML (теги <script>, <link>, <img>).',
+	script: 'JavaScript. Ресурс загружен динамически из JS-кода.',
+	preload: '<link rel="preload">. Ресурс загружен заранее по подсказке разработчика.',
+	fetch: 'fetch() API. Программный запрос данных.',
+	xmlhttprequest: 'XMLHttpRequest. Программный запрос данных (устаревший API).',
+	other: 'Другой источник (redirect, serviceworker и т.д.).',
 };
 
 function getInitiatorTypeHint(initiatorType: string): string
 {
-	return INITIATOR_TYPE_HINTS[initiatorType] ?? `Инициатор загрузки: ${initiatorType}. Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.`;
+	return INITIATOR_TYPE_HINTS[initiatorType] ?? `Инициатор: ${initiatorType}`;
 }
 
 function getProtocolHint(protocol: string): string
 {
 	const hints: Record<string, string> = {
-		'h2': 'Протокол: HTTP/2. Мультиплексирование запросов через одно TCP-соединение, сжатие заголовков. Возможные значения: h2, h3, http/1.1.',
-		'h3': 'Протокол: HTTP/3 (QUIC). Работает поверх UDP, быстрее установка соединения, нет head-of-line blocking. Возможные значения: h2, h3, http/1.1.',
-		'http/1.1': 'Протокол: HTTP/1.1. Устаревший, один запрос на соединение. Браузер открывает до 6 параллельных TCP-соединений к домену. Возможные значения: h2, h3, http/1.1.',
+		'h2': 'HTTP/2. Мультиплексирование запросов через одно TCP-соединение, сжатие заголовков.',
+		'h3': 'HTTP/3 (QUIC). Работает поверх UDP, быстрее установка соединения, нет head-of-line blocking.',
+		'http/1.1': 'HTTP/1.1. Один запрос на соединение, до 6 параллельных TCP-соединений к домену.',
 	};
 
-	return hints[protocol] ?? `Протокол: ${protocol}. Возможные значения: h2, h3, http/1.1.`;
+	return hints[protocol] ?? `Протокол: ${protocol}`;
 }
 
 function getPriorityHint(priority: string): string
 {
 	const hints: Record<string, string> = {
-		'VeryHigh': 'Приоритет: Очень высокий. Основной документ (HTML). Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
-		'High': 'Приоритет: Высокий. CSS, шрифты, синхронные JS в <head>. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
-		'Medium': 'Приоритет: Средний. Обычные скрипты, preload-ресурсы. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
-		'Low': 'Приоритет: Низкий. Изображения вне viewport, async-скрипты. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
-		'VeryLow': 'Приоритет: Очень низкий. Prefetch, фоновые ресурсы. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
+		'VeryHigh': 'Очень высокий приоритет. Основной документ (HTML).',
+		'High': 'Высокий приоритет. CSS, шрифты, синхронные JS в <head>.',
+		'Medium': 'Средний приоритет. Обычные скрипты, preload-ресурсы.',
+		'Low': 'Низкий приоритет. Изображения вне viewport, async-скрипты.',
+		'VeryLow': 'Очень низкий приоритет. Prefetch, фоновые ресурсы.',
 	};
 
-	return hints[priority] ?? `Приоритет загрузки: ${priority}. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.`;
+	return hints[priority] ?? `Приоритет: ${priority}`;
 }
 
 function WaterfallRow({ request, maxEndTime, targetOrigin }: {
@@ -218,6 +218,7 @@ function WaterfallRow({ request, maxEndTime, targetOrigin }: {
 
 export function RequestWaterfall({ requests, targetUrl }: RequestWaterfallProps)
 {
+	const [filterType, setFilterType] = useState('all');
 	const targetOrigin = getTargetOrigin(targetUrl);
 	const waterfallRequests = requests.filter((request) => {
 		const start = toFiniteNumber(request.startTimeMs);
@@ -231,10 +232,16 @@ export function RequestWaterfall({ requests, targetUrl }: RequestWaterfallProps)
 		return null;
 	}
 
+	// maxEndTime always from ALL requests (so the timeline scale stays consistent)
 	const maxEndTime = Math.max(
 		...waterfallRequests.map((request) => toFiniteNumber(request.endTimeMs) ?? request.durationMs),
 		1,
 	);
+
+	const resourceTypes = [...new Set(waterfallRequests.map((r) => r.resourceType))].sort();
+	const visibleRequests = filterType === 'all'
+		? waterfallRequests
+		: waterfallRequests.filter((r) => r.resourceType === filterType);
 
 	return (
 		<section className="panel panel-waterfall" aria-labelledby="waterfall-heading">
@@ -243,7 +250,24 @@ export function RequestWaterfall({ requests, targetUrl }: RequestWaterfallProps)
 					<p className="eyebrow">Network Timeline</p>
 					<h2 id="waterfall-heading">Waterfall</h2>
 				</div>
-				<span className="workspace-context">{formatMetricValue('duration', maxEndTime)} total</span>
+				<div className="toolbar-group">
+					<label className="toolbar-control">
+						<span>Тип</span>
+						<select
+							aria-label="Фильтр по типу ресурса"
+							value={filterType}
+							onChange={(event) => setFilterType(event.target.value)}
+						>
+							<option value="all">all ({waterfallRequests.length})</option>
+							{resourceTypes.map((type) => (
+								<option key={type} value={type}>
+									{type} ({waterfallRequests.filter((r) => r.resourceType === type).length})
+								</option>
+							))}
+						</select>
+					</label>
+					<span className="workspace-context">{formatMetricValue('duration', maxEndTime)} total</span>
+				</div>
 			</div>
 
 			<div className="waterfall-legend">
@@ -257,7 +281,7 @@ export function RequestWaterfall({ requests, targetUrl }: RequestWaterfallProps)
 			</div>
 
 			<div className="waterfall-list">
-				{waterfallRequests.map((request) => (
+				{visibleRequests.map((request) => (
 					<WaterfallRow
 						key={`${request.assetKey}-${request.url}`}
 						request={request}
