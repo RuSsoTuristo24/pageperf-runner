@@ -399,12 +399,11 @@ export function App()
 				setIsBootstrapping(true);
 				setErrorMessage(null);
 
-				const [loadedProfiles, loadedRuns, loadedAuthSession, loadedAssetIssues, loadedUrlIndex, loadedSettings] = await Promise.all([
+				const [loadedProfiles, loadedRuns, loadedAuthSession, loadedAssetIssues, loadedSettings] = await Promise.all([
 					fetchProfiles(),
 					fetchRuns(),
 					fetchAuthSession(),
 					fetchAssetIssues(),
-					fetchUrlIndex().catch(() => ({} as Record<string, string>)),
 					fetchSettings(),
 				]);
 
@@ -417,8 +416,10 @@ export function App()
 				setRuns(loadedRuns);
 				setAuthSession(loadedAuthSession);
 				setAssetIssues(loadedAssetIssues);
-				setUrlIndex(loadedUrlIndex);
 				setSettings(loadedSettings);
+
+				// URL index loaded lazily after main data (heavy scan)
+				fetchUrlIndex().then((idx) => { if (!isCancelled) { setUrlIndex(idx); } }).catch(() => undefined);
 				setDraftModulesRoot(loadedSettings.modulesRoot);
 				if (loadedSettings.imageCoefficients)
 				{
@@ -1202,8 +1203,18 @@ export function App()
 						<span className="vue2-hint">Vue 2 deprecated. Компоненты должны мигрировать на ui.vue3 (BX.Vue3).</span>
 					</div>
 				) : null}
-				{isBootstrapping ? <p className="message-banner">Загрузка прогонов…</p> : null}
-				{selectedRunId && isLoadingDetails ? <p className="message-banner">Загрузка данных прогона…</p> : null}
+				{isBootstrapping ? (
+					<div className="loading-overlay">
+						<div className="loading-spinner" />
+						<p>Загрузка прогонов...</p>
+					</div>
+				) : null}
+				{selectedRunId && isLoadingDetails ? (
+					<div className="loading-overlay">
+						<div className="loading-spinner" />
+						<p>Загрузка данных прогона...</p>
+					</div>
+				) : null}
 
 				<div className="resource-tabs workspace-tabs" role="tablist" aria-label="Workspace tabs">
 					{([
