@@ -53,23 +53,13 @@ export function RunList({ runs, selectedRunId, onRunSelect, onRunDelete }: RunLi
 
 			<ul className="run-list">
 				{runs.map((run) => (
-					<li key={run.id}>
+					<li key={run.id} className="run-list-row">
 						<button
 							type="button"
 							className={`run-list-item ${selectedRunId === run.id ? 'is-selected' : ''}`}
 							aria-pressed={selectedRunId === run.id}
 							onClick={() => onRunSelect?.(run.id)}
 						>
-							<div className="run-list-topline">
-								<strong>{run.profile}</strong>
-								<span className={`status-pill status-${run.status}`}>{run.status}</span>
-							</div>
-							<p className="run-list-page">{run.page}</p>
-							<div className="run-list-meta">
-								<span>{run.context}</span>
-								<span>{formatRelativeTime(run.createdAt)}</span>
-								<span className="run-id">{run.id.slice(0, 8)}</span>
-							</div>
 							{onRunDelete && confirmDeleteId === run.id ? (
 								<div className="run-list-confirm" onClick={(e) => e.stopPropagation()}>
 									<button
@@ -88,13 +78,23 @@ export function RunList({ runs, selectedRunId, onRunSelect, onRunDelete }: RunLi
 									</button>
 								</div>
 							) : null}
+							<div className="run-list-topline">
+								<strong>{run.profile}</strong>
+								<span className={`status-pill status-${run.status}`}>{run.status}</span>
+							</div>
+							<p className="run-list-page">{run.page}</p>
+							<div className="run-list-meta">
+								<span>{run.context}</span>
+								<span>{formatRelativeTime(run.createdAt)}</span>
+								<span className="run-id">{run.id.slice(0, 8)}</span>
+							</div>
 						</button>
-						{onRunDelete && confirmDeleteId !== run.id ? (
+						{onRunDelete ? (
 							<button
 								type="button"
-								className="run-list-delete-inline"
+								className="run-list-delete"
 								title="Удалить прогон"
-								onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(run.id); }}
+								onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(confirmDeleteId === run.id ? null : run.id); }}
 							>
 								×
 							</button>

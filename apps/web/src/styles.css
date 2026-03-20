@@ -618,39 +618,44 @@ textarea {
 	transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
-.run-list li {
-	position: relative;
+.run-list-row {
+	display: flex;
+	align-items: stretch;
+}
+.run-list-row .run-list-item {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	border-radius: var(--radius-lg) 0 0 var(--radius-lg);
 }
 .run-list-item:hover {
 	transform: translateY(-1px);
 	border-color: rgba(93, 228, 199, 0.24);
 }
-.run-list-delete-inline {
-	position: absolute;
-	top: 6px;
-	right: 6px;
-	width: 22px;
-	height: 22px;
+.run-list-delete {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	border: none;
-	border-radius: 4px;
-	background: transparent;
-	color: rgba(255, 255, 255, 0.15);
-	font-size: 14px;
+	width: 28px;
+	flex-shrink: 0;
+	border: 1px solid var(--line);
+	border-left: none;
+	border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+	background: rgba(255, 255, 255, 0.02);
+	color: rgba(255, 255, 255, 0.2);
+	font-size: 16px;
 	cursor: pointer;
 }
-.run-list-delete-inline:hover {
+.run-list-delete:hover {
 	background: rgba(231, 76, 60, 0.15);
 	color: #e74c3c;
 }
 .run-list-confirm {
 	display: flex;
 	gap: 6px;
-	margin-top: 8px;
-	padding-top: 8px;
-	border-top: 1px solid rgba(255, 255, 255, 0.06);
+	margin-bottom: 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 .run-list-confirm-btn {
 	flex: 1;
