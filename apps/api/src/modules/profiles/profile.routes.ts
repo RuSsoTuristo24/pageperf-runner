@@ -28,8 +28,16 @@ export function registerProfileRoutes(app: FastifyInstance, service: ProfileServ
     }
   });
 
-  app.delete('/api/profiles/:id', async (request, reply) => {
-    const { id } = request.params as { id: string };
+  app.delete('/api/profiles', async (request, reply) => {
+    const { id } = request.body as { id?: string };
+
+    if (!id)
+    {
+      reply.code(400);
+
+      return { error: 'Missing id' };
+    }
+
     const deleted = service.delete(id);
 
     if (!deleted)

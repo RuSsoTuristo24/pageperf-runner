@@ -377,6 +377,7 @@ export function App()
 	const [draftRepeatCount, setDraftRepeatCount] = useState(1);
 	const [draftSaveAsProfile, setDraftSaveAsProfile] = useState(true);
 	const draftProfileUrl = draftProfilePages.split('\n').find((line) => line.trim().length > 0)?.trim() ?? '';
+	const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
 	const [copyFeedback, setCopyFeedback] = useState(false);
 	const [urlIndex, setUrlIndex] = useState<Record<string, string>>({});
 	const [settings, setSettings] = useState<ApiSettings | null>(null);
@@ -732,6 +733,34 @@ export function App()
 			.split(/\r?\n/)
 			.map((page) => page.trim())
 			.filter(Boolean);
+
+		// Client-side validation
+		const invalidUrls: string[] = [];
+		for (const page of profilePages)
+		{
+			try
+			{
+				new URL(page);
+			}
+			catch
+			{
+				invalidUrls.push(page);
+			}
+		}
+
+		if (invalidUrls.length > 0)
+		{
+			setErrorMessage(`Невалидные URL:\n${invalidUrls.join('\n')}`);
+
+			return;
+		}
+
+		if (profilePages.length === 0)
+		{
+			setErrorMessage('Укажите хотя бы одну страницу для прогона.');
+
+			return;
+		}
 
 		try
 		{

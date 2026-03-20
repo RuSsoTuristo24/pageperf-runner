@@ -405,27 +405,30 @@ textarea {
 	flex-direction: column;
 	gap: 2px;
 	flex-shrink: 0;
+	padding: 2px;
 }
-.launch-profile-delete-yes {
-	padding: 2px 6px;
+.launch-profile-confirm-btn {
+	padding: 4px 8px;
 	border: none;
-	border-radius: 3px;
+	border-radius: 4px;
+	font-size: 11px;
+	font-weight: 500;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.launch-profile-confirm-yes {
 	background: rgba(231, 76, 60, 0.2);
 	color: #e74c3c;
-	font-size: 10px;
-	cursor: pointer;
 }
-.launch-profile-delete-yes:hover {
-	background: rgba(231, 76, 60, 0.35);
+.launch-profile-confirm-yes:hover {
+	background: rgba(231, 76, 60, 0.4);
 }
-.launch-profile-delete-no {
-	padding: 2px 6px;
-	border: none;
-	border-radius: 3px;
-	background: rgba(255, 255, 255, 0.05);
+.launch-profile-confirm-no {
+	background: rgba(255, 255, 255, 0.06);
 	color: rgba(255, 255, 255, 0.5);
-	font-size: 10px;
-	cursor: pointer;
+}
+.launch-profile-confirm-no:hover {
+	background: rgba(255, 255, 255, 0.12);
 }
 .launch-origin-bar {
 	display: flex;
