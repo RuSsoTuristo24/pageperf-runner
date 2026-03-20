@@ -72,12 +72,15 @@ export function AssetTops({ requests, jsExecByUrl, targetUrl }: AssetTopsProps)
 	const [depStats, setDepStats] = useState<ApiBatchExtStat[] | null>(null);
 	const [isLoadingDeps, setIsLoadingDeps] = useState(false);
 	const [depError, setDepError] = useState<string | null>(null);
+	const [filterType, setFilterType] = useState('all');
 
 	const targetOrigin = targetUrl ? (() => { try { return new URL(targetUrl).origin; } catch { return undefined; } })() : undefined;
+	const resourceTypes = [...new Set(requests.map((r) => r.resourceType))].sort();
+	const filtered = filterType === 'all' ? requests : requests.filter((r) => r.resourceType === filterType);
 
 	// Top: heaviest by own decoded size
 	const heaviestOwn = buildTopList(
-		requests.map((r) => ({
+		filtered.map((r) => ({
 			url: r.url,
 			label: getResourceLabel(r.url),
 			value: formatBytes(r.decodedBodySize),
@@ -87,7 +90,7 @@ export function AssetTops({ requests, jsExecByUrl, targetUrl }: AssetTopsProps)
 
 	// Top: longest eval
 	const longestEval = buildTopList(
-		requests
+		filtered
 			.filter((r) => r.resourceType === 'script' && jsExecByUrl.has(r.url))
 			.map((r) => {
 				const exec = jsExecByUrl.get(r.url)!;
@@ -103,7 +106,7 @@ export function AssetTops({ requests, jsExecByUrl, targetUrl }: AssetTopsProps)
 
 	// Top: worst compression (highest expansion ratio, only for sizeable assets)
 	const worstCompression = buildTopList(
-		requests
+		filtered
 			.filter((r) => r.encodedBodySize > 1024 && r.decodedBodySize > r.encodedBodySize)
 			.map((r) => ({
 				url: r.url,
@@ -176,9 +179,28 @@ export function AssetTops({ requests, jsExecByUrl, targetUrl }: AssetTopsProps)
 
 	return (
 		<section className="panel panel-tops" aria-labelledby="tops-heading">
-			<div className="panel-heading">
-				<p className="eyebrow">Аналитика</p>
-				<h2 id="tops-heading">Топы ресурсов</h2>
+			<div className="panel-heading panel-heading-inline">
+				<div>
+					<p className="eyebrow">Аналитика</p>
+					<h2 id="tops-heading">Топы ресурсов</h2>
+				</div>
+				<div className="toolbar-group">
+					<label className="toolbar-control">
+						<span>Тип</span>
+						<select
+							aria-label="Фильтр по типу ресурса"
+							value={filterType}
+							onChange={(e) => setFilterType(e.target.value)}
+						>
+							<option value="all">all ({requests.length})</option>
+							{resourceTypes.map((type) => (
+								<option key={type} value={type}>
+									{type} ({requests.filter((r) => r.resourceType === type).length})
+								</option>
+							))}
+						</select>
+					</label>
+				</div>
 			</div>
 
 			<div className="tops-grid">

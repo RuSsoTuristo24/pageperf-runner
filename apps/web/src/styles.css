@@ -883,6 +883,13 @@ textarea {
 	color: var(--text-primary);
 }
 
+.toolbar-control-search {
+	min-width: 180px;
+}
+.toolbar-control-search input {
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 0.8rem;
+}
 .toolbar-control-threshold {
 	min-width: 170px;
 }

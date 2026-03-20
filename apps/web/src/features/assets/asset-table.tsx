@@ -128,11 +128,15 @@ export function AssetTable({
 	const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 	const [editingAssetKey, setEditingAssetKey] = useState<string | null>(null);
 	const [depsAssetKey, setDepsAssetKey] = useState<string | null>(null);
+	const [searchQuery, setSearchQuery] = useState('');
 	const targetOrigin = getTargetOrigin(targetUrl);
 	const heavyAssetLabel = Number(heavyAssetThresholdMb) > 0
 		? `> ${Number(heavyAssetThresholdMb).toFixed(2)} МБ`
 		: 'disabled';
-	const sortedAssets = sortAssets(assets, sortKey, sortDirection, jsExecByUrl);
+	const searchFiltered = searchQuery.trim().length > 0
+		? assets.filter((asset) => asset.url.toLowerCase().includes(searchQuery.toLowerCase()))
+		: assets;
+	const sortedAssets = sortAssets(searchFiltered, sortKey, sortDirection, jsExecByUrl);
 
 	function handleSort(nextSortKey: AssetSortKey): void
 	{
@@ -183,6 +187,16 @@ export function AssetTable({
 								</option>
 							))}
 						</select>
+					</label>
+					<label className="toolbar-control toolbar-control-search">
+						<span>Поиск</span>
+						<input
+							aria-label="Поиск по URL ассета"
+							type="text"
+							placeholder="core.min, popup, vue..."
+							value={searchQuery}
+							onChange={(event) => setSearchQuery(event.target.value)}
+						/>
 					</label>
 					<label className="toolbar-control toolbar-control-threshold">
 						<span>Порог decoded (МБ)</span>
