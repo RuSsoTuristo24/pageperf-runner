@@ -84,18 +84,20 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 					<option value="both">оба</option>
 				</select>
 			</label>
-			<label className="field" title="Количество повторных прогонов для статистической точности. Метрики рассчитываются по 80-му процентилю (p80). Каждый прогон в отдельном браузерном контексте.">
-				<span>Повторы</span>
-				<input
-					aria-label="Количество повторных прогонов"
-					type="number"
-					min={1}
-					max={20}
-					value={props.repeatCount}
-					onChange={(event) => props.onRepeatCountChange(Math.max(1, Math.min(20, Number(event.target.value) || 1)))}
-				/>
-				<span className="field-hint">1 = один прогон. 3–5 = стабильный p80.</span>
-			</label>
+			{props.cacheMode === 'cold' ? (
+				<label className="field" title="Количество повторных прогонов для статистической точности. Метрики рассчитываются по 80-му процентилю (p80). Каждый прогон в отдельном браузерном контексте. Доступно только для холодного кеша.">
+					<span>Повторы</span>
+					<input
+						aria-label="Количество повторных прогонов"
+						type="number"
+						min={1}
+						max={20}
+						value={props.repeatCount}
+						onChange={(event) => props.onRepeatCountChange(Math.max(1, Math.min(20, Number(event.target.value) || 1)))}
+					/>
+					<span className="field-hint">1 = один прогон. 3–5 = стабильный p80.</span>
+				</label>
+			) : null}
 			<label className="field-checkbox">
 				<input
 					aria-label="Использовать сохранённую сессию"

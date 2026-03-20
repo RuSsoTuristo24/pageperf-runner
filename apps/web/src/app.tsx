@@ -1045,7 +1045,7 @@ export function App()
 					onUrlChange={setDraftProfileUrl}
 					onPagesChange={setDraftProfilePages}
 					onThrottlingChange={setDraftThrottling}
-					onCacheModeChange={setDraftCacheMode}
+					onCacheModeChange={(mode) => { setDraftCacheMode(mode); if (mode !== 'cold') { setDraftRepeatCount(1); } }}
 					onRepeatCountChange={setDraftRepeatCount}
 					onUseAuthSessionChange={setUseAuthSession}
 					onSubmit={() => {
