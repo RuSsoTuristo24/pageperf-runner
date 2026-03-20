@@ -602,7 +602,8 @@ textarea {
 	display: grid;
 	gap: 10px;
 	max-height: calc(100vh - 470px);
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .run-list-item {
@@ -617,53 +618,45 @@ textarea {
 	transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
-.run-list-row {
-	display: flex;
-	align-items: stretch;
-}
-.run-list-row .run-list-item {
-	flex: 1;
-	min-width: 0;
-	overflow: hidden;
-	border-radius: var(--radius-lg) 0 0 var(--radius-lg);
-}
 .run-list-item:hover {
 	transform: translateY(-1px);
 	border-color: rgba(93, 228, 199, 0.24);
 }
-.run-list-delete {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 28px;
-	flex-shrink: 0;
-	border: 1px solid var(--line);
-	border-left: none;
-	border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
-	background: rgba(255, 255, 255, 0.02);
-	color: rgba(255, 255, 255, 0.2);
-	font-size: 16px;
+.run-list-x {
+	margin-left: auto;
+	font-size: 14px;
+	color: rgba(255, 255, 255, 0.15);
 	cursor: pointer;
+	padding: 0 2px;
 }
-.run-list-delete:hover {
-	background: rgba(231, 76, 60, 0.15);
+.run-list-x:hover {
 	color: #e74c3c;
 }
 .run-list-confirm {
 	display: flex;
-	flex-direction: column;
-	gap: 2px;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin-bottom: 8px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.run-list-confirm-label {
+	font-size: 11px;
+	color: rgba(255, 255, 255, 0.5);
+}
+.run-list-confirm-actions {
+	display: flex;
+	gap: 4px;
 	flex-shrink: 0;
-	padding: 2px;
 }
 .run-list-confirm-btn {
-	padding: 4px 8px;
+	padding: 4px 10px;
 	border: none;
 	border-radius: 4px;
 	font-size: 11px;
 	font-weight: 500;
 	cursor: pointer;
-	white-space: nowrap;
 }
 .run-list-confirm-yes {
 	background: rgba(231, 76, 60, 0.2);
