@@ -1864,6 +1864,28 @@ textarea {
 	color: rgba(255, 255, 255, 0.3);
 	line-height: 1.4;
 }
+.settings-coeff-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 6px;
+}
+.settings-coeff-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+.settings-coeff-label {
+	font-size: 10px;
+	font-weight: 600;
+	color: rgba(255, 255, 255, 0.5);
+	width: 42px;
+	flex-shrink: 0;
+}
+.settings-coeff-input {
+	width: 100%;
+	padding: 4px 6px;
+	font-size: 12px;
+}
 .settings-error {
 	font-size: 12px;
 	color: #e74c3c;

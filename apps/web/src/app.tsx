@@ -380,6 +380,9 @@ export function App()
 	const [isSavingSettings, setIsSavingSettings] = useState(false);
 	const [settingsError, setSettingsError] = useState<string | null>(null);
 	const [showSettings, setShowSettings] = useState(false);
+	const [draftCoefficients, setDraftCoefficients] = useState({
+		png: '1.0', jpg: '0.3', gif: '0.5', webp: '0.15', avif: '0.1', other: '0.3',
+	});
 
 	useEffect(() => {
 		let isCancelled = false;
@@ -412,6 +415,17 @@ export function App()
 				setUrlIndex(loadedUrlIndex);
 				setSettings(loadedSettings);
 				setDraftModulesRoot(loadedSettings.modulesRoot);
+				if (loadedSettings.imageCoefficients)
+				{
+					setDraftCoefficients({
+						png: String(loadedSettings.imageCoefficients.png),
+						jpg: String(loadedSettings.imageCoefficients.jpg),
+						gif: String(loadedSettings.imageCoefficients.gif),
+						webp: String(loadedSettings.imageCoefficients.webp),
+						avif: String(loadedSettings.imageCoefficients.avif),
+						other: String(loadedSettings.imageCoefficients.other),
+					});
+				}
 				setUseAuthSession(loadedAuthSession.status === 'ready');
 				setSelectedRunId((currentSelectedRunId) => currentSelectedRunId ?? pickDefaultRunId(loadedRuns));
 			}
@@ -910,7 +924,17 @@ export function App()
 			setIsSavingSettings(true);
 			setSettingsError(null);
 
-			const updated = await updateSettings({ modulesRoot: draftModulesRoot });
+			const updated = await updateSettings({
+				modulesRoot: draftModulesRoot,
+				imageCoefficients: {
+					png: Number(draftCoefficients.png) || 1.0,
+					jpg: Number(draftCoefficients.jpg) || 0.3,
+					gif: Number(draftCoefficients.gif) || 0.5,
+					webp: Number(draftCoefficients.webp) || 0.15,
+					avif: Number(draftCoefficients.avif) || 0.1,
+					other: Number(draftCoefficients.other) || 0.3,
+				},
+			});
 
 			setSettings(updated);
 
@@ -972,11 +996,30 @@ export function App()
 								/>
 								<span className="settings-hint">Абсолютный путь к директории с модулями (содержит main/, ui/, crm/ и т.д.)</span>
 							</label>
+							<div className="settings-field">
+								<span className="settings-label" title="Сколько байт весит один лишний пиксель для каждого формата. PNG без потерь — самый тяжёлый (~1 byte/px). JPEG с потерями — ~0.3. WebP — ~0.15. Влияет на расчёт колонки «Лишний вес» в Oversized Images.">Коэффициенты byte/px для изображений</span>
+								<div className="settings-coeff-grid">
+									{(['png', 'jpg', 'gif', 'webp', 'avif', 'other'] as const).map((fmt) => (
+										<label key={fmt} className="settings-coeff-item">
+											<span className="settings-coeff-label">{fmt.toUpperCase()}</span>
+											<input
+												type="number"
+												className="settings-input settings-coeff-input"
+												step="0.05"
+												min="0"
+												value={draftCoefficients[fmt]}
+												onChange={(e) => setDraftCoefficients((prev) => ({ ...prev, [fmt]: e.target.value }))}
+											/>
+										</label>
+									))}
+								</div>
+								<span className="settings-hint">PNG ~1.0 (без потерь, тяжёлый). JPEG ~0.3 (с потерями). WebP ~0.15 (современный). AVIF ~0.1 (лучшее сжатие).</span>
+							</div>
 							{settingsError ? <p className="settings-error">{settingsError}</p> : null}
 							<button
 								type="button"
 								className="secondary-button secondary-button-compact"
-								disabled={isSavingSettings || draftModulesRoot === (settings?.modulesRoot ?? '')}
+								disabled={isSavingSettings}
 								onClick={() => { void handleSaveSettings(); }}
 							>
 								{isSavingSettings ? 'Сохраняю...' : 'Сохранить'}
@@ -1190,6 +1233,7 @@ export function App()
 							<OversizedImagesPanel
 								images={activeDiagnostics?.oversizedImages}
 								targetUrl={activePage?.url ?? selectedProfile?.url}
+								imageCoefficients={settings?.imageCoefficients}
 							/>
 						</CollapsiblePanel>
 

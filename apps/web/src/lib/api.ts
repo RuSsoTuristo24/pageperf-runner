@@ -878,8 +878,18 @@ export function fetchBatchExtStats(urls: string[]): Promise<{ results: ApiBatchE
 	return sendJson<{ results: ApiBatchExtStat[] }>('/api/extensions/batch-stats', 'POST', { urls });
 }
 
+export type ApiImageCoefficients = {
+	png: number;
+	jpg: number;
+	gif: number;
+	webp: number;
+	avif: number;
+	other: number;
+};
+
 export type ApiSettings = {
 	modulesRoot: string;
+	imageCoefficients: ApiImageCoefficients;
 };
 
 export function fetchSettings(): Promise<ApiSettings>
