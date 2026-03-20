@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import type { ApiProfile } from '../../lib/api.js';
 
@@ -241,7 +241,7 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 							placeholder={"https://example.com/page1\nhttps://example.com/page2\nhttps://example.com/page3"}
 							value={props.pages}
 							onChange={(event) => props.onPagesChange(event.target.value)}
-							autoFocus
+							ref={(el) => { if (el) { requestAnimationFrame(() => el.focus({ preventScroll: true })); } }}
 						/>
 						<div className="modal-footer">
 							<span className="modal-count">{pageCount} URL</span>
