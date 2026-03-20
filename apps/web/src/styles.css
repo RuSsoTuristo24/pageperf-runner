@@ -620,9 +620,12 @@ textarea {
 .run-list-row {
 	display: flex;
 	align-items: stretch;
+	position: relative;
 }
 .run-list-row .run-list-item {
 	border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+	flex: 1;
+	min-width: 0;
 }
 .run-list-item:hover {
 	transform: translateY(-1px);
@@ -647,11 +650,18 @@ textarea {
 	color: #e74c3c;
 }
 .run-list-confirm {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	transform: translateY(-50%);
 	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	justify-content: center;
-	padding: 2px;
+	gap: 4px;
+	padding: 4px 6px;
+	background: var(--bg-surface, #1a1f2e);
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	z-index: 10;
 }
 .run-list-confirm-btn {
 	padding: 4px 8px;
