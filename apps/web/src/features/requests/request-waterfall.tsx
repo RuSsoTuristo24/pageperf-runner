@@ -158,6 +158,7 @@ export function RequestWaterfall({ requests, targetUrl }: RequestWaterfallProps)
 										<span
 											key={phase.key}
 											className={`waterfall-segment waterfall-segment-${phase.key}`}
+											title={`${phase.label}: ${formatMetricValue('duration', phase.value)}`}
 											style={{
 												width: `${(phase.value / safeTotal) * 100}%`,
 											}}
@@ -168,7 +169,8 @@ export function RequestWaterfall({ requests, targetUrl }: RequestWaterfallProps)
 
 							<div className="waterfall-phase-list">
 								{phases.map((phase) => (
-									<span key={phase.key} className="waterfall-phase-pill">
+									<span key={phase.key} className={`waterfall-phase-pill waterfall-phase-${phase.key}`}>
+										<span className={`waterfall-phase-dot waterfall-segment-${phase.key}`} />
 										{phase.label} {formatMetricValue('duration', phase.value)}
 									</span>
 								))}
