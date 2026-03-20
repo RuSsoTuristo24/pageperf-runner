@@ -53,7 +53,7 @@ export function RunList({ runs, selectedRunId, onRunSelect, onRunDelete }: RunLi
 
 			<ul className="run-list">
 				{runs.map((run) => (
-					<li key={run.id} className="run-list-row">
+					<li key={run.id}>
 						<button
 							type="button"
 							className={`run-list-item ${selectedRunId === run.id ? 'is-selected' : ''}`}
@@ -70,35 +70,34 @@ export function RunList({ runs, selectedRunId, onRunSelect, onRunDelete }: RunLi
 								<span>{formatRelativeTime(run.createdAt)}</span>
 								<span className="run-id">{run.id.slice(0, 8)}</span>
 							</div>
-						</button>
-						{onRunDelete ? (
-							confirmDeleteId === run.id ? (
-								<span className="run-list-confirm">
+							{onRunDelete && confirmDeleteId === run.id ? (
+								<div className="run-list-confirm" onClick={(e) => e.stopPropagation()}>
 									<button
 										type="button"
 										className="run-list-confirm-btn run-list-confirm-yes"
-										onClick={() => { onRunDelete(run.id); setConfirmDeleteId(null); }}
+										onClick={(e) => { e.stopPropagation(); onRunDelete(run.id); setConfirmDeleteId(null); }}
 									>
 										Удалить
 									</button>
 									<button
 										type="button"
 										className="run-list-confirm-btn run-list-confirm-no"
-										onClick={() => setConfirmDeleteId(null)}
+										onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
 									>
 										Отмена
 									</button>
-								</span>
-							) : (
-								<button
-									type="button"
-									className="run-list-delete"
-									title="Удалить прогон"
-									onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(run.id); }}
-								>
-									×
-								</button>
-							)
+								</div>
+							) : null}
+						</button>
+						{onRunDelete && confirmDeleteId !== run.id ? (
+							<button
+								type="button"
+								className="run-list-delete-inline"
+								title="Удалить прогон"
+								onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(run.id); }}
+							>
+								×
+							</button>
 						) : null}
 					</li>
 				))}
