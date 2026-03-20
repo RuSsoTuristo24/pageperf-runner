@@ -1119,6 +1119,18 @@ export function App()
 					runs={runItems}
 					selectedRunId={selectedRunId}
 					onRunSelect={setSelectedRunId}
+					onRunDelete={(runId) => {
+						deleteRun(runId).then(() => {
+							setRuns((current) => current.filter((r) => r.id !== runId));
+							if (selectedRunId === runId)
+							{
+								setSelectedRunId(null);
+								setSelectedRunDetails(null);
+							}
+						}).catch((error) => {
+							setErrorMessage(toErrorMessage(error));
+						});
+					}}
 				/>
 
 			</aside>

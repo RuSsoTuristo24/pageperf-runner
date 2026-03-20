@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 type RunItem = {
 	id: string;
 	page: string;
@@ -30,10 +32,13 @@ type RunListProps = {
 	runs: RunItem[];
 	selectedRunId?: string | null;
 	onRunSelect?: (runId: string) => void;
+	onRunDelete?: (runId: string) => void;
 };
 
-export function RunList({ runs, selectedRunId, onRunSelect }: RunListProps)
+export function RunList({ runs, selectedRunId, onRunSelect, onRunDelete }: RunListProps)
 {
+	const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
 	return (
 		<section className="sidebar-section" aria-labelledby="runs-heading">
 			<div className="sidebar-section-heading">
@@ -48,7 +53,7 @@ export function RunList({ runs, selectedRunId, onRunSelect }: RunListProps)
 
 			<ul className="run-list">
 				{runs.map((run) => (
-					<li key={run.id}>
+					<li key={run.id} className="run-list-row">
 						<button
 							type="button"
 							className={`run-list-item ${selectedRunId === run.id ? 'is-selected' : ''}`}
@@ -66,6 +71,35 @@ export function RunList({ runs, selectedRunId, onRunSelect }: RunListProps)
 								<span className="run-id">{run.id.slice(0, 8)}</span>
 							</div>
 						</button>
+						{onRunDelete ? (
+							confirmDeleteId === run.id ? (
+								<span className="run-list-confirm">
+									<button
+										type="button"
+										className="run-list-confirm-btn run-list-confirm-yes"
+										onClick={() => { onRunDelete(run.id); setConfirmDeleteId(null); }}
+									>
+										Удалить
+									</button>
+									<button
+										type="button"
+										className="run-list-confirm-btn run-list-confirm-no"
+										onClick={() => setConfirmDeleteId(null)}
+									>
+										Отмена
+									</button>
+								</span>
+							) : (
+								<button
+									type="button"
+									className="run-list-delete"
+									title="Удалить прогон"
+									onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(run.id); }}
+								>
+									×
+								</button>
+							)
+						) : null}
 					</li>
 				))}
 			</ul>

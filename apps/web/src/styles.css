@@ -617,9 +617,61 @@ textarea {
 	transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
 }
 
+.run-list-row {
+	display: flex;
+	align-items: stretch;
+}
+.run-list-row .run-list-item {
+	border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
 .run-list-item:hover {
 	transform: translateY(-1px);
 	border-color: rgba(93, 228, 199, 0.24);
+}
+.run-list-delete {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	flex-shrink: 0;
+	border: 1px solid var(--line);
+	border-left: none;
+	border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+	background: rgba(255, 255, 255, 0.02);
+	color: rgba(255, 255, 255, 0.2);
+	font-size: 16px;
+	cursor: pointer;
+}
+.run-list-delete:hover {
+	background: rgba(231, 76, 60, 0.15);
+	color: #e74c3c;
+}
+.run-list-confirm {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	justify-content: center;
+	padding: 2px;
+}
+.run-list-confirm-btn {
+	padding: 4px 8px;
+	border: none;
+	border-radius: 4px;
+	font-size: 11px;
+	font-weight: 500;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.run-list-confirm-yes {
+	background: rgba(231, 76, 60, 0.2);
+	color: #e74c3c;
+}
+.run-list-confirm-yes:hover {
+	background: rgba(231, 76, 60, 0.4);
+}
+.run-list-confirm-no {
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.5);
 }
 
 .run-list-item.is-selected {
