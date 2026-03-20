@@ -82,7 +82,7 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 								const profileOrigins = getOrigins(profile.pages ?? [profile.url]);
 
 								return (
-									<div key={profile.id}>
+									<div key={profile.id} className="launch-profile-row">
 										<button
 											type="button"
 											className="launch-profile-item"
@@ -115,25 +115,23 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 													</div>
 												</div>
 											) : null}
-											<div className="launch-profile-topline">
-												<strong>{profile.name}</strong>
-												{confirmDeleteId !== profile.id ? (
-													<span
-														className="launch-profile-x"
-														role="button"
-														title="Удалить шаблон"
-														onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(profile.id); }}
-													>
-														×
-													</span>
-												) : null}
-											</div>
+											<strong>{profile.name}</strong>
 											<span className="launch-profile-origins">{profileOrigins.join(', ')}</span>
 											<span className="launch-profile-meta">
 												{(profile.pages?.length ?? 1)} URL / {profile.throttling} / {profile.cacheMode}
 												{(profile.repeatCount ?? 1) > 1 ? ` / x${profile.repeatCount}` : ''}
 											</span>
 										</button>
+										{confirmDeleteId !== profile.id ? (
+											<button
+												type="button"
+												className="launch-profile-strip-delete"
+												title="Удалить шаблон"
+												onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(profile.id); }}
+											>
+												×
+											</button>
+										) : null}
 									</div>
 								);
 							})}

@@ -54,54 +54,56 @@ export function RunList({ runs, selectedRunId, onRunSelect, onRunDelete }: RunLi
 			<ul className="run-list">
 				{runs.map((run) => (
 					<li key={run.id}>
-						<button
-							type="button"
-							className={`run-list-item ${selectedRunId === run.id ? 'is-selected' : ''}`}
-							aria-pressed={selectedRunId === run.id}
-							onClick={() => confirmDeleteId === run.id ? undefined : onRunSelect?.(run.id)}
-						>
-							{onRunDelete && confirmDeleteId === run.id ? (
-								<div className="run-list-confirm" onClick={(e) => e.stopPropagation()}>
-									<span className="run-list-confirm-label">Удалить прогон?</span>
-									<div className="run-list-confirm-actions">
-										<button
-											type="button"
-											className="run-list-confirm-btn run-list-confirm-yes"
-											onClick={(e) => { e.stopPropagation(); onRunDelete(run.id); setConfirmDeleteId(null); }}
-										>
-											Удалить
-										</button>
-										<button
-											type="button"
-											className="run-list-confirm-btn run-list-confirm-no"
-											onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
-										>
-											Отмена
-										</button>
+						<div className="run-list-row">
+							<button
+								type="button"
+								className={`run-list-item ${selectedRunId === run.id ? 'is-selected' : ''}`}
+								aria-pressed={selectedRunId === run.id}
+								onClick={() => confirmDeleteId === run.id ? undefined : onRunSelect?.(run.id)}
+							>
+								{onRunDelete && confirmDeleteId === run.id ? (
+									<div className="run-list-confirm" onClick={(e) => e.stopPropagation()}>
+										<span className="run-list-confirm-label">Удалить прогон?</span>
+										<div className="run-list-confirm-actions">
+											<button
+												type="button"
+												className="run-list-confirm-btn run-list-confirm-yes"
+												onClick={(e) => { e.stopPropagation(); onRunDelete(run.id); setConfirmDeleteId(null); }}
+											>
+												Удалить
+											</button>
+											<button
+												type="button"
+												className="run-list-confirm-btn run-list-confirm-no"
+												onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
+											>
+												Отмена
+											</button>
+										</div>
 									</div>
-								</div>
-							) : null}
-							<div className="run-list-topline">
-								<strong>{run.profile}</strong>
-								<span className={`status-pill status-${run.status}`}>{run.status}</span>
-								{onRunDelete && confirmDeleteId !== run.id ? (
-									<span
-										className="run-list-x"
-										role="button"
-										title="Удалить прогон"
-										onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(run.id); }}
-									>
-										×
-									</span>
 								) : null}
-							</div>
-							<p className="run-list-page">{run.page}</p>
-							<div className="run-list-meta">
-								<span>{run.context}</span>
-								<span>{formatRelativeTime(run.createdAt)}</span>
-								<span className="run-id">{run.id.slice(0, 8)}</span>
-							</div>
-						</button>
+								<div className="run-list-topline">
+									<strong>{run.profile}</strong>
+									<span className={`status-pill status-${run.status}`}>{run.status}</span>
+								</div>
+								<p className="run-list-page">{run.page}</p>
+								<div className="run-list-meta">
+									<span>{run.context}</span>
+									<span>{formatRelativeTime(run.createdAt)}</span>
+									<span className="run-id">{run.id.slice(0, 8)}</span>
+								</div>
+							</button>
+							{onRunDelete && confirmDeleteId !== run.id ? (
+								<button
+									type="button"
+									className="run-list-strip-delete"
+									title="Удалить прогон"
+									onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(run.id); }}
+								>
+									×
+								</button>
+							) : null}
+						</div>
 					</li>
 				))}
 			</ul>
