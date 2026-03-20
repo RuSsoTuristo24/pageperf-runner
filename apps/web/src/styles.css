@@ -602,8 +602,7 @@ textarea {
 	display: grid;
 	gap: 10px;
 	max-height: calc(100vh - 470px);
-	overflow-y: auto;
-	overflow-x: hidden;
+	overflow: auto;
 }
 
 .run-list-item {
@@ -652,20 +651,19 @@ textarea {
 }
 .run-list-confirm {
 	display: flex;
-	gap: 6px;
-	margin-bottom: 8px;
-	padding-bottom: 8px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+	flex-direction: column;
+	gap: 2px;
+	flex-shrink: 0;
+	padding: 2px;
 }
 .run-list-confirm-btn {
-	flex: 1;
-	padding: 5px 0;
+	padding: 4px 8px;
 	border: none;
 	border-radius: 4px;
 	font-size: 11px;
 	font-weight: 500;
 	cursor: pointer;
-	text-align: center;
+	white-space: nowrap;
 }
 .run-list-confirm-yes {
 	background: rgba(231, 76, 60, 0.2);

@@ -60,24 +60,6 @@ export function RunList({ runs, selectedRunId, onRunSelect, onRunDelete }: RunLi
 							aria-pressed={selectedRunId === run.id}
 							onClick={() => onRunSelect?.(run.id)}
 						>
-							{onRunDelete && confirmDeleteId === run.id ? (
-								<div className="run-list-confirm" onClick={(e) => e.stopPropagation()}>
-									<button
-										type="button"
-										className="run-list-confirm-btn run-list-confirm-yes"
-										onClick={(e) => { e.stopPropagation(); onRunDelete(run.id); setConfirmDeleteId(null); }}
-									>
-										Удалить
-									</button>
-									<button
-										type="button"
-										className="run-list-confirm-btn run-list-confirm-no"
-										onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
-									>
-										Отмена
-									</button>
-								</div>
-							) : null}
 							<div className="run-list-topline">
 								<strong>{run.profile}</strong>
 								<span className={`status-pill status-${run.status}`}>{run.status}</span>
@@ -90,14 +72,33 @@ export function RunList({ runs, selectedRunId, onRunSelect, onRunDelete }: RunLi
 							</div>
 						</button>
 						{onRunDelete ? (
-							<button
-								type="button"
-								className="run-list-delete"
-								title="Удалить прогон"
-								onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(confirmDeleteId === run.id ? null : run.id); }}
-							>
-								×
-							</button>
+							confirmDeleteId === run.id ? (
+								<span className="run-list-confirm">
+									<button
+										type="button"
+										className="run-list-confirm-btn run-list-confirm-yes"
+										onClick={() => { onRunDelete(run.id); setConfirmDeleteId(null); }}
+									>
+										Удалить
+									</button>
+									<button
+										type="button"
+										className="run-list-confirm-btn run-list-confirm-no"
+										onClick={() => setConfirmDeleteId(null)}
+									>
+										Отмена
+									</button>
+								</span>
+							) : (
+								<button
+									type="button"
+									className="run-list-delete"
+									title="Удалить прогон"
+									onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(run.id); }}
+								>
+									×
+								</button>
+							)
 						) : null}
 					</li>
 				))}
