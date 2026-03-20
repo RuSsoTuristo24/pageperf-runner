@@ -602,7 +602,8 @@ textarea {
 	display: grid;
 	gap: 10px;
 	max-height: calc(100vh - 470px);
-	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .run-list-item {
@@ -635,14 +636,14 @@ textarea {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 28px;
+	width: 24px;
 	flex-shrink: 0;
 	border: 1px solid var(--line);
 	border-left: none;
 	border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
 	background: rgba(255, 255, 255, 0.02);
 	color: rgba(255, 255, 255, 0.2);
-	font-size: 16px;
+	font-size: 14px;
 	cursor: pointer;
 }
 .run-list-delete:hover {
@@ -657,10 +658,10 @@ textarea {
 	padding: 2px;
 }
 .run-list-confirm-btn {
-	padding: 4px 8px;
+	padding: 4px 5px;
 	border: none;
 	border-radius: 4px;
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: 500;
 	cursor: pointer;
 	white-space: nowrap;
