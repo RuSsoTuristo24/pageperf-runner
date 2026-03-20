@@ -4,6 +4,7 @@ import { AuthSessionCard } from './features/auth/auth-session-card.js';
 import { IssueWatch } from './features/asset-issues/issue-watch.js';
 import { AssetTable } from './features/assets/asset-table.js';
 import { AssetTops } from './features/assets/asset-tops.js';
+import { RunCompare } from './features/compare/run-compare.js';
 import { hasWaterfallTiming, RequestWaterfall } from './features/requests/request-waterfall.js';
 import { LongTasksPanel } from './features/diagnostics/long-tasks-panel.js';
 import { OversizedImagesPanel } from './features/diagnostics/oversized-images-panel.js';
@@ -87,7 +88,7 @@ type DeepMetricItem = {
 	hint: string;
 };
 
-type WorkspaceTab = 'assets' | 'tops' | 'requests' | 'overview' | 'analysis' | 'mantis';
+type WorkspaceTab = 'assets' | 'tops' | 'compare' | 'requests' | 'overview' | 'analysis' | 'mantis';
 type RunPageRecord = NonNullable<ApiRunDetails['pages']>[number];
 
 type AssetRow = {
@@ -1147,6 +1148,7 @@ export function App()
 					{([
 						['assets', 'Ресурсы', filteredAssets.length],
 						['tops', 'Топы', null],
+						['compare', 'Сравнение', null],
 						['requests', 'Waterfall', requestItems.length],
 						['overview', 'Обзор', null],
 						['analysis', 'Анализ', null],
@@ -1300,6 +1302,14 @@ export function App()
 						requests={selectedRequests}
 						jsExecByUrl={jsExecByUrl}
 						targetUrl={activePage?.url ?? selectedProfile?.url}
+					/>
+				) : null}
+
+				{workspaceTab === 'compare' && selectedRunDetails ? (
+					<RunCompare
+						currentRun={selectedRunDetails}
+						runs={runs}
+						currentRunId={selectedRunDetails.run.id}
 					/>
 				) : null}
 

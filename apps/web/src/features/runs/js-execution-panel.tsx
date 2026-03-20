@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import type { ApiRunDetails } from '../../lib/api.js';
 import { formatMetricValue } from '../../lib/format.js';
 import { getDisplayUrl, getResourceLabel, getTargetOrigin } from '../../lib/url.js';
@@ -7,8 +9,11 @@ type JsExecutionPanelProps = {
 	targetUrl?: string;
 };
 
+const INITIAL_LIMIT = 20;
+
 export function JsExecutionPanel({ summary, targetUrl }: JsExecutionPanelProps)
 {
+	const [showAll, setShowAll] = useState(false);
 	const targetOrigin = getTargetOrigin(targetUrl);
 	const resources = summary?.resources ?? [];
 	const unattributedTotal = summary?.unattributed.totalMs ?? 0;
@@ -18,6 +23,9 @@ export function JsExecutionPanel({ summary, targetUrl }: JsExecutionPanelProps)
 	{
 		return null;
 	}
+
+	const hasMore = resources.length > INITIAL_LIMIT;
+	const visibleResources = showAll ? resources : resources.slice(0, INITIAL_LIMIT);
 
 	return (
 		<section className="panel panel-js-execution" aria-labelledby="js-execution-heading">
@@ -38,7 +46,7 @@ export function JsExecutionPanel({ summary, targetUrl }: JsExecutionPanelProps)
 					<span role="columnheader" title="Точность привязки к скрипту. high = прямая ссылка в trace, medium = по call stack, low = по совпадению таймингов">Уверенность</span>
 				</div>
 
-				{resources.map((resource) => (
+				{visibleResources.map((resource) => (
 					<div key={resource.url} className="js-execution-row" role="row">
 						<div className="js-execution-resource" role="cell">
 							<strong className="resource-primary">{getResourceLabel(resource.url)}</strong>
@@ -54,6 +62,18 @@ export function JsExecutionPanel({ summary, targetUrl }: JsExecutionPanelProps)
 						</span>
 					</div>
 				))}
+
+				{hasMore && !showAll ? (
+					<div className="js-execution-show-more">
+						<button
+							type="button"
+							className="secondary-button secondary-button-compact"
+							onClick={() => setShowAll(true)}
+						>
+							Показать все {resources.length} скриптов (ещё {resources.length - INITIAL_LIMIT})
+						</button>
+					</div>
+				) : null}
 
 				<div className="js-execution-row js-execution-row-unattributed" role="row">
 					<div className="js-execution-resource" role="cell">
