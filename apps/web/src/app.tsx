@@ -370,11 +370,11 @@ export function App()
 	const [llmReport, setLlmReport] = useState<ApiLlmReport | null>(null);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [draftProfileName, setDraftProfileName] = useState('Blank page native');
-	const [draftProfileUrl, setDraftProfileUrl] = useState('https://russeltest.bitrix24.ru/blank.php');
 	const [draftProfilePages, setDraftProfilePages] = useState('https://russeltest.bitrix24.ru/blank.php');
 	const [draftThrottling, setDraftThrottling] = useState('native');
 	const [draftCacheMode, setDraftCacheMode] = useState<'cold' | 'warm' | 'both'>('cold');
 	const [draftRepeatCount, setDraftRepeatCount] = useState(1);
+	const draftProfileUrl = draftProfilePages.split('\n').find((line) => line.trim().length > 0)?.trim() ?? '';
 	const [copyFeedback, setCopyFeedback] = useState(false);
 	const [urlIndex, setUrlIndex] = useState<Record<string, string>>({});
 	const [settings, setSettings] = useState<ApiSettings | null>(null);
@@ -1034,20 +1034,27 @@ export function App()
 
 				<RunLaunchForm
 					name={draftProfileName}
-					url={draftProfileUrl}
 					pages={draftProfilePages}
 					throttling={draftThrottling}
 					cacheMode={draftCacheMode}
 					repeatCount={draftRepeatCount}
 					useAuthSession={useAuthSession}
 					isSubmitting={isSubmittingRun}
+					savedProfiles={profiles}
 					onNameChange={setDraftProfileName}
-					onUrlChange={setDraftProfileUrl}
 					onPagesChange={setDraftProfilePages}
 					onThrottlingChange={setDraftThrottling}
 					onCacheModeChange={(mode) => { setDraftCacheMode(mode); if (mode !== 'cold') { setDraftRepeatCount(1); } }}
 					onRepeatCountChange={setDraftRepeatCount}
 					onUseAuthSessionChange={setUseAuthSession}
+					onLoadProfile={(profile) => {
+						setDraftProfileName(profile.name);
+						setDraftProfilePages((profile.pages ?? [profile.url]).join('\n'));
+						setDraftThrottling(profile.throttling);
+						setDraftCacheMode(profile.cacheMode);
+						setDraftRepeatCount(profile.repeatCount ?? 1);
+						setUseAuthSession(profile.authMode === 'session');
+					}}
 					onSubmit={() => {
 						void handleCreateAndStartRun();
 					}}
