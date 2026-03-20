@@ -1530,6 +1530,15 @@ textarea {
 	color: rgba(255, 255, 255, 0.4);
 	font-size: 13px;
 }
+.compare-warning {
+	margin: 0;
+	padding: 8px 20px;
+	font-size: 12px;
+	color: #f1c40f;
+	background: rgba(241, 196, 15, 0.06);
+	border-left: 3px solid rgba(241, 196, 15, 0.4);
+	border-radius: 0 4px 4px 0;
+}
 .compare-content {
 	display: flex;
 	flex-direction: column;

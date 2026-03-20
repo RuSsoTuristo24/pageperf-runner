@@ -1307,9 +1307,12 @@ export function App()
 
 				{workspaceTab === 'compare' && selectedRunDetails ? (
 					<RunCompare
-						currentRun={selectedRunDetails}
-						runs={runs}
+						currentMetrics={activePass?.pageMetrics ?? activePage?.pageMetrics ?? selectedRunDetails.pageMetrics}
+						currentRequests={selectedRequests}
 						currentRunId={selectedRunDetails.run.id}
+						currentUrl={activePage?.url ?? selectedProfile?.url}
+						runs={runs}
+						profiles={profiles}
 					/>
 				) : null}
 

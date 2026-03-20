@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
 
-import { fetchRunDetails, type ApiRun, type ApiRunDetails } from '../../lib/api.js';
+import { fetchRunDetails, type ApiProfile, type ApiRun, type ApiRunDetails } from '../../lib/api.js';
 import { formatBytes, formatMetricValue } from '../../lib/format.js';
 import { getResourceLabel } from '../../lib/url.js';
 
 type RunCompareProps = {
-	currentRun: ApiRunDetails;
-	runs: ApiRun[];
+	/** Current active page metrics */
+	currentMetrics: Array<{ name: string; value: number }>;
+	/** Current active page/pass requests */
+	currentRequests: ApiRunDetails['requests'];
+	/** Current run info */
 	currentRunId: string;
+	currentUrl?: string;
+	/** All runs and profiles for the baseline selector */
+	runs: ApiRun[];
+	profiles: ApiProfile[];
 };
 
 type MetricDiff = {
@@ -58,10 +65,34 @@ function normalizeUrl(url: string): string
 	return url.split('?')[0];
 }
 
-export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
+function getPageLabel(url: string): string
+{
+	try
+	{
+		return new URL(url).pathname;
+	}
+	catch
+	{
+		return url;
+	}
+}
+
+function getRunLabel(run: ApiRun, profiles: ApiProfile[]): string
+{
+	const profile = profiles.find((p) => p.id === run.profileId);
+	const name = profile?.name ?? 'Unknown';
+	const date = run.createdAt
+		? new Date(run.createdAt).toLocaleString('ru', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+		: '?';
+
+	return `${name} — ${date}`;
+}
+
+export function RunCompare({ currentMetrics, currentRequests, currentRunId, currentUrl, runs, profiles }: RunCompareProps)
 {
 	const [baselineRunId, setBaselineRunId] = useState<string | null>(null);
 	const [baselineDetails, setBaselineDetails] = useState<ApiRunDetails | null>(null);
+	const [baselinePageKey, setBaselinePageKey] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const otherRuns = runs.filter((r) => r.id !== currentRunId && r.status === 'completed');
@@ -70,6 +101,7 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 		if (!baselineRunId)
 		{
 			setBaselineDetails(null);
+			setBaselinePageKey(null);
 
 			return;
 		}
@@ -87,6 +119,17 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 				if (!cancelled)
 				{
 					setBaselineDetails(details);
+
+					// Auto-select matching page if baseline is multi-page
+					if (details.pages?.length && currentUrl)
+					{
+						const match = details.pages.find((p) => getPageLabel(p.url) === getPageLabel(currentUrl));
+						setBaselinePageKey(match?.pageKey ?? details.pages[0].pageKey);
+					}
+					else
+					{
+						setBaselinePageKey(null);
+					}
 				}
 			}
 			catch
@@ -112,18 +155,46 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 		};
 	}, [baselineRunId]);
 
-	// Metric diffs
-	const metricDiffs: MetricDiff[] = [];
+	// Resolve baseline metrics and requests for the selected page
+	let baselineMetrics: Array<{ name: string; value: number }> = [];
+	let baselineRequests: ApiRunDetails['requests'] = [];
+	let baselineUrl = '';
 
 	if (baselineDetails)
 	{
-		const currentMetrics = new Map(currentRun.pageMetrics.map((m) => [m.name, m.value]));
-		const baselineMetrics = new Map(baselineDetails.pageMetrics.map((m) => [m.name, m.value]));
+		if (baselineDetails.pages?.length && baselinePageKey)
+		{
+			const page = baselineDetails.pages.find((p) => p.pageKey === baselinePageKey);
+
+			if (page)
+			{
+				baselineMetrics = page.pageMetrics;
+				baselineRequests = page.requests;
+				baselineUrl = page.url;
+			}
+		}
+		else
+		{
+			baselineMetrics = baselineDetails.pageMetrics;
+			baselineRequests = baselineDetails.requests;
+
+			const baselineProfile = profiles.find((p) => p.id === baselineDetails!.run.profileId);
+			baselineUrl = baselineProfile?.url ?? '';
+		}
+	}
+
+	// Metric diffs
+	const metricDiffs: MetricDiff[] = [];
+
+	if (baselineMetrics.length > 0)
+	{
+		const currentMap = new Map(currentMetrics.map((m) => [m.name, m.value]));
+		const baselineMap = new Map(baselineMetrics.map((m) => [m.name, m.value]));
 
 		for (const name of ['ttfb', 'fcp', 'lcp', 'dcl', 'load'])
 		{
-			const current = currentMetrics.get(name);
-			const baseline = baselineMetrics.get(name);
+			const current = currentMap.get(name);
+			const baseline = baselineMap.get(name);
 
 			if (current !== undefined && baseline !== undefined)
 			{
@@ -145,13 +216,13 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 	let removedAssets: AssetDiff[] = [];
 	let changedAssets: AssetDiff[] = [];
 
-	if (baselineDetails)
+	if (baselineRequests.length > 0)
 	{
 		const currentByUrl = new Map(
-			currentRun.requests.map((r) => [normalizeUrl(r.url), r.decodedBodySize]),
+			currentRequests.map((r) => [normalizeUrl(r.url), r.decodedBodySize]),
 		);
 		const baselineByUrl = new Map(
-			baselineDetails.requests.map((r) => [normalizeUrl(r.url), r.decodedBodySize]),
+			baselineRequests.map((r) => [normalizeUrl(r.url), r.decodedBodySize]),
 		);
 
 		for (const [url, currentBytes] of currentByUrl)
@@ -160,23 +231,11 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 
 			if (baselineBytes === undefined)
 			{
-				newAssets.push({
-					url,
-					label: getResourceLabel(url),
-					currentBytes,
-					baselineBytes: 0,
-					delta: currentBytes,
-				});
+				newAssets.push({ url, label: getResourceLabel(url), currentBytes, baselineBytes: 0, delta: currentBytes });
 			}
 			else if (Math.abs(currentBytes - baselineBytes) > 100)
 			{
-				changedAssets.push({
-					url,
-					label: getResourceLabel(url),
-					currentBytes,
-					baselineBytes,
-					delta: currentBytes - baselineBytes,
-				});
+				changedAssets.push({ url, label: getResourceLabel(url), currentBytes, baselineBytes, delta: currentBytes - baselineBytes });
 			}
 		}
 
@@ -184,13 +243,7 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 		{
 			if (!currentByUrl.has(url))
 			{
-				removedAssets.push({
-					url,
-					label: getResourceLabel(url),
-					currentBytes: 0,
-					baselineBytes,
-					delta: -baselineBytes,
-				});
+				removedAssets.push({ url, label: getResourceLabel(url), currentBytes: 0, baselineBytes, delta: -baselineBytes });
 			}
 		}
 
@@ -199,11 +252,8 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 		changedAssets.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
 	}
 
-	// Size totals
-	const currentTotal = currentRun.requests.reduce((s, r) => s + r.decodedBodySize, 0);
-	const baselineTotal = baselineDetails
-		? baselineDetails.requests.reduce((s, r) => s + r.decodedBodySize, 0)
-		: 0;
+	const currentTotal = currentRequests.reduce((s, r) => s + r.decodedBodySize, 0);
+	const baselineTotal = baselineRequests.reduce((s, r) => s + r.decodedBodySize, 0);
 
 	return (
 		<section className="panel panel-compare" aria-labelledby="compare-heading">
@@ -223,11 +273,27 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 							<option value="">Выберите прогон</option>
 							{otherRuns.map((run) => (
 								<option key={run.id} value={run.id}>
-									{run.id.slice(0, 8)} — {run.createdAt ? new Date(run.createdAt).toLocaleString('ru') : '?'}
+									{getRunLabel(run, profiles)}
 								</option>
 							))}
 						</select>
 					</label>
+					{baselineDetails?.pages?.length ? (
+						<label className="toolbar-control">
+							<span>Страница</span>
+							<select
+								aria-label="Страница baseline"
+								value={baselinePageKey ?? ''}
+								onChange={(e) => setBaselinePageKey(e.target.value)}
+							>
+								{baselineDetails.pages.map((page) => (
+									<option key={page.pageKey} value={page.pageKey}>
+										{getPageLabel(page.url)}
+									</option>
+								))}
+							</select>
+						</label>
+					) : null}
 				</div>
 			</div>
 
@@ -239,7 +305,13 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 				<p className="compare-prompt">Загрузка baseline...</p>
 			) : null}
 
-			{baselineDetails ? (
+			{baselineDetails && baselineUrl && currentUrl && getPageLabel(baselineUrl) !== getPageLabel(currentUrl) ? (
+				<p className="compare-warning">
+					Разные страницы: текущая <strong>{getPageLabel(currentUrl)}</strong>, baseline <strong>{getPageLabel(baselineUrl)}</strong>. Сравнение может быть неинформативным.
+				</p>
+			) : null}
+
+			{baselineDetails && baselineMetrics.length > 0 ? (
 				<div className="compare-content">
 					<div className="compare-section">
 						<h3 className="compare-section-title">Метрики</h3>
@@ -267,11 +339,11 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 							<div className="compare-metric diff-neutral">
 								<span className="compare-metric-name">Requests</span>
 								<span className="compare-metric-values">
-									{baselineDetails.requests.length} → {currentRun.requests.length}
+									{baselineRequests.length} → {currentRequests.length}
 								</span>
 								<span className="compare-metric-delta">
-									{currentRun.requests.length - baselineDetails.requests.length > 0 ? '+' : ''}
-									{currentRun.requests.length - baselineDetails.requests.length}
+									{currentRequests.length - baselineRequests.length > 0 ? '+' : ''}
+									{currentRequests.length - baselineRequests.length}
 								</span>
 							</div>
 						</div>
@@ -325,7 +397,7 @@ export function RunCompare({ currentRun, runs, currentRunId }: RunCompareProps)
 					) : null}
 
 					{newAssets.length === 0 && removedAssets.length === 0 && changedAssets.length === 0 ? (
-						<p className="compare-prompt">Набор ассетов идентичен.</p>
+						<p className="compare-prompt">Набор ассетов идентичен (различия менее 100 байт).</p>
 					) : null}
 				</div>
 			) : null}
