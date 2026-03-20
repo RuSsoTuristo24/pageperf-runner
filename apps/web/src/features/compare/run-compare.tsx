@@ -184,6 +184,14 @@ export function RunCompare({ currentMetrics, currentRequests, currentRunId, curr
 	}
 
 	// Metric diffs
+	const METRIC_HINTS: Record<string, string> = {
+		TTFB: 'Time to First Byte. Время от начала навигации до получения первого байта ответа от сервера. Показывает скорость серверной обработки + сетевую задержку.',
+		FCP: 'First Contentful Paint. Когда браузер отрисовал первый текст, изображение или canvas. Момент, когда пользователь видит что страница начала загружаться.',
+		LCP: 'Largest Contentful Paint. Когда отрисовался крупнейший видимый элемент (заголовок, картинка). Ключевая метрика Core Web Vitals — должна быть < 2.5с.',
+		DCL: 'DOMContentLoaded. HTML полностью разобран, все синхронные скрипты выполнены. Картинки и async-скрипты могут ещё грузиться.',
+		LOAD: 'Load. Все ресурсы страницы загружены (картинки, шрифты, CSS, JS). Полная загрузка страницы.',
+	};
+
 	const metricDiffs: MetricDiff[] = [];
 
 	if (baselineMetrics.length > 0)
@@ -317,7 +325,7 @@ export function RunCompare({ currentMetrics, currentRequests, currentRunId, curr
 						<h3 className="compare-section-title">Метрики</h3>
 						<div className="compare-metrics">
 							{metricDiffs.map((m) => (
-								<div key={m.name} className={`compare-metric ${deltaClass(m.deltaPercent)}`}>
+								<div key={m.name} className={`compare-metric ${deltaClass(m.deltaPercent)}`} title={METRIC_HINTS[m.name] ?? ''}>
 									<span className="compare-metric-name">{m.name}</span>
 									<span className="compare-metric-values">
 										{formatMetricValue('duration', m.baseline)} → {formatMetricValue('duration', m.current)}
@@ -327,7 +335,7 @@ export function RunCompare({ currentMetrics, currentRequests, currentRunId, curr
 									</span>
 								</div>
 							))}
-							<div className={`compare-metric ${deltaClass(baselineTotal > 0 ? ((currentTotal - baselineTotal) / baselineTotal) * 100 : 0)}`}>
+							<div className={`compare-metric ${deltaClass(baselineTotal > 0 ? ((currentTotal - baselineTotal) / baselineTotal) * 100 : 0)}`} title="Суммарный decoded-размер всех ресурсов на странице (без сжатия).">
 								<span className="compare-metric-name">Total Size</span>
 								<span className="compare-metric-values">
 									{formatBytes(baselineTotal)} → {formatBytes(currentTotal)}
@@ -336,7 +344,7 @@ export function RunCompare({ currentMetrics, currentRequests, currentRunId, curr
 									{formatDelta(currentTotal - baselineTotal, 'bytes')}
 								</span>
 							</div>
-							<div className="compare-metric diff-neutral">
+							<div className="compare-metric diff-neutral" title="Общее количество сетевых запросов на странице.">
 								<span className="compare-metric-name">Requests</span>
 								<span className="compare-metric-values">
 									{baselineRequests.length} → {currentRequests.length}

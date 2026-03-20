@@ -1570,6 +1570,7 @@ textarea {
 	border-radius: 6px;
 	background: rgba(255, 255, 255, 0.03);
 	min-width: 140px;
+	cursor: help;
 }
 .compare-metric-name {
 	font-size: 11px;
