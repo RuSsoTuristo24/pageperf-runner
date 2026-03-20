@@ -650,18 +650,11 @@ textarea {
 	color: #e74c3c;
 }
 .run-list-confirm {
-	position: absolute;
-	right: 0;
-	top: 50%;
-	transform: translateY(-50%);
 	display: flex;
-	gap: 4px;
-	padding: 4px 6px;
-	background: var(--bg-surface, #1a1f2e);
-	border: 1px solid var(--line);
-	border-radius: 6px;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-	z-index: 10;
+	flex-direction: column;
+	gap: 2px;
+	flex-shrink: 0;
+	padding: 2px;
 }
 .run-list-confirm-btn {
 	padding: 4px 8px;
