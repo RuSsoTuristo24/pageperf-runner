@@ -52,14 +52,15 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 				<span>Страницы для прогона</span>
 				<textarea
 					aria-label="Страницы для прогона"
-					className="field-textarea"
+					className="field-textarea field-textarea-urls"
 					placeholder={"https://example.com/page1\nhttps://example.com/page2"}
 					value={props.pages}
 					onChange={(event) => props.onPagesChange(event.target.value)}
+					rows={Math.max(3, props.pages.split('\n').length + 1)}
 				/>
 				<span className="field-hint">По одному URL на строку</span>
 			</label>
-			<label className="field">
+			<label className="field" title="Имитация медленного интернет-соединения. native = без ограничений (реальная скорость). slow-4g = типичный мобильный 4G (~1.6 Мбит/с, RTT 150мс). fast-3g = быстрый 3G (~1.5 Мбит/с, RTT 563мс). slow-3g = медленный 3G (~400 Кбит/с, RTT 2с).">
 				<span>Пресет сети</span>
 				<select
 					aria-label="Пресет сети"
@@ -72,7 +73,7 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 					<option value="slow-3g">slow-3g</option>
 				</select>
 			</label>
-			<label className="field">
+			<label className="field" title="Холодный: первый визит, пустой кеш браузера. Тёплый: сначала прогрев (загрузка без замера), потом замер с кешем. Оба: два замера — сначала холодный, потом тёплый в том же контексте.">
 				<span>Режим кеша</span>
 				<select
 					aria-label="Режим кеша"

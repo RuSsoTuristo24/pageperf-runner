@@ -312,6 +312,12 @@ textarea {
 	line-height: 1.4;
 }
 
+.field-textarea-urls {
+	word-break: break-all;
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 0.78rem;
+}
+
 .field-hint {
 	color: var(--text-muted);
 	font-size: 0.72rem;
