@@ -80,6 +80,62 @@ export function hasWaterfallTiming(requests: RequestWaterfallItem[]): boolean
 	});
 }
 
+const RESOURCE_TYPE_HINTS: Record<string, string> = {
+	document: 'Тип: HTML-документ страницы. Основной запрос, с которого начинается загрузка. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	script: 'Тип: JavaScript-файл. Загружается через <script> или динамически. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	stylesheet: 'Тип: CSS-файл. Загружается через <link rel="stylesheet">. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	image: 'Тип: Изображение (PNG, JPG, SVG, WebP и т.д.). Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	font: 'Тип: Шрифт (WOFF2, TTF и т.д.). Загружается через @font-face. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	fetch: 'Тип: запрос через fetch() API. Обычно AJAX-запрос к бэкенду. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	xmlhttprequest: 'Тип: XMLHttpRequest (XHR). Устаревший AJAX, до fetch(). Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	media: 'Тип: Аудио или видео. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	websocket: 'Тип: WebSocket-соединение. Постоянный двусторонний канал. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+	other: 'Тип: Прочий ресурс (manifest, favicon и т.д.). Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.',
+};
+
+function getResourceTypeHint(resourceType: string): string
+{
+	return RESOURCE_TYPE_HINTS[resourceType] ?? `Тип ресурса: ${resourceType}. Возможные значения: document, script, stylesheet, image, font, fetch, xmlhttprequest, media, websocket, other.`;
+}
+
+const INITIATOR_TYPE_HINTS: Record<string, string> = {
+	parser: 'Инициатор: HTML-парсер. Ресурс найден при разборе HTML (теги <script>, <link>, <img>). Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
+	script: 'Инициатор: JavaScript. Ресурс загружен динамически из JS-кода (createElement, import(), fetch). Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
+	preload: 'Инициатор: <link rel="preload">. Ресурс загружен заранее по подсказке разработчика. Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
+	fetch: 'Инициатор: fetch() API. Программный запрос данных. Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
+	xmlhttprequest: 'Инициатор: XMLHttpRequest. Программный запрос данных (устаревший API). Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
+	other: 'Инициатор: Другой источник (redirect, serviceworker и т.д.). Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.',
+};
+
+function getInitiatorTypeHint(initiatorType: string): string
+{
+	return INITIATOR_TYPE_HINTS[initiatorType] ?? `Инициатор загрузки: ${initiatorType}. Возможные значения: parser, script, preload, fetch, xmlhttprequest, other.`;
+}
+
+function getProtocolHint(protocol: string): string
+{
+	const hints: Record<string, string> = {
+		'h2': 'Протокол: HTTP/2. Мультиплексирование запросов через одно TCP-соединение, сжатие заголовков. Возможные значения: h2, h3, http/1.1.',
+		'h3': 'Протокол: HTTP/3 (QUIC). Работает поверх UDP, быстрее установка соединения, нет head-of-line blocking. Возможные значения: h2, h3, http/1.1.',
+		'http/1.1': 'Протокол: HTTP/1.1. Устаревший, один запрос на соединение. Браузер открывает до 6 параллельных TCP-соединений к домену. Возможные значения: h2, h3, http/1.1.',
+	};
+
+	return hints[protocol] ?? `Протокол: ${protocol}. Возможные значения: h2, h3, http/1.1.`;
+}
+
+function getPriorityHint(priority: string): string
+{
+	const hints: Record<string, string> = {
+		'VeryHigh': 'Приоритет: Очень высокий. Основной документ (HTML). Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
+		'High': 'Приоритет: Высокий. CSS, шрифты, синхронные JS в <head>. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
+		'Medium': 'Приоритет: Средний. Обычные скрипты, preload-ресурсы. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
+		'Low': 'Приоритет: Низкий. Изображения вне viewport, async-скрипты. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
+		'VeryLow': 'Приоритет: Очень низкий. Prefetch, фоновые ресурсы. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.',
+	};
+
+	return hints[priority] ?? `Приоритет загрузки: ${priority}. Возможные значения: VeryHigh, High, Medium, Low, VeryLow.`;
+}
+
 function WaterfallRow({ request, maxEndTime, targetOrigin }: {
 	request: RequestWaterfallItem;
 	maxEndTime: number;
@@ -105,10 +161,10 @@ function WaterfallRow({ request, maxEndTime, targetOrigin }: {
 				<div className="waterfall-row-heading">
 					<strong className="resource-primary">{label}</strong>
 					<div className="resource-badges">
-						<span className="table-pill">{request.resourceType}</span>
-						{request.initiatorType ? <span className="table-pill">{request.initiatorType}</span> : null}
-						{request.protocol ? <span className="table-pill">{request.protocol}</span> : null}
-						{request.priority ? <span className="table-pill">{request.priority}</span> : null}
+						<span className="table-pill" title={getResourceTypeHint(request.resourceType)}>{request.resourceType}</span>
+						{request.initiatorType ? <span className="table-pill" title={getInitiatorTypeHint(request.initiatorType)}>{request.initiatorType}</span> : null}
+						{request.protocol ? <span className="table-pill" title={getProtocolHint(request.protocol)}>{request.protocol}</span> : null}
+						{request.priority ? <span className="table-pill" title={getPriorityHint(request.priority)}>{request.priority}</span> : null}
 					</div>
 				</div>
 				<span className="resource-meta">{displayUrl}</span>
