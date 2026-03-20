@@ -4,7 +4,7 @@ import { AuthSessionCard } from './features/auth/auth-session-card.js';
 import { IssueWatch } from './features/asset-issues/issue-watch.js';
 import { AssetTable } from './features/assets/asset-table.js';
 import { AssetTops } from './features/assets/asset-tops.js';
-import { RequestTable } from './features/requests/request-table.js';
+import { hasWaterfallTiming, RequestWaterfall } from './features/requests/request-waterfall.js';
 import { LongTasksPanel } from './features/diagnostics/long-tasks-panel.js';
 import { OversizedImagesPanel } from './features/diagnostics/oversized-images-panel.js';
 import { RenderBlockingPanel } from './features/diagnostics/render-blocking-panel.js';
@@ -354,7 +354,6 @@ export function App()
 	const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 	const [selectedRunDetails, setSelectedRunDetails] = useState<ApiRunDetails | null>(null);
 	const [workspaceTab, setWorkspaceTab] = useState<WorkspaceTab>('assets');
-	const [requestType, setRequestType] = useState('all');
 	const [assetType, setAssetType] = useState('all');
 	const [heavyAssetThresholdMb, setHeavyAssetThresholdMb] = useState('1');
 	const [useAuthSession, setUseAuthSession] = useState(false);
@@ -683,9 +682,6 @@ export function App()
 		priority: request.priority,
 		issue: assetIssuesByKey.get(normalizeAssetUrl(request.url)),
 	}));
-	const filteredRequests = requestType === 'all'
-		? requestItems
-		: requestItems.filter((request) => request.resourceType === requestType);
 	const heavyAssetThresholdBytes = Math.max(0, Number(heavyAssetThresholdMb) || 0) * 1024 * 1024;
 	const assets: AssetRow[] = selectedRequests.map((request) => ({
 			assetKey: normalizeAssetUrl(request.url),
@@ -1108,7 +1104,7 @@ export function App()
 					{([
 						['assets', 'Ресурсы', filteredAssets.length],
 						['tops', 'Топы', null],
-						['requests', 'Запросы', filteredRequests.length],
+						['requests', 'Waterfall', requestItems.length],
 						['overview', 'Обзор', null],
 						['analysis', 'Анализ', null],
 						['mantis', 'Mantis-трекер', assetIssues.length],
@@ -1127,16 +1123,14 @@ export function App()
 				</div>
 
 				{workspaceTab === 'requests' ? (
-					<RequestTable
-						requestType={requestType}
-						requestTypes={requestTypes}
-						requests={filteredRequests}
-						isSavingAssetKey={savingAssetKey}
-						targetUrl={activePage?.url ?? selectedProfile?.url}
-						onRequestTypeChange={setRequestType}
-						onSaveIssue={handleSaveAssetIssue}
-						onDeleteIssue={handleDeleteAssetIssue}
-					/>
+					hasWaterfallTiming(requestItems) ? (
+						<RequestWaterfall
+							requests={requestItems}
+							targetUrl={activePage?.url ?? selectedProfile?.url}
+						/>
+					) : (
+						<p className="message-banner">Нет данных для Waterfall. Запустите прогон для сбора таймингов запросов.</p>
+					)
 				) : null}
 
 				{workspaceTab === 'overview' ? (
