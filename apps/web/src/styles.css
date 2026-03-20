@@ -866,6 +866,18 @@ textarea {
 	color: var(--text-secondary);
 	font-size: 0.74rem;
 }
+.waterfall-phase-pill.is-highlighted {
+	border-color: rgba(255, 255, 255, 0.4);
+	background: rgba(255, 255, 255, 0.1);
+	color: var(--text-primary);
+}
+.waterfall-segment {
+	cursor: pointer;
+}
+.waterfall-segment.is-highlighted {
+	filter: brightness(1.5);
+	box-shadow: 0 0 6px currentColor;
+}
 .waterfall-phase-dot {
 	display: inline-block;
 	width: 8px;
