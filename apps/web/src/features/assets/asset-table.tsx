@@ -161,6 +161,8 @@ export function AssetTable({
 		return sortDirection === 'asc' ? ' ↑' : ' ↓';
 	}
 
+	const isUrlIndexReady = Object.keys(urlIndex).length > 0;
+
 	return (
 		<section className="panel panel-resource" aria-labelledby="assets-heading">
 			<div className="panel-heading panel-heading-inline">
@@ -169,6 +171,12 @@ export function AssetTable({
 					<h2 id="assets-heading">Ресурсы</h2>
 				</div>
 				<div className="toolbar-group">
+					{!isUrlIndexReady ? (
+						<span className="toolbar-loading" title="Сканирование config.php для маппинга URL → экстеншен. После загрузки появятся кнопки зависимостей.">
+							<span className="toolbar-loading-dot" />
+							Индекс зависимостей...
+						</span>
+					) : null}
 					<p className="toolbar-chip">
 						<span>Тяжёлых decoded: {heavyAssetCount}</span>
 						<strong>{heavyAssetLabel}</strong>
