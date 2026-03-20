@@ -115,6 +115,11 @@ export type ApiRunDetails = {
 			naturalHeight: number;
 			displayWidth: number;
 			displayHeight: number;
+			recommendedWidth?: number;
+			recommendedHeight?: number;
+			dpr?: number;
+			format?: string;
+			hasSrcset?: boolean;
 			wastedPixels: number;
 			estimatedWastedBytes: number;
 		}>;

@@ -1508,6 +1508,28 @@ textarea {
 	width: calc(50% - 1px);
 }
 
+/* ── Oversized images extras ── */
+.oversized-badge {
+	display: inline-block;
+	font-size: 10px;
+	padding: 1px 5px;
+	border-radius: 3px;
+	margin-left: 6px;
+	vertical-align: middle;
+}
+.oversized-srcset {
+	background: rgba(99, 179, 237, 0.12);
+	color: rgba(99, 179, 237, 0.8);
+	cursor: help;
+}
+.oversized-dpr {
+	display: inline-block;
+	margin-left: 4px;
+	font-size: 10px;
+	opacity: 0.5;
+	cursor: help;
+}
+
 /* ── Eval column ── */
 .eval-na {
 	opacity: 0.2;

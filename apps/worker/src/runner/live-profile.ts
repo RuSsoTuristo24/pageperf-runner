@@ -873,6 +873,7 @@ async function executeMeasuredPass(
 				}
 			}
 
+			const dpr = window.devicePixelRatio || 1;
 			const images = Array.from(document.querySelectorAll('img[src]'));
 			const oversizedImages = images.flatMap((img) =>
 			{
@@ -882,17 +883,40 @@ async function executeMeasuredPass(
 				{
 					return [];
 				}
-				const natPx = nw * nh, dispPx = dw * dh;
-				if (natPx <= dispPx * 2)
+
+				// Ideal pixel size = display size × DPR (accounts for retina)
+				const idealW = Math.round(dw * dpr);
+				const idealH = Math.round(dh * dpr);
+				const natPx = nw * nh;
+				const idealPx = idealW * idealH;
+
+				// Only flag if natural is >20% larger than ideal (allows small variance)
+				if (natPx <= idealPx * 1.2)
 				{
 					return [];
 				}
-				const wasted = natPx - dispPx;
+
+				const wasted = natPx - idealPx;
+				const src = img.currentSrc || img.src;
+				const ext = src.split('?')[0].split('.').pop()?.toLowerCase() ?? '';
+				const bpp: Record<string, number> = { png: 1.0, gif: 0.5, jpg: 0.3, jpeg: 0.3, webp: 0.15, avif: 0.1, svg: 0 };
+				const bytesPerPixel = bpp[ext] ?? 0.3;
+
+				if (ext === 'svg')
+				{
+					return [];
+				}
 
 				return [{
-					url: img.src, naturalWidth: nw, naturalHeight: nh,
+					url: src,
+					naturalWidth: nw, naturalHeight: nh,
 					displayWidth: dw, displayHeight: dh,
-					wastedPixels: wasted, estimatedWastedBytes: Math.round(wasted * 0.3),
+					recommendedWidth: idealW, recommendedHeight: idealH,
+					dpr: Math.round(dpr * 100) / 100,
+					format: ext,
+					hasSrcset: img.hasAttribute('srcset') || !!img.closest('picture'),
+					wastedPixels: wasted,
+					estimatedWastedBytes: Math.round(wasted * bytesPerPixel),
 				}];
 			}).sort((a, b) => b.estimatedWastedBytes - a.estimatedWastedBytes);
 

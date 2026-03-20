@@ -1184,8 +1184,8 @@ export function App()
 							id="oversized-images"
 							eyebrow="Оптимизация"
 							title="Oversized Images"
-							hint="Изображения, у которых natural-размер значительно больше display-размера. Лишние пиксели — лишний трафик и память. Можно уменьшить или использовать srcset."
-							summary={activeDiagnostics?.oversizedImages?.length ? `${activeDiagnostics.oversizedImages.length} изображений` : 'Нет данных'}
+							hint="Изображения, у которых размер файла значительно больше размера отображения с учётом DPR экрана. Рассчитывается рекомендуемый размер и лишний вес с учётом формата (PNG тяжелее JPEG, WebP легче всех)."
+							summary={activeDiagnostics?.oversizedImages?.length ? `${activeDiagnostics.oversizedImages.length} изображений, ~${formatBytes(activeDiagnostics.oversizedImages.reduce((s, i) => s + i.estimatedWastedBytes, 0))} лишних` : 'Нет данных'}
 						>
 							<OversizedImagesPanel
 								images={activeDiagnostics?.oversizedImages}
