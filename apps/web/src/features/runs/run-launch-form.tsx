@@ -112,7 +112,7 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 													className="launch-profile-confirm-btn launch-profile-confirm-no"
 													onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
 												>
-													Нет
+													Отмена
 												</button>
 											</span>
 										) : (
