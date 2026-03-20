@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 
 import type { ApiProfile } from '../../lib/api.js';
 
@@ -229,7 +230,7 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 				{props.isSubmitting ? 'Профилирование…' : 'Запустить'}
 			</button>
 
-			{showPagesModal ? (
+			{showPagesModal ? createPortal(
 				<div className="modal-overlay" onClick={() => setShowPagesModal(false)}>
 					<div className="modal-content" onClick={(e) => e.stopPropagation()}>
 						<div className="modal-header">
@@ -250,7 +251,8 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 							</button>
 						</div>
 					</div>
-				</div>
+				</div>,
+				document.body,
 			) : null}
 		</section>
 	);
