@@ -82,49 +82,58 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 								const profileOrigins = getOrigins(profile.pages ?? [profile.url]);
 
 								return (
-									<div key={profile.id} className="launch-profile-item-wrap">
+									<div key={profile.id}>
 										<button
 											type="button"
 											className="launch-profile-item"
 											onClick={() => {
-												props.onLoadProfile(profile);
-												setShowProfilePicker(false);
+												if (confirmDeleteId !== profile.id)
+												{
+													props.onLoadProfile(profile);
+													setShowProfilePicker(false);
+												}
 											}}
 										>
-											<strong>{profile.name}</strong>
+											{confirmDeleteId === profile.id ? (
+												<div className="launch-profile-confirm" onClick={(e) => e.stopPropagation()}>
+													<span className="launch-profile-confirm-label">Удалить шаблон?</span>
+													<div className="launch-profile-confirm-actions">
+														<button
+															type="button"
+															className="launch-profile-confirm-btn launch-profile-confirm-yes"
+															onClick={(e) => { e.stopPropagation(); props.onDeleteProfile(profile.id); setConfirmDeleteId(null); }}
+														>
+															Удалить
+														</button>
+														<button
+															type="button"
+															className="launch-profile-confirm-btn launch-profile-confirm-no"
+															onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
+														>
+															Отмена
+														</button>
+													</div>
+												</div>
+											) : null}
+											<div className="launch-profile-topline">
+												<strong>{profile.name}</strong>
+												{confirmDeleteId !== profile.id ? (
+													<span
+														className="launch-profile-x"
+														role="button"
+														title="Удалить шаблон"
+														onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(profile.id); }}
+													>
+														×
+													</span>
+												) : null}
+											</div>
 											<span className="launch-profile-origins">{profileOrigins.join(', ')}</span>
 											<span className="launch-profile-meta">
 												{(profile.pages?.length ?? 1)} URL / {profile.throttling} / {profile.cacheMode}
 												{(profile.repeatCount ?? 1) > 1 ? ` / x${profile.repeatCount}` : ''}
 											</span>
 										</button>
-										{confirmDeleteId === profile.id ? (
-											<span className="launch-profile-confirm">
-												<button
-													type="button"
-													className="launch-profile-confirm-btn launch-profile-confirm-yes"
-													onClick={(e) => { e.stopPropagation(); props.onDeleteProfile(profile.id); setConfirmDeleteId(null); }}
-												>
-													Удалить
-												</button>
-												<button
-													type="button"
-													className="launch-profile-confirm-btn launch-profile-confirm-no"
-													onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
-												>
-													Отмена
-												</button>
-											</span>
-										) : (
-											<button
-												type="button"
-												className="launch-profile-delete"
-												title="Удалить шаблон"
-												onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(profile.id); }}
-											>
-												×
-											</button>
-										)}
 									</div>
 								);
 							})}
