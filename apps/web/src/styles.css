@@ -1530,6 +1530,21 @@ textarea {
 	color: rgba(255, 255, 255, 0.4);
 	font-size: 13px;
 }
+.compare-run-info {
+	display: flex;
+	gap: 8px;
+	padding: 8px 20px;
+}
+.compare-run-badge {
+	display: inline-block;
+	padding: 3px 8px;
+	border-radius: 4px;
+	font-size: 11px;
+	font-family: 'IBM Plex Mono', monospace;
+	background: rgba(255, 255, 255, 0.04);
+	color: rgba(255, 255, 255, 0.5);
+	cursor: help;
+}
 .compare-warning {
 	margin: 0;
 	padding: 8px 20px;

@@ -136,6 +136,7 @@ export class RunService
         targetUrls: profile.pages?.length ? profile.pages : [profile.url],
         throttling: profile.throttling,
         cacheMode: profile.cacheMode,
+        repeatCount: profile.repeatCount ?? 1,
         authStatePath: profile.authMode === 'session'
           ? await this.#resolveAuthStatePath(profile.url)
           : undefined,

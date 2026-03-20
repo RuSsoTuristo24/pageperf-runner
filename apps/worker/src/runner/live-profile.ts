@@ -123,6 +123,7 @@ type LiveRunProfileResult = {
 		pageDiagnostics?: PageDiagnostics;
 	}>;
 	pages: LiveRunPageResult[];
+	repeatCount?: number;
 };
 
 type RequestMapEntry = RawNetworkEntry & {
@@ -1114,31 +1115,158 @@ async function executePageRun(browser: Browser, job: RunJob, targetUrl: string):
 	}
 }
 
+function computePercentile(values: number[], percentile: number): number
+{
+	if (values.length === 0)
+	{
+		return 0;
+	}
+
+	const sorted = [...values].sort((a, b) => a - b);
+	const index = Math.ceil((percentile / 100) * sorted.length) - 1;
+
+	return sorted[Math.max(0, index)];
+}
+
+function aggregateMetrics(
+	allRuns: Array<Array<{ name: string; value: number }>>,
+): Array<{ name: string; value: number }>
+{
+	if (allRuns.length <= 1)
+	{
+		return allRuns[0] ?? [];
+	}
+
+	const byName = new Map<string, number[]>();
+
+	for (const run of allRuns)
+	{
+		for (const metric of run)
+		{
+			const existing = byName.get(metric.name);
+
+			if (existing)
+			{
+				existing.push(metric.value);
+			}
+			else
+			{
+				byName.set(metric.name, [metric.value]);
+			}
+		}
+	}
+
+	return [...byName.entries()].map(([name, values]) => ({
+		name,
+		value: computePercentile(values, 80),
+	}));
+}
+
 export async function executeLiveRun(job: RunJob): Promise<LiveRunProfileResult>
 {
+	const repeatCount = Math.max(1, Math.min(20, job.repeatCount ?? 1));
 	const browser = await launchBrowser();
 
 	try
 	{
 		const targetUrls = job.targetUrls?.length ? job.targetUrls : [job.targetUrl];
-		const pageResults: LiveRunPageResult[] = [];
 
-		for (const targetUrl of targetUrls)
+		if (repeatCount === 1)
 		{
-			pageResults.push(await executePageRun(browser, job, targetUrl));
+			const pageResults: LiveRunPageResult[] = [];
+
+			for (const targetUrl of targetUrls)
+			{
+				pageResults.push(await executePageRun(browser, job, targetUrl));
+			}
+
+			const primaryPage = pageResults[0] ?? {
+				pageKey: job.targetUrl,
+				url: job.targetUrl,
+				pageMetrics: [],
+				requests: [],
+				traceSummary: summarizeTrace([]),
+				jsExecutionSummary: summarizeJsExecution([]),
+				coverageSummary: summarizeCoverage([]),
+				pageDiagnostics: summarizePageDiagnostics({}),
+				passes: [],
+			};
+
+			return {
+				pageMetrics: primaryPage.pageMetrics,
+				requests: primaryPage.requests,
+				traceSummary: primaryPage.traceSummary,
+				jsExecutionSummary: primaryPage.jsExecutionSummary,
+				coverageSummary: primaryPage.coverageSummary,
+				pageDiagnostics: primaryPage.pageDiagnostics,
+				passes: primaryPage.passes,
+				pages: pageResults,
+				repeatCount: 1,
+			};
 		}
 
-		const primaryPage = pageResults[0] ?? {
-			pageKey: job.targetUrl,
-			url: job.targetUrl,
-			pageMetrics: [],
-			requests: [],
-			traceSummary: summarizeTrace([]),
-			jsExecutionSummary: summarizeJsExecution([]),
-			coverageSummary: summarizeCoverage([]),
-			pageDiagnostics: summarizePageDiagnostics({}),
-			passes: [],
-		};
+		// Multi-run: execute N times, each in a fresh browser context
+		const allPageRuns: LiveRunPageResult[][] = [];
+
+		for (let i = 0; i < repeatCount; i++)
+		{
+			const pageResults: LiveRunPageResult[] = [];
+
+			for (const targetUrl of targetUrls)
+			{
+				// Fresh context for each repeat (true cold cache)
+				pageResults.push(await executePageRun(browser, job, targetUrl));
+			}
+
+			allPageRuns.push(pageResults);
+		}
+
+		// Aggregate: for single-page runs, aggregate across repeats
+		// For multi-page, aggregate per-page
+		const firstRun = allPageRuns[0];
+		const pageCount = firstRun.length;
+		const aggregatedPages: LiveRunPageResult[] = [];
+
+		for (let pageIndex = 0; pageIndex < pageCount; pageIndex++)
+		{
+			const runsForPage = allPageRuns.map((run) => run[pageIndex]);
+			const allMetrics = runsForPage.map((r) => r.pageMetrics);
+			const p80Metrics = aggregateMetrics(allMetrics);
+
+			// Use the median run (closest to p80 load time) for requests/trace/etc.
+			const loadValues = runsForPage.map((r) =>
+				r.pageMetrics.find((m) => m.name === 'load')?.value ?? 0,
+			);
+			const p80Load = computePercentile(loadValues, 80);
+			const medianRun = runsForPage.reduce((best, run) => {
+				const runLoad = run.pageMetrics.find((m) => m.name === 'load')?.value ?? 0;
+				const bestLoad = best.pageMetrics.find((m) => m.name === 'load')?.value ?? 0;
+
+				return Math.abs(runLoad - p80Load) < Math.abs(bestLoad - p80Load) ? run : best;
+			});
+
+			// All individual runs become passes
+			const allPasses = runsForPage.flatMap((run, runIndex) =>
+				run.passes.map((pass) => ({
+					...pass,
+					label: (`${pass.label}-${runIndex + 1}`) as 'cold' | 'warm',
+				})),
+			);
+
+			aggregatedPages.push({
+				pageKey: runsForPage[0].pageKey,
+				url: runsForPage[0].url,
+				pageMetrics: p80Metrics,
+				requests: medianRun.requests,
+				traceSummary: medianRun.traceSummary,
+				jsExecutionSummary: medianRun.jsExecutionSummary,
+				coverageSummary: medianRun.coverageSummary,
+				pageDiagnostics: medianRun.pageDiagnostics,
+				passes: allPasses,
+			});
+		}
+
+		const primaryPage = aggregatedPages[0];
 
 		return {
 			pageMetrics: primaryPage.pageMetrics,
@@ -1148,7 +1276,8 @@ export async function executeLiveRun(job: RunJob): Promise<LiveRunProfileResult>
 			coverageSummary: primaryPage.coverageSummary,
 			pageDiagnostics: primaryPage.pageDiagnostics,
 			passes: primaryPage.passes,
-			pages: pageResults,
+			pages: aggregatedPages,
+			repeatCount,
 		};
 	}
 	finally

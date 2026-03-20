@@ -12,6 +12,7 @@ type RunCompareProps = {
 	/** Current run info */
 	currentRunId: string;
 	currentUrl?: string;
+	currentRepeatCount?: number;
 	/** All runs and profiles for the baseline selector */
 	runs: ApiRun[];
 	profiles: ApiProfile[];
@@ -88,7 +89,7 @@ function getRunLabel(run: ApiRun, profiles: ApiProfile[]): string
 	return `${name} — ${date}`;
 }
 
-export function RunCompare({ currentMetrics, currentRequests, currentRunId, currentUrl, runs, profiles }: RunCompareProps)
+export function RunCompare({ currentMetrics, currentRequests, currentRunId, currentUrl, currentRepeatCount, runs, profiles }: RunCompareProps)
 {
 	const [baselineRunId, setBaselineRunId] = useState<string | null>(null);
 	const [baselineDetails, setBaselineDetails] = useState<ApiRunDetails | null>(null);
@@ -304,6 +305,23 @@ export function RunCompare({ currentMetrics, currentRequests, currentRunId, curr
 					) : null}
 				</div>
 			</div>
+
+			{baselineDetails ? (() => {
+				const baselineProfile = profiles.find((p) => p.id === baselineDetails!.run.profileId);
+				const baselineRepeat = baselineProfile?.repeatCount ?? 1;
+				const currentRepeat = currentRepeatCount ?? 1;
+
+				return (currentRepeat > 1 || baselineRepeat > 1) ? (
+					<div className="compare-run-info">
+						<span className="compare-run-badge" title="Количество прогонов и метод агрегации для текущего прогона">
+							Текущий: {currentRepeat > 1 ? `p80 / ${currentRepeat} runs` : '1 run'}
+						</span>
+						<span className="compare-run-badge" title="Количество прогонов и метод агрегации для baseline">
+							Baseline: {baselineRepeat > 1 ? `p80 / ${baselineRepeat} runs` : '1 run'}
+						</span>
+					</div>
+				) : null;
+			})() : null}
 
 			{!baselineRunId ? (
 				<p className="compare-prompt">Выберите baseline-прогон для сравнения с текущим.</p>

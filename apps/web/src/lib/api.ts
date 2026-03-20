@@ -6,6 +6,7 @@ export type ApiProfile = {
 	throttling: string;
 	authMode: 'none' | 'session';
 	cacheMode: 'cold' | 'warm' | 'both';
+	repeatCount?: number;
 };
 
 export type ApiRun = {
@@ -494,6 +495,7 @@ export type CreateProfilePayload = {
 	throttling: string;
 	authMode: 'none' | 'session';
 	cacheMode: 'cold' | 'warm' | 'both';
+	repeatCount?: number;
 };
 
 export type ApiAuthSession = {

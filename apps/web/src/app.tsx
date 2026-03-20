@@ -374,6 +374,7 @@ export function App()
 	const [draftProfilePages, setDraftProfilePages] = useState('https://russeltest.bitrix24.ru/blank.php');
 	const [draftThrottling, setDraftThrottling] = useState('native');
 	const [draftCacheMode, setDraftCacheMode] = useState<'cold' | 'warm' | 'both'>('cold');
+	const [draftRepeatCount, setDraftRepeatCount] = useState(1);
 	const [copyFeedback, setCopyFeedback] = useState(false);
 	const [urlIndex, setUrlIndex] = useState<Record<string, string>>({});
 	const [settings, setSettings] = useState<ApiSettings | null>(null);
@@ -742,6 +743,7 @@ export function App()
 				throttling: draftThrottling,
 				authMode: useAuthSession ? 'session' : 'none',
 				cacheMode: draftCacheMode,
+				repeatCount: draftRepeatCount,
 			});
 			const run = await createRun(profile.id);
 			const startedRun = await startRun(run.id);
@@ -1036,6 +1038,7 @@ export function App()
 					pages={draftProfilePages}
 					throttling={draftThrottling}
 					cacheMode={draftCacheMode}
+					repeatCount={draftRepeatCount}
 					useAuthSession={useAuthSession}
 					isSubmitting={isSubmittingRun}
 					onNameChange={setDraftProfileName}
@@ -1043,6 +1046,7 @@ export function App()
 					onPagesChange={setDraftProfilePages}
 					onThrottlingChange={setDraftThrottling}
 					onCacheModeChange={setDraftCacheMode}
+					onRepeatCountChange={setDraftRepeatCount}
 					onUseAuthSessionChange={setUseAuthSession}
 					onSubmit={() => {
 						void handleCreateAndStartRun();
@@ -1121,6 +1125,11 @@ export function App()
 							{getStatusDisplayLabel(selectedRunDetails?.run.status ?? 'idle')}
 						</span>
 						<span className="workspace-context">{selectedProfile?.throttling ?? draftThrottling}</span>
+						{(selectedProfile?.repeatCount ?? 1) > 1 ? (
+							<span className="workspace-context" title="Метрики рассчитаны по 80-му процентилю из нескольких прогонов">
+								p80 / {selectedProfile?.repeatCount} runs
+							</span>
+						) : null}
 					</div>
 				</header>
 
@@ -1311,6 +1320,7 @@ export function App()
 						currentRequests={selectedRequests}
 						currentRunId={selectedRunDetails.run.id}
 						currentUrl={activePage?.url ?? selectedProfile?.url}
+						currentRepeatCount={selectedProfile?.repeatCount}
 						runs={runs}
 						profiles={profiles}
 					/>

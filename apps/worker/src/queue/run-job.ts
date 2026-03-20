@@ -5,6 +5,7 @@ export type RunJob = {
   targetUrls?: string[];
   throttling: 'native' | 'slow-4g' | 'fast-3g' | 'slow-3g' | 'custom';
   cacheMode: 'cold' | 'warm' | 'both';
+  repeatCount?: number;
   authStatePath?: string;
 };
 

@@ -4,6 +4,7 @@ type RunLaunchFormProps = {
 	pages: string;
 	throttling: string;
 	cacheMode: 'cold' | 'warm' | 'both';
+	repeatCount: number;
 	useAuthSession: boolean;
 	isSubmitting: boolean;
 	onNameChange: (value: string) => void;
@@ -11,6 +12,7 @@ type RunLaunchFormProps = {
 	onPagesChange: (value: string) => void;
 	onThrottlingChange: (value: string) => void;
 	onCacheModeChange: (value: 'cold' | 'warm' | 'both') => void;
+	onRepeatCountChange: (value: number) => void;
 	onUseAuthSessionChange: (value: boolean) => void;
 	onSubmit: () => void;
 };
@@ -81,6 +83,18 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 					<option value="warm">тёплый</option>
 					<option value="both">оба</option>
 				</select>
+			</label>
+			<label className="field" title="Количество повторных прогонов для статистической точности. Метрики рассчитываются по 80-му процентилю (p80). Каждый прогон в отдельном браузерном контексте.">
+				<span>Повторы</span>
+				<input
+					aria-label="Количество повторных прогонов"
+					type="number"
+					min={1}
+					max={20}
+					value={props.repeatCount}
+					onChange={(event) => props.onRepeatCountChange(Math.max(1, Math.min(20, Number(event.target.value) || 1)))}
+				/>
+				<span className="field-hint">1 = один прогон. 3–5 = стабильный p80.</span>
 			</label>
 			<label className="field-checkbox">
 				<input
