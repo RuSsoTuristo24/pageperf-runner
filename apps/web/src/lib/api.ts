@@ -771,7 +771,7 @@ export function createProfile(payload: CreateProfilePayload): Promise<ApiProfile
 
 export function deleteProfile(profileId: string): Promise<{ deleted: true; id: string }>
 {
-	return sendJson<{ deleted: true; id: string }>('/api/profiles', 'DELETE', { id: profileId });
+	return sendJson<{ deleted: true; id: string }>('/api/delete-profile', 'POST', { id: profileId });
 }
 
 export function fetchAuthSession(): Promise<ApiAuthSession>

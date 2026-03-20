@@ -28,7 +28,7 @@ export function registerProfileRoutes(app: FastifyInstance, service: ProfileServ
     }
   });
 
-  app.delete('/api/profiles', async (request, reply) => {
+  app.post('/api/delete-profile', async (request, reply) => {
     const { id } = request.body as { id?: string };
 
     if (!id)
