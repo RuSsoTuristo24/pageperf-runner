@@ -26,6 +26,7 @@ export class ProfileService
       throttling: parsed.data.throttling,
       authMode: parsed.data.authMode,
       cacheMode: parsed.data.cacheMode,
+      repeatCount: parsed.data.repeatCount,
     });
   }
 
@@ -37,5 +38,10 @@ export class ProfileService
   findById(id: string): (Profile & { id: string }) | null
   {
     return this.repository.findById(id);
+  }
+
+  delete(id: string): boolean
+  {
+    return this.repository.delete(id);
   }
 }

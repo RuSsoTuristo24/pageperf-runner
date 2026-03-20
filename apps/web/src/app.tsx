@@ -19,6 +19,7 @@ import {
 	captureAuthSession,
 	createProfile,
 	createRun,
+	deleteProfile,
 	createAssetIssue,
 	deleteRun,
 	deleteAssetIssue,
@@ -374,6 +375,7 @@ export function App()
 	const [draftThrottling, setDraftThrottling] = useState('native');
 	const [draftCacheMode, setDraftCacheMode] = useState<'cold' | 'warm' | 'both'>('cold');
 	const [draftRepeatCount, setDraftRepeatCount] = useState(1);
+	const [draftSaveAsProfile, setDraftSaveAsProfile] = useState(true);
 	const draftProfileUrl = draftProfilePages.split('\n').find((line) => line.trim().length > 0)?.trim() ?? '';
 	const [copyFeedback, setCopyFeedback] = useState(false);
 	const [urlIndex, setUrlIndex] = useState<Record<string, string>>({});
@@ -748,7 +750,14 @@ export function App()
 			const run = await createRun(profile.id);
 			const startedRun = await startRun(run.id);
 
-			setProfiles((currentProfiles) => [profile, ...currentProfiles]);
+			if (draftSaveAsProfile)
+			{
+				setProfiles((currentProfiles) => [profile, ...currentProfiles]);
+			}
+			else
+			{
+				deleteProfile(profile.id).catch(() => undefined);
+			}
 			setRuns((currentRuns) => [
 				startedRun.run,
 				...currentRuns.filter((currentRun) => currentRun.id !== startedRun.run.id),
@@ -1038,6 +1047,7 @@ export function App()
 					throttling={draftThrottling}
 					cacheMode={draftCacheMode}
 					repeatCount={draftRepeatCount}
+					saveAsProfile={draftSaveAsProfile}
 					useAuthSession={useAuthSession}
 					isSubmitting={isSubmittingRun}
 					savedProfiles={profiles}
@@ -1046,6 +1056,7 @@ export function App()
 					onThrottlingChange={setDraftThrottling}
 					onCacheModeChange={(mode) => { setDraftCacheMode(mode); if (mode !== 'cold') { setDraftRepeatCount(1); } }}
 					onRepeatCountChange={setDraftRepeatCount}
+					onSaveAsProfileChange={setDraftSaveAsProfile}
 					onUseAuthSessionChange={setUseAuthSession}
 					onLoadProfile={(profile) => {
 						setDraftProfileName(profile.name);
@@ -1054,6 +1065,11 @@ export function App()
 						setDraftCacheMode(profile.cacheMode);
 						setDraftRepeatCount(profile.repeatCount ?? 1);
 						setUseAuthSession(profile.authMode === 'session');
+					}}
+					onDeleteProfile={(profileId) => {
+						deleteProfile(profileId).then(() => {
+							setProfiles((current) => current.filter((p) => p.id !== profileId));
+						}).catch(() => undefined);
 					}}
 					onSubmit={() => {
 						void handleCreateAndStartRun();

@@ -62,6 +62,21 @@ export class InMemoryProfileRepository
     return this.#profiles.find((profile) => profile.id === id) ?? null;
   }
 
+  delete(id: string): boolean
+  {
+    const index = this.#profiles.findIndex((profile) => profile.id === id);
+
+    if (index === -1)
+    {
+      return false;
+    }
+
+    this.#profiles.splice(index, 1);
+    this.#persist();
+
+    return true;
+  }
+
   #persist(): void
   {
     if (!this.#storageFilePath)

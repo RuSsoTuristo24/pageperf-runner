@@ -350,13 +350,20 @@ textarea {
 	max-height: 200px;
 	overflow-y: auto;
 }
+.launch-profile-item-wrap {
+	display: flex;
+	align-items: stretch;
+	gap: 0;
+}
 .launch-profile-item {
+	flex: 1;
+	min-width: 0;
 	display: flex;
 	flex-direction: column;
 	gap: 1px;
 	padding: 6px 8px;
 	border: 1px solid rgba(255, 255, 255, 0.06);
-	border-radius: 4px;
+	border-radius: 4px 0 0 4px;
 	background: rgba(255, 255, 255, 0.02);
 	color: rgba(255, 255, 255, 0.7);
 	font-size: 12px;
@@ -371,13 +378,79 @@ textarea {
 	font-size: 12px;
 	color: rgba(255, 255, 255, 0.85);
 }
-.launch-profile-item span {
-	font-family: 'IBM Plex Mono', monospace;
-	font-size: 10px;
-	color: rgba(255, 255, 255, 0.35);
+.launch-profile-origins {
+	font-size: 11px;
+	color: rgba(99, 179, 237, 0.7);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+.launch-profile-meta {
+	font-size: 10px;
+	color: rgba(255, 255, 255, 0.3);
+}
+.launch-profile-delete {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	flex-shrink: 0;
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-left: none;
+	border-radius: 0 4px 4px 0;
+	background: rgba(255, 255, 255, 0.02);
+	color: rgba(255, 255, 255, 0.25);
+	font-size: 16px;
+	cursor: pointer;
+}
+.launch-profile-delete:hover {
+	background: rgba(231, 76, 60, 0.15);
+	color: #e74c3c;
+}
+.launch-profile-confirm {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex-shrink: 0;
+}
+.launch-profile-delete-yes {
+	padding: 2px 6px;
+	border: none;
+	border-radius: 3px;
+	background: rgba(231, 76, 60, 0.2);
+	color: #e74c3c;
+	font-size: 10px;
+	cursor: pointer;
+}
+.launch-profile-delete-yes:hover {
+	background: rgba(231, 76, 60, 0.35);
+}
+.launch-profile-delete-no {
+	padding: 2px 6px;
+	border: none;
+	border-radius: 3px;
+	background: rgba(255, 255, 255, 0.05);
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 10px;
+	cursor: pointer;
+}
+.launch-origin-bar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	padding: 0 0 4px;
+}
+.launch-origin {
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 10px;
+	color: rgba(99, 179, 237, 0.7);
+	background: rgba(99, 179, 237, 0.08);
+	padding: 2px 6px;
+	border-radius: 3px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
 }
 
 /* ── Modal ── */

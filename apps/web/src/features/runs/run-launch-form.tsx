@@ -8,6 +8,7 @@ type RunLaunchFormProps = {
 	throttling: string;
 	cacheMode: 'cold' | 'warm' | 'both';
 	repeatCount: number;
+	saveAsProfile: boolean;
 	useAuthSession: boolean;
 	isSubmitting: boolean;
 	savedProfiles: ApiProfile[];
@@ -16,34 +17,54 @@ type RunLaunchFormProps = {
 	onThrottlingChange: (value: string) => void;
 	onCacheModeChange: (value: 'cold' | 'warm' | 'both') => void;
 	onRepeatCountChange: (value: number) => void;
+	onSaveAsProfileChange: (value: boolean) => void;
 	onUseAuthSessionChange: (value: boolean) => void;
 	onLoadProfile: (profile: ApiProfile) => void;
+	onDeleteProfile: (profileId: string) => void;
 	onSubmit: () => void;
 };
 
-function countPages(pages: string): number
+function getPageLines(pages: string): string[]
 {
-	return pages.split('\n').filter((line) => line.trim().length > 0).length;
+	return pages.split('\n').map((l) => l.trim()).filter(Boolean);
+}
+
+function getOrigins(lines: string[]): string[]
+{
+	const origins = new Set<string>();
+
+	for (const line of lines)
+	{
+		try
+		{
+			origins.add(new URL(line).origin);
+		}
+		catch
+		{
+			// skip invalid
+		}
+	}
+
+	return [...origins];
 }
 
 export function RunLaunchForm(props: RunLaunchFormProps)
 {
 	const [showPagesModal, setShowPagesModal] = useState(false);
 	const [showProfilePicker, setShowProfilePicker] = useState(false);
-	const pageCount = countPages(props.pages);
+	const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+	const pageLines = getPageLines(props.pages);
+	const pageCount = pageLines.length;
+	const origins = getOrigins(pageLines);
 
 	return (
 		<section className="sidebar-section sidebar-section-launch" aria-labelledby="launch-heading">
 			<div className="sidebar-section-heading">
 				<div>
 					<p className="eyebrow">Профилирование</p>
-					<h2 id="launch-heading">Создать профиль</h2>
+					<h2 id="launch-heading">Новый прогон</h2>
 				</div>
 			</div>
-
-			<p className="sidebar-copy">
-				Запустить новый замер и добавить в список прогонов.
-			</p>
 
 			{props.savedProfiles.length > 0 ? (
 				<div className="field">
@@ -52,39 +73,84 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 						className="secondary-button secondary-button-compact launch-profile-toggle"
 						onClick={() => setShowProfilePicker((v) => !v)}
 					>
-						{showProfilePicker ? 'Скрыть профили' : `Загрузить из профиля (${props.savedProfiles.length})`}
+						{showProfilePicker ? 'Скрыть шаблоны' : `Загрузить шаблон (${props.savedProfiles.length})`}
 					</button>
 					{showProfilePicker ? (
 						<div className="launch-profile-list">
-							{props.savedProfiles.map((profile) => (
-								<button
-									key={profile.id}
-									type="button"
-									className="launch-profile-item"
-									onClick={() => {
-										props.onLoadProfile(profile);
-										setShowProfilePicker(false);
-									}}
-								>
-									<strong>{profile.name}</strong>
-									<span>{profile.url}</span>
-								</button>
-							))}
+							{props.savedProfiles.map((profile) => {
+								const profileOrigins = getOrigins(profile.pages ?? [profile.url]);
+
+								return (
+									<div key={profile.id} className="launch-profile-item-wrap">
+										<button
+											type="button"
+											className="launch-profile-item"
+											onClick={() => {
+												props.onLoadProfile(profile);
+												setShowProfilePicker(false);
+											}}
+										>
+											<strong>{profile.name}</strong>
+											<span className="launch-profile-origins">{profileOrigins.join(', ')}</span>
+											<span className="launch-profile-meta">
+												{(profile.pages?.length ?? 1)} URL / {profile.throttling} / {profile.cacheMode}
+												{(profile.repeatCount ?? 1) > 1 ? ` / x${profile.repeatCount}` : ''}
+											</span>
+										</button>
+										{confirmDeleteId === profile.id ? (
+											<span className="launch-profile-confirm">
+												<button
+													type="button"
+													className="launch-profile-delete-yes"
+													onClick={(e) => { e.stopPropagation(); props.onDeleteProfile(profile.id); setConfirmDeleteId(null); }}
+												>
+													Да, удалить
+												</button>
+												<button
+													type="button"
+													className="launch-profile-delete-no"
+													onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null); }}
+												>
+													Отмена
+												</button>
+											</span>
+										) : (
+											<button
+												type="button"
+												className="launch-profile-delete"
+												title="Удалить шаблон"
+												onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(profile.id); }}
+											>
+												×
+											</button>
+										)}
+									</div>
+								);
+							})}
 						</div>
 					) : null}
 				</div>
 			) : null}
 
 			<label className="field">
-				<span>Имя профиля</span>
+				<span>Имя</span>
 				<input
 					aria-label="Имя профиля"
 					value={props.name}
 					onChange={(event) => props.onNameChange(event.target.value)}
 				/>
 			</label>
+
+			{pageCount > 0 ? (
+				<div className="launch-origin-bar">
+					{origins.map((origin) => (
+						<span key={origin} className="launch-origin">{origin}</span>
+					))}
+				</div>
+			) : null}
+
 			<div className="field">
-				<span>Страницы для прогона</span>
+				<span>Страницы</span>
 				<button
 					type="button"
 					className="launch-pages-button"
@@ -92,10 +158,10 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 				>
 					{pageCount > 0 ? `${pageCount} URL` : 'Добавить URL'}
 					<span className="launch-pages-preview">
-						{props.pages.split('\n').filter(Boolean).slice(0, 2).map((url) => {
-							try { return new URL(url.trim()).pathname; } catch { return url.trim(); }
+						{pageLines.slice(0, 3).map((url) => {
+							try { return new URL(url).pathname; } catch { return url; }
 						}).join(', ')}
-						{pageCount > 2 ? ` и ещё ${pageCount - 2}` : ''}
+						{pageCount > 3 ? ` +${pageCount - 3}` : ''}
 					</span>
 				</button>
 			</div>
@@ -140,12 +206,19 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 			) : null}
 			<label className="field-checkbox">
 				<input
-					aria-label="Использовать сохранённую сессию"
 					checked={props.useAuthSession}
 					type="checkbox"
 					onChange={(event) => props.onUseAuthSessionChange(event.target.checked)}
 				/>
 				<span>Использовать сохранённую сессию</span>
+			</label>
+			<label className="field-checkbox" title="Сохранить текущие настройки как шаблон для повторного использования. Если выключено, прогон будет запущен без сохранения профиля.">
+				<input
+					checked={props.saveAsProfile}
+					type="checkbox"
+					onChange={(event) => props.onSaveAsProfileChange(event.target.checked)}
+				/>
+				<span>Сохранить как шаблон</span>
 			</label>
 			<button
 				type="button"
@@ -153,7 +226,7 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 				onClick={props.onSubmit}
 				disabled={props.isSubmitting || pageCount === 0}
 			>
-				{props.isSubmitting ? 'Профилирование…' : 'Создать и запустить'}
+				{props.isSubmitting ? 'Профилирование…' : 'Запустить'}
 			</button>
 
 			{showPagesModal ? (

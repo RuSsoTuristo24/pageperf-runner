@@ -27,4 +27,18 @@ export function registerProfileRoutes(app: FastifyInstance, service: ProfileServ
       throw error;
     }
   });
+
+  app.delete('/api/profiles/:id', async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const deleted = service.delete(id);
+
+    if (!deleted)
+    {
+      reply.code(404);
+
+      return { error: 'Profile not found' };
+    }
+
+    return { deleted: true, id };
+  });
 }
