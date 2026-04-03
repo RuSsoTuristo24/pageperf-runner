@@ -1,14 +1,13 @@
 import path from 'node:path';
 
-import type { AssetIssue } from '@webperf/shared';
-
 import { readJsonFileSync, writeJsonFileSync } from '../../storage/json-file.js';
 
-export type StoredAssetIssue = Required<Pick<AssetIssue, 'assetKey' | 'assetUrl' | 'resourceType' | 'mantisUrl' | 'status' | 'note' | 'createdAt' | 'updatedAt'>> & {
-  closedAt?: string;
-};
+import type { AssetIssueRepository, StoredAssetIssue } from './asset-issue.repository.types.js';
 
-export class AssetIssueRepository
+export type { StoredAssetIssue } from './asset-issue.repository.types.js';
+export type { AssetIssueRepository } from './asset-issue.repository.types.js';
+
+export class InMemoryAssetIssueRepository implements AssetIssueRepository
 {
   #issues: StoredAssetIssue[];
 
@@ -22,17 +21,17 @@ export class AssetIssueRepository
       : [];
   }
 
-  list(): StoredAssetIssue[]
+  async list(): Promise<StoredAssetIssue[]>
   {
     return [...this.#issues];
   }
 
-  findByAssetKey(assetKey: string): StoredAssetIssue | null
+  async findByAssetKey(assetKey: string): Promise<StoredAssetIssue | null>
   {
     return this.#issues.find((issue) => issue.assetKey === assetKey) ?? null;
   }
 
-  save(issue: StoredAssetIssue): StoredAssetIssue
+  async save(issue: StoredAssetIssue): Promise<StoredAssetIssue>
   {
     const currentIndex = this.#issues.findIndex((currentIssue) => currentIssue.assetKey === issue.assetKey);
 
@@ -50,7 +49,7 @@ export class AssetIssueRepository
     return issue;
   }
 
-  delete(assetKey: string): boolean
+  async delete(assetKey: string): Promise<boolean>
   {
     const nextIssues = this.#issues.filter((issue) => issue.assetKey !== assetKey);
 

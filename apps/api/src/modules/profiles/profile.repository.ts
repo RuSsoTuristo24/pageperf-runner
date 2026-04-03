@@ -4,7 +4,10 @@ import path from 'node:path';
 import type { Profile } from '@webperf/shared';
 import { readJsonFileSync, writeJsonFileSync } from '../../storage/json-file.js';
 
-type StoredProfile = Profile & { id: string };
+import type { ProfileRepository, StoredProfile } from './profile.repository.types.js';
+
+export type { StoredProfile } from './profile.repository.types.js';
+export type { ProfileRepository } from './profile.repository.types.js';
 
 function normalizeStoredProfile(
   profile: StoredProfile | (
@@ -25,7 +28,7 @@ function normalizeStoredProfile(
   };
 }
 
-export class InMemoryProfileRepository
+export class InMemoryProfileRepository implements ProfileRepository
 {
   #profiles: StoredProfile[];
 
@@ -39,7 +42,7 @@ export class InMemoryProfileRepository
       : [];
   }
 
-  create(profile: Omit<Profile, 'id'>): StoredProfile
+  async create(profile: Omit<Profile, 'id'>): Promise<StoredProfile>
   {
     const stored: StoredProfile = {
       ...normalizeStoredProfile(profile),
@@ -52,17 +55,17 @@ export class InMemoryProfileRepository
     return stored;
   }
 
-  list(): StoredProfile[]
+  async list(): Promise<StoredProfile[]>
   {
     return [...this.#profiles];
   }
 
-  findById(id: string): StoredProfile | null
+  async findById(id: string): Promise<StoredProfile | null>
   {
     return this.#profiles.find((profile) => profile.id === id) ?? null;
   }
 
-  delete(id: string): boolean
+  async delete(id: string): Promise<boolean>
   {
     const index = this.#profiles.findIndex((profile) => profile.id === id);
 

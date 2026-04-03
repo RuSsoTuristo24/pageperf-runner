@@ -1,14 +1,14 @@
 import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary } from '@webperf/worker';
 import { requestSchema } from '@webperf/shared';
 
-import {
-  InMemoryRunRepository,
-  type ArtifactRecord,
-  type PageMetricRecord,
-  type RunPageRecord,
-  type RunPassRecord,
-  type RequestRecord,
-} from '../runs/run.repository.js';
+import type {
+  RunRepository,
+  ArtifactRecord,
+  PageMetricRecord,
+  RunPageRecord,
+  RunPassRecord,
+  RequestRecord,
+} from '../runs/run.repository.types.js';
 
 type IngestPayload = {
   runId: string;
@@ -25,7 +25,7 @@ type IngestPayload = {
 
 export class RunIngestService
 {
-  constructor(private readonly runs: InMemoryRunRepository)
+  constructor(private readonly runs: RunRepository)
   {
   }
 
@@ -90,7 +90,7 @@ export class RunIngestService
     }
 
     const payload = input;
-    this.runs.updateDetails(payload.runId, {
+    await this.runs.updateDetails(payload.runId, {
       pageMetrics: payload.pageMetrics,
       requests: payload.requests,
       artifacts: payload.artifacts,
@@ -102,7 +102,7 @@ export class RunIngestService
       pages: payload.pages ?? [],
     });
 
-    const run = this.runs.findById(payload.runId);
+    const run = await this.runs.findById(payload.runId);
 
     if (!run)
     {

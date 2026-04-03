@@ -6,87 +6,18 @@ import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary
 
 import { readJsonFileSync, writeJsonFileSync } from '../../storage/json-file.js';
 
-export type RunRecord = {
-  id: string;
-  profileId: string;
-  status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled';
-  createdAt: string;
-  completedAt?: string;
-};
+import type { RunRepository, RunRecord, RunDetails } from './run.repository.types.js';
 
-export type PageMetricRecord = {
-  name: string;
-  value: number;
-};
-
-export type RequestRecord = {
-  url: string;
-  method: string;
-  status?: number;
-  resourceType: string;
-  contentEncoding?: string | null;
-  fromDiskCache?: boolean;
-  fromMemoryCache?: boolean;
-  revalidated?: boolean;
-  transferSize: number;
-  encodedBodySize: number;
-  decodedBodySize: number;
-  durationMs?: number;
-  startTimeMs?: number;
-  endTimeMs?: number;
-  queueingMs?: number;
-  dnsMs?: number;
-  connectMs?: number;
-  sslMs?: number;
-  requestSentMs?: number;
-  waitingMs?: number;
-  downloadMs?: number;
-  initiatorType?: 'parser' | 'script' | 'preload' | 'fetch' | 'xmlhttprequest' | 'other';
-  initiatorUrl?: string;
-  redirectParentUrl?: string;
-  protocol?: string;
-  priority?: string;
-  responseHeaders?: Record<string, string>;
-};
-
-export type ArtifactRecord = {
-  kind: string;
-  path: string;
-};
-
-export type RunPassRecord = {
-  label: 'cold' | 'warm';
-  pageMetrics: PageMetricRecord[];
-  requests: RequestRecord[];
-  traceSummary?: TraceSummary;
-  jsExecutionSummary?: JsExecutionSummary;
-  coverageSummary?: CoverageSummary;
-  pageDiagnostics?: PageDiagnostics;
-};
-
-export type RunPageRecord = {
-  pageKey: string;
-  url: string;
-  pageMetrics: PageMetricRecord[];
-  requests: RequestRecord[];
-  passes: RunPassRecord[];
-  traceSummary?: TraceSummary;
-  jsExecutionSummary?: JsExecutionSummary;
-  coverageSummary?: CoverageSummary;
-  pageDiagnostics?: PageDiagnostics;
-};
-
-type RunDetails = {
-  pageMetrics: PageMetricRecord[];
-  requests: RequestRecord[];
-  artifacts: ArtifactRecord[];
-  passes?: RunPassRecord[];
-  traceSummary?: TraceSummary;
-  jsExecutionSummary?: JsExecutionSummary;
-  coverageSummary?: CoverageSummary;
-  pageDiagnostics?: PageDiagnostics;
-  pages?: RunPageRecord[];
-};
+export type {
+  RunRecord,
+  RunDetails,
+  PageMetricRecord,
+  RequestRecord,
+  ArtifactRecord,
+  RunPassRecord,
+  RunPageRecord,
+  RunRepository,
+} from './run.repository.types.js';
 
 function toFiniteNumber(value: unknown, fallback = 0): number
 {
@@ -271,7 +202,7 @@ function normalizeRunDetails(details: RunDetails): RunDetails
   };
 }
 
-export class InMemoryRunRepository
+export class InMemoryRunRepository implements RunRepository
 {
   #runs: RunRecord[];
 
@@ -299,7 +230,7 @@ export class InMemoryRunRepository
     }
   }
 
-  create(input: { profileId: string }): RunRecord
+  async create(input: { profileId: string }): Promise<RunRecord>
   {
     const run: RunRecord = {
       id: randomUUID(),
@@ -324,19 +255,19 @@ export class InMemoryRunRepository
     return run;
   }
 
-  list(): RunRecord[]
+  async list(): Promise<RunRecord[]>
   {
     return [...this.#runs];
   }
 
-  findById(id: string): RunRecord | null
+  async findById(id: string): Promise<RunRecord | null>
   {
     return this.#runs.find((run) => run.id === id) ?? null;
   }
 
-  setStatus(id: string, status: RunRecord['status']): RunRecord | null
+  async setStatus(id: string, status: RunRecord['status']): Promise<RunRecord | null>
   {
-    const run = this.findById(id);
+    const run = await this.findById(id);
 
     if (!run)
     {
@@ -353,7 +284,7 @@ export class InMemoryRunRepository
     return run;
   }
 
-  findDetails(id: string): RunDetails
+  async findDetails(id: string): Promise<RunDetails>
   {
     return this.#details.get(id) ?? {
       pageMetrics: [],
@@ -364,9 +295,9 @@ export class InMemoryRunRepository
     };
   }
 
-  updateDetails(id: string, details: RunDetails): void
+  async updateDetails(id: string, details: RunDetails): Promise<void>
   {
-    const run = this.findById(id);
+    const run = await this.findById(id);
     if (!run)
     {
       return;
@@ -379,7 +310,7 @@ export class InMemoryRunRepository
     this.#persistDetails(id);
   }
 
-  delete(id: string): boolean
+  async delete(id: string): Promise<boolean>
   {
     const runIndex = this.#runs.findIndex((run) => run.id === id);
 
@@ -455,7 +386,13 @@ export class InMemoryRunRepository
 
     writeJsonFileSync(
       path.join(this.#detailsDirectoryPath, `${id}.json`),
-      this.findDetails(id),
+      this.#details.get(id) ?? {
+        pageMetrics: [],
+        requests: [],
+        artifacts: [],
+        passes: [],
+        pages: [],
+      },
     );
   }
 }

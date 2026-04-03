@@ -6,7 +6,7 @@ import { RunIngestService } from './run-ingest.service.js';
 describe('RunIngestService', () => {
   it('persists metrics, requests, and artifacts for a run payload', async () => {
     const runs = new InMemoryRunRepository();
-    const run = runs.create({ profileId: '11111111-1111-4111-8111-111111111111' });
+    const run = await runs.create({ profileId: '11111111-1111-4111-8111-111111111111' });
 
     const service = new RunIngestService(runs);
     const stored = await service.ingest({
@@ -33,7 +33,7 @@ describe('RunIngestService', () => {
 
   it('accepts fractional page metric values', async () => {
     const runs = new InMemoryRunRepository();
-    const run = runs.create({ profileId: '11111111-1111-4111-8111-111111111111' });
+    const run = await runs.create({ profileId: '11111111-1111-4111-8111-111111111111' });
 
     const service = new RunIngestService(runs);
     const stored = await service.ingest({

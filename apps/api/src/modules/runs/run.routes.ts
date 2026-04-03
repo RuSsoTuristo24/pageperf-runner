@@ -4,12 +4,12 @@ import { RunDependencyError, RunService, RunValidationError } from './run.servic
 
 export function registerRunRoutes(app: FastifyInstance, service: RunService): void
 {
-  app.get('/api/runs', async () => service.list());
+  app.get('/api/runs', async () => await service.list());
 
   app.post('/api/runs', async (request, reply) => {
     try
     {
-      const run = service.create(request.body);
+      const run = await service.create(request.body);
 
       reply.code(201);
 

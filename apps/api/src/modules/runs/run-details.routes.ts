@@ -1,15 +1,15 @@
 import type { FastifyInstance } from 'fastify';
 
-import { InMemoryRunRepository } from './run.repository.js';
+import type { RunRepository } from './run.repository.types.js';
 
 export function registerRunDetailRoutes(
   app: FastifyInstance,
-  runs: InMemoryRunRepository,
+  runs: RunRepository,
 ): void
 {
   app.get('/api/runs/:id', async (request, reply) => {
     const params = request.params as { id: string };
-    const run = runs.findById(params.id);
+    const run = await runs.findById(params.id);
 
     if (!run)
     {
@@ -18,7 +18,7 @@ export function registerRunDetailRoutes(
       return { error: 'Run not found' };
     }
 
-    const details = runs.findDetails(params.id);
+    const details = await runs.findDetails(params.id);
 
     return {
       run,

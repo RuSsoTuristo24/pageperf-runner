@@ -13,7 +13,7 @@ export function registerRunLlmReportRoutes(
 
 		try
 		{
-			return service.build(params.id, query.pass, query.page);
+			return await service.build(params.id, query.pass, query.page);
 		}
 		catch (error)
 		{

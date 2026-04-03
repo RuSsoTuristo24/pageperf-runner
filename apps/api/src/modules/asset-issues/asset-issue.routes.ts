@@ -4,12 +4,12 @@ import { AssetIssueDependencyError, AssetIssueService, AssetIssueValidationError
 
 export function registerAssetIssueRoutes(app: FastifyInstance, service: AssetIssueService): void
 {
-  app.get('/api/asset-issues', async () => service.list());
+  app.get('/api/asset-issues', async () => await service.list());
 
   app.post('/api/asset-issues', async (request, reply) => {
     try
     {
-      const issue = service.create(request.body);
+      const issue = await service.create(request.body);
 
       reply.code(201);
 
@@ -31,7 +31,7 @@ export function registerAssetIssueRoutes(app: FastifyInstance, service: AssetIss
   app.patch('/api/asset-issues', async (request, reply) => {
     try
     {
-      return service.update(request.body);
+      return await service.update(request.body);
     }
     catch (error)
     {
@@ -56,7 +56,7 @@ export function registerAssetIssueRoutes(app: FastifyInstance, service: AssetIss
   app.delete('/api/asset-issues', async (request, reply) => {
     try
     {
-      return service.delete(request.body);
+      return await service.delete(request.body);
     }
     catch (error)
     {

@@ -1,16 +1,16 @@
 import { profileSchema, type Profile } from '@webperf/shared';
 
-import { InMemoryProfileRepository } from './profile.repository.js';
+import type { ProfileRepository } from './profile.repository.types.js';
 
 export class ProfileValidationError extends Error {}
 
 export class ProfileService
 {
-  constructor(private readonly repository: InMemoryProfileRepository)
+  constructor(private readonly repository: ProfileRepository)
   {
   }
 
-  create(input: unknown): Profile & { id: string }
+  async create(input: unknown): Promise<Profile & { id: string }>
   {
     const parsed = profileSchema.safeParse(input);
 
@@ -30,17 +30,17 @@ export class ProfileService
     });
   }
 
-  list(): Array<Profile & { id: string }>
+  async list(): Promise<Array<Profile & { id: string }>>
   {
     return this.repository.list();
   }
 
-  findById(id: string): (Profile & { id: string }) | null
+  async findById(id: string): Promise<(Profile & { id: string }) | null>
   {
     return this.repository.findById(id);
   }
 
-  delete(id: string): boolean
+  async delete(id: string): Promise<boolean>
   {
     return this.repository.delete(id);
   }

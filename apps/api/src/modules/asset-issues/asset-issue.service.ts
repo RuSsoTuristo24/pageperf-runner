@@ -1,7 +1,7 @@
 import { assetIssueSchema, assetIssueStatusSchema, normalizeAssetUrl } from '@webperf/shared';
 
-import { InMemoryRunRepository, type RunRecord } from '../runs/run.repository.js';
-import { AssetIssueRepository, type StoredAssetIssue } from './asset-issue.repository.js';
+import type { RunRepository, RunRecord } from '../runs/run.repository.types.js';
+import type { AssetIssueRepository, StoredAssetIssue } from './asset-issue.repository.types.js';
 
 export class AssetIssueValidationError extends Error {}
 export class AssetIssueDependencyError extends Error {}
@@ -49,21 +49,23 @@ export class AssetIssueService
 {
   constructor(
     private readonly repository: AssetIssueRepository,
-    private readonly runs: InMemoryRunRepository,
+    private readonly runs: RunRepository,
   )
   {
   }
 
-  list(): AssetIssueListItem[]
+  async list(): Promise<AssetIssueListItem[]>
   {
-    return this.repository.list().map((issue) => this.#enrichIssue(issue));
+    const issues = await this.repository.list();
+
+    return Promise.all(issues.map((issue) => this.#enrichIssue(issue)));
   }
 
-  create(input: unknown): AssetIssueListItem
+  async create(input: unknown): Promise<AssetIssueListItem>
   {
     const payload = this.#validateCreateInput(input);
     const assetKey = normalizeAssetUrl(payload.assetUrl);
-    const currentIssue = this.repository.findByAssetKey(assetKey);
+    const currentIssue = await this.repository.findByAssetKey(assetKey);
     const now = new Date().toISOString();
     const storedIssue: StoredAssetIssue = {
       assetKey,
@@ -79,13 +81,13 @@ export class AssetIssueService
         : undefined,
     };
 
-    return this.#enrichIssue(this.repository.save(storedIssue));
+    return this.#enrichIssue(await this.repository.save(storedIssue));
   }
 
-  update(input: unknown): AssetIssueListItem
+  async update(input: unknown): Promise<AssetIssueListItem>
   {
     const payload = this.#validateUpdateInput(input);
-    const currentIssue = this.repository.findByAssetKey(payload.assetKey);
+    const currentIssue = await this.repository.findByAssetKey(payload.assetKey);
 
     if (!currentIssue)
     {
@@ -105,13 +107,13 @@ export class AssetIssueService
         : undefined,
     };
 
-    return this.#enrichIssue(this.repository.save(storedIssue));
+    return this.#enrichIssue(await this.repository.save(storedIssue));
   }
 
-  delete(input: unknown): { deleted: true; assetKey: string }
+  async delete(input: unknown): Promise<{ deleted: true; assetKey: string }>
   {
     const assetKey = this.#validateDeleteInput(input);
-    const deleted = this.repository.delete(assetKey);
+    const deleted = await this.repository.delete(assetKey);
 
     if (!deleted)
     {
@@ -230,9 +232,9 @@ export class AssetIssueService
     return candidate.assetKey;
   }
 
-  #enrichIssue(issue: StoredAssetIssue): AssetIssueListItem
+  async #enrichIssue(issue: StoredAssetIssue): Promise<AssetIssueListItem>
   {
-    const issueAppearance = this.#findLatestAppearance(issue.assetKey);
+    const issueAppearance = await this.#findLatestAppearance(issue.assetKey);
     const lastSeenAt = issueAppearance?.seenAt;
 
     return {
@@ -248,13 +250,13 @@ export class AssetIssueService
     };
   }
 
-  #findLatestAppearance(assetKey: string): { seenAt: string; runId: string } | null
+  async #findLatestAppearance(assetKey: string): Promise<{ seenAt: string; runId: string } | null>
   {
     let latestAppearance: { seenAt: string; runId: string } | null = null;
 
-    for (const run of this.runs.list())
+    for (const run of await this.runs.list())
     {
-      const appearance = this.#findRunAppearance(run, assetKey);
+      const appearance = await this.#findRunAppearance(run, assetKey);
 
       if (!appearance)
       {
@@ -270,10 +272,10 @@ export class AssetIssueService
     return latestAppearance;
   }
 
-  #findRunAppearance(run: RunRecord, assetKey: string): { seenAt: string; runId: string } | null
+  async #findRunAppearance(run: RunRecord, assetKey: string): Promise<{ seenAt: string; runId: string } | null>
   {
     const seenAt = run.completedAt ?? run.createdAt;
-    const details = this.runs.findDetails(run.id);
+    const details = await this.runs.findDetails(run.id);
     const requests = [
       ...details.requests,
       ...(details.passes ?? []).flatMap((pass) => pass.requests),

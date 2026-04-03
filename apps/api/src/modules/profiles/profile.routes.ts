@@ -4,12 +4,12 @@ import { ProfileService, ProfileValidationError } from './profile.service.js';
 
 export function registerProfileRoutes(app: FastifyInstance, service: ProfileService): void
 {
-  app.get('/api/profiles', async () => service.list());
+  app.get('/api/profiles', async () => await service.list());
 
   app.post('/api/profiles', async (request, reply) => {
     try
     {
-      const profile = service.create(request.body);
+      const profile = await service.create(request.body);
 
       reply.code(201);
 
@@ -38,7 +38,7 @@ export function registerProfileRoutes(app: FastifyInstance, service: ProfileServ
       return { error: 'Missing id' };
     }
 
-    const deleted = service.delete(id);
+    const deleted = await service.delete(id);
 
     if (!deleted)
     {

@@ -1,14 +1,14 @@
 import { normalizeAssetUrl } from '@webperf/shared';
 
 import { detectIssues } from '../issues/rule-engine.js';
-import type { InMemoryProfileRepository } from '../profiles/profile.repository.js';
+import type { ProfileRepository } from '../profiles/profile.repository.types.js';
 import type {
-	InMemoryRunRepository,
+	RunRepository,
 	PageMetricRecord,
 	RequestRecord,
 	RunPageRecord,
 	RunPassRecord,
-} from '../runs/run.repository.js';
+} from '../runs/run.repository.types.js';
 import type { AssetIssueService } from '../asset-issues/asset-issue.service.js';
 
 type LlmReportPassLabel = 'cold' | 'warm';
@@ -103,30 +103,30 @@ function pickPage(
 export class LlmReportService
 {
 	constructor(
-		private readonly runs: InMemoryRunRepository,
-		private readonly profiles: InMemoryProfileRepository,
+		private readonly runs: RunRepository,
+		private readonly profiles: ProfileRepository,
 		private readonly assetIssues: AssetIssueService,
 	)
 	{
 	}
 
-	build(runId: string, requestedPassLabel?: string, requestedPageKey?: string): {
+	async build(runId: string, requestedPassLabel?: string, requestedPageKey?: string): Promise<{
 		runId: string;
 		passLabel: LlmReportPassLabel;
 		format: 'markdown';
 		generatedAt: string;
 		content: string;
-	}
+	}>
 	{
-		const run = this.runs.findById(runId);
+		const run = await this.runs.findById(runId);
 
 		if (!run)
 		{
 			throw new Error('Run not found');
 		}
 
-		const profile = this.profiles.findById(run.profileId);
-		const details = this.runs.findDetails(runId);
+		const profile = await this.profiles.findById(run.profileId);
+		const details = await this.runs.findDetails(runId);
 		const selectedPage = pickPage(details.pages, requestedPageKey);
 		const pageMetrics = selectedPage?.pageMetrics ?? details.pageMetrics;
 		const requests = selectedPage?.requests ?? details.requests;
@@ -165,7 +165,8 @@ export class LlmReportService
 			warmLoadMs,
 		});
 		const requestAssetKeys = new Set(selectedRequests.map((request) => normalizeAssetUrl(request.url)));
-		const trackedIssues = this.assetIssues.list().filter((issue) => requestAssetKeys.has(issue.assetKey));
+		const allIssues = await this.assetIssues.list();
+		const trackedIssues = allIssues.filter((issue) => requestAssetKeys.has(issue.assetKey));
 		const lines = [
 			'# WebPerf Hub LLM Report',
 			'',

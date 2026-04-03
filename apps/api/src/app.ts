@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { captureAuthSession, createRunner, defaultExecuteLiveRun, validateAuthSession } from '@webperf/worker';
 import Fastify, { type FastifyInstance } from 'fastify';
 
-import { AssetIssueRepository } from './modules/asset-issues/asset-issue.repository.js';
+import { InMemoryAssetIssueRepository } from './modules/asset-issues/asset-issue.repository.js';
 import { registerAssetIssueRoutes } from './modules/asset-issues/asset-issue.routes.js';
 import { AssetIssueService } from './modules/asset-issues/asset-issue.service.js';
 import { LlmReportService } from './modules/analysis/llm-report.service.js';
@@ -49,7 +49,7 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 	const storageRoot = options.storageRoot ?? resolveDefaultStorageRoot();
 	const profileRepository = new InMemoryProfileRepository(storageRoot);
 	const runRepository = new InMemoryRunRepository(storageRoot);
-	const assetIssueRepository = new AssetIssueRepository(storageRoot);
+	const assetIssueRepository = new InMemoryAssetIssueRepository(storageRoot);
 	const authSessionRepository = new AuthSessionRepository(storageRoot);
 	const artifactStore = new ArtifactStore(path.join(storageRoot, 'artifacts'));
 	const runIngestService = new RunIngestService(runRepository);

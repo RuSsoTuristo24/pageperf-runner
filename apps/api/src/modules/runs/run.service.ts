@@ -7,16 +7,16 @@ import { RunIngestService } from '../ingest/run-ingest.service.js';
 import { detectIssues } from '../issues/rule-engine.js';
 import { createQueuedRunJob } from '@webperf/worker';
 
-import { InMemoryProfileRepository } from '../profiles/profile.repository.js';
-import {
-  InMemoryRunRepository,
-  type ArtifactRecord,
-  type PageMetricRecord,
-  type RunPageRecord,
-  type RequestRecord,
-  type RunPassRecord,
-  type RunRecord,
-} from './run.repository.js';
+import type { ProfileRepository } from '../profiles/profile.repository.types.js';
+import type {
+  RunRepository,
+  ArtifactRecord,
+  PageMetricRecord,
+  RunPageRecord,
+  RequestRecord,
+  RunPassRecord,
+  RunRecord,
+} from './run.repository.types.js';
 
 export class RunValidationError extends Error {}
 
@@ -42,8 +42,8 @@ type RunExecutor = ReturnType<typeof createQueuedRunJob> extends infer T
 export class RunService
 {
   constructor(
-    private readonly runs: InMemoryRunRepository,
-    private readonly profiles: InMemoryProfileRepository,
+    private readonly runs: RunRepository,
+    private readonly profiles: ProfileRepository,
     private readonly ingestService?: RunIngestService,
     private readonly artifactStore?: ArtifactStore,
     private readonly runExecutor?: RunExecutor,
@@ -52,7 +52,7 @@ export class RunService
   {
   }
 
-  create(input: unknown): RunRecord
+  async create(input: unknown): Promise<RunRecord>
   {
     if (
       !input
@@ -65,14 +65,14 @@ export class RunService
     }
 
     const payload = input as { profileId: string };
-    const profile = this.profiles.findById(payload.profileId);
+    const profile = await this.profiles.findById(payload.profileId);
 
     if (!profile)
     {
       throw new RunDependencyError('Profile not found');
     }
 
-    const run = this.runs.create(payload);
+    const run = await this.runs.create(payload);
     runSchema.parse({
       id: run.id,
       profileId: run.profileId,
@@ -82,7 +82,7 @@ export class RunService
     return run;
   }
 
-  list(): RunRecord[]
+  async list(): Promise<RunRecord[]>
   {
     return this.runs.list();
   }
@@ -106,14 +106,14 @@ export class RunService
       throw new RunValidationError('Invalid run id');
     }
 
-    const run = this.runs.findById(runId);
+    const run = await this.runs.findById(runId);
 
     if (!run)
     {
       throw new RunDependencyError('Run not found');
     }
 
-    const profile = this.profiles.findById(run.profileId);
+    const profile = await this.profiles.findById(run.profileId);
 
     if (!profile)
     {
@@ -125,7 +125,7 @@ export class RunService
       throw new RunDependencyError('Run execution is not configured');
     }
 
-    this.runs.setStatus(run.id, 'running');
+    await this.runs.setStatus(run.id, 'running');
 
     try
     {
@@ -203,7 +203,7 @@ export class RunService
     }
     catch (error)
     {
-      this.runs.setStatus(run.id, 'failed');
+      await this.runs.setStatus(run.id, 'failed');
       throw error;
     }
   }
@@ -215,7 +215,7 @@ export class RunService
       throw new RunValidationError('Invalid run id');
     }
 
-    const deleted = this.runs.delete(runId);
+    const deleted = await this.runs.delete(runId);
 
     if (!deleted)
     {
