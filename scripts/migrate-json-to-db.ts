@@ -25,7 +25,9 @@ if (!databaseUrl)
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const storageRoot = process.argv[2] ?? path.resolve(currentDir, '../storage');
 
-const db = createDatabase(databaseUrl);
+async function main(): Promise<void>
+{
+const db = createDatabase(databaseUrl!);
 await runMigrations(db);
 
 // ── Profiles ──
@@ -115,3 +117,9 @@ for (const issue of storedIssues)
 
 console.log('Migration complete!');
 process.exit(0);
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
