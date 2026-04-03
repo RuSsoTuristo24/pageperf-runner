@@ -6,7 +6,7 @@ import type { FastifyInstance } from 'fastify';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { createApp } from './app.js';
-import { schemaTables } from './db/schema.js';
+import * as schema from './db/schema.js';
 
 let app: FastifyInstance;
 let storageRoot = '';
@@ -37,15 +37,12 @@ describe('api app', () => {
 });
 
 describe('db schema', () => {
-  it('declares the core normalized tables', () => {
-    expect(Object.keys(schemaTables)).toEqual([
-      'profiles',
-      'runs',
-      'pageMetrics',
-      'requests',
-      'assets',
-      'issues',
-      'artifacts',
-    ]);
+  it('declares the core tables', () => {
+    expect(schema.profiles).toBeDefined();
+    expect(schema.runs).toBeDefined();
+    expect(schema.runDetails).toBeDefined();
+    expect(schema.pageMetrics).toBeDefined();
+    expect(schema.assetIssues).toBeDefined();
+    expect(schema.artifacts).toBeDefined();
   });
 });
