@@ -1,61 +1,67 @@
-import { integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { integer, jsonb, pgTable, real, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
+// ── Profiles ─────────────────────────────────────────────
 export const profiles = pgTable('profiles', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	name: text('name').notNull(),
-	url: text('url').notNull(),
-	throttling: text('throttling').notNull(),
-	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  id: uuid('id').defaultRandom().primaryKey(),
+  name: text('name').notNull(),
+  url: text('url').notNull(),
+  throttling: text('throttling').notNull().default('native'),
+  authMode: text('auth_mode').notNull().default('none'),
+  cacheMode: text('cache_mode').notNull().default('cold'),
+  pages: jsonb('pages').$type<string[]>().notNull().default([]),
+  repeatCount: integer('repeat_count').notNull().default(1),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
+// ── Runs ─────────────────────────────────────────────────
 export const runs = pgTable('runs', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	profileId: uuid('profile_id').notNull(),
-	status: text('status').notNull(),
-	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  id: uuid('id').defaultRandom().primaryKey(),
+  profileId: uuid('profile_id').notNull(),
+  status: text('status').notNull().default('queued'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  completedAt: timestamp('completed_at', { withTimezone: true }),
 });
 
+// ── Page Metrics (flat rows for Grafana) ─────────────────
 export const pageMetrics = pgTable('page_metrics', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	runId: uuid('run_id').notNull(),
-	name: text('name').notNull(),
-	value: integer('value').notNull(),
+  id: uuid('id').defaultRandom().primaryKey(),
+  runId: uuid('run_id').notNull(),
+  passLabel: text('pass_label'),
+  pageKey: text('page_key'),
+  name: text('name').notNull(),
+  value: real('value').notNull(),
 });
 
-export const requests = pgTable('requests', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	runId: uuid('run_id').notNull(),
-	url: text('url').notNull(),
-	resourceType: text('resource_type').notNull(),
-	status: integer('status').notNull(),
+// ── Run Details (JSONB for heavy nested data) ────────────
+export const runDetails = pgTable('run_details', {
+  runId: uuid('run_id').primaryKey(),
+  requests: jsonb('requests').notNull().default([]),
+  artifacts: jsonb('artifacts').notNull().default([]),
+  passes: jsonb('passes').notNull().default([]),
+  pages: jsonb('pages').notNull().default([]),
+  traceSummary: jsonb('trace_summary'),
+  jsExecutionSummary: jsonb('js_execution_summary'),
+  coverageSummary: jsonb('coverage_summary'),
+  pageDiagnostics: jsonb('page_diagnostics'),
 });
 
-export const assets = pgTable('assets', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	url: text('url').notNull(),
-	type: text('type').notNull(),
+// ── Asset Issues ─────────────────────────────────────────
+export const assetIssues = pgTable('asset_issues', {
+  assetKey: text('asset_key').primaryKey(),
+  assetUrl: text('asset_url').notNull(),
+  resourceType: text('resource_type').notNull(),
+  mantisUrl: text('mantis_url').notNull(),
+  status: text('status').notNull().default('open'),
+  note: text('note').notNull().default(''),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  closedAt: timestamp('closed_at', { withTimezone: true }),
 });
 
-export const issues = pgTable('issues', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	runId: uuid('run_id').notNull(),
-	code: text('code').notNull(),
-	severity: text('severity').notNull(),
-});
-
+// ── Artifacts (metadata only, files on disk) ─────────────
 export const artifacts = pgTable('artifacts', {
-	id: uuid('id').defaultRandom().primaryKey(),
-	runId: uuid('run_id').notNull(),
-	kind: text('kind').notNull(),
-	path: text('path').notNull(),
+  id: uuid('id').defaultRandom().primaryKey(),
+  runId: uuid('run_id').notNull(),
+  kind: text('kind').notNull(),
+  path: text('path').notNull(),
 });
-
-export const schemaTables = {
-	profiles,
-	runs,
-	pageMetrics,
-	requests,
-	assets,
-	issues,
-	artifacts,
-};

@@ -11,10 +11,11 @@
     "lint": "node -e \"console.log('api: lint placeholder')\""
   },
   "dependencies": {
-    "@webperf/worker": "workspace:*",
     "@webperf/shared": "workspace:*",
+    "@webperf/worker": "workspace:*",
     "drizzle-orm": "^0.44.5",
     "fastify": "^5.6.1",
+    "postgres": "^3.4.8",
     "zod": "^4.1.11"
   },
   "devDependencies": {
