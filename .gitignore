@@ -7,5 +7,8 @@ build/
 
 storage/logs/
 storage/data/
+storage/auth/
+storage/artifacts/
+storage/dev-processes.json
 apps/api/storage/artifacts/
 tmp-playwright-requests.txt
