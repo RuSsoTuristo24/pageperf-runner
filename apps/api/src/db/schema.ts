@@ -1,4 +1,4 @@
-import { integer, jsonb, pgTable, real, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, integer, jsonb, pgTable, real, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 // ── Profiles ─────────────────────────────────────────────
 export const profiles = pgTable('profiles', {
@@ -10,6 +10,8 @@ export const profiles = pgTable('profiles', {
   cacheMode: text('cache_mode').notNull().default('cold'),
   pages: jsonb('pages').$type<string[]>().notNull().default([]),
   repeatCount: integer('repeat_count').notNull().default(1),
+  scheduled: boolean('scheduled').notNull().default(false),
+  cronExpression: text('cron_expression'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 

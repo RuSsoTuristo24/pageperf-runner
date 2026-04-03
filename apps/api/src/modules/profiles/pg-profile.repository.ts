@@ -16,6 +16,8 @@ function toStoredProfile(row: typeof profiles.$inferSelect): StoredProfile
     cacheMode: row.cacheMode as StoredProfile['cacheMode'],
     pages: (row.pages as string[]) ?? [],
     repeatCount: row.repeatCount,
+    scheduled: row.scheduled,
+    cronExpression: row.cronExpression ?? undefined,
   };
 }
 
@@ -34,6 +36,8 @@ export class PgProfileRepository implements ProfileRepository
       cacheMode: input.cacheMode ?? 'cold',
       pages,
       repeatCount: input.repeatCount ?? 1,
+      scheduled: input.scheduled ?? false,
+      cronExpression: input.cronExpression ?? null,
     }).returning();
 
     return toStoredProfile(row);

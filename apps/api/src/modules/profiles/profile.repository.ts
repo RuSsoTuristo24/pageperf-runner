@@ -25,6 +25,8 @@ function normalizeStoredProfile(
     authMode: profile.authMode ?? 'none',
     cacheMode: profile.cacheMode ?? 'cold',
     pages: profile.pages?.length ? profile.pages : [profile.url],
+    scheduled: profile.scheduled ?? false,
+    cronExpression: profile.cronExpression ?? undefined,
   };
 }
 

@@ -29,6 +29,8 @@ import { ExtensionResolver } from './modules/extensions/extension-resolver.js';
 import { registerExtensionRoutes } from './modules/extensions/extension.routes.js';
 import { SettingsRepository } from './modules/settings/settings.repository.js';
 import { registerSettingsRoutes } from './modules/settings/settings.routes.js';
+import { SchedulerService } from './modules/scheduler/scheduler.service.js';
+import { registerSchedulerRoutes } from './modules/scheduler/scheduler.routes.js';
 import { registerHealthRoutes } from './routes/health.js';
 
 type AppOptions = {
@@ -91,6 +93,8 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 	// Mutable holder so the resolver can be swapped when settings change
 	const resolverHolder = { current: effectiveModulesRoot ? new ExtensionResolver(effectiveModulesRoot) : null };
 
+	const scheduler = new SchedulerService(runService, profileRepository);
+
 	registerHealthRoutes(app);
 	registerSettingsRoutes(app, settingsRepository, (newRoot) =>
 	{
@@ -103,6 +107,15 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 	registerRunRoutes(app, runService);
 	registerRunDetailRoutes(app, runRepository);
 	registerRunLlmReportRoutes(app, llmReportService);
+	registerSchedulerRoutes(app, scheduler);
+
+	app.addHook('onReady', async () => {
+		await scheduler.init();
+	});
+
+	app.addHook('onClose', async () => {
+		scheduler.stop();
+	});
 
 	return app;
 }

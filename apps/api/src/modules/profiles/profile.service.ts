@@ -27,6 +27,8 @@ export class ProfileService
       authMode: parsed.data.authMode,
       cacheMode: parsed.data.cacheMode,
       repeatCount: parsed.data.repeatCount,
+      scheduled: parsed.data.scheduled,
+      cronExpression: parsed.data.cronExpression,
     });
   }
 
