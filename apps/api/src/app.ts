@@ -4,7 +4,9 @@ import { fileURLToPath } from 'node:url';
 import { captureAuthSession, createRunner, defaultExecuteLiveRun, validateAuthSession } from '@webperf/worker';
 import Fastify, { type FastifyInstance } from 'fastify';
 
+import { type Database } from './db/drizzle.js';
 import { InMemoryAssetIssueRepository } from './modules/asset-issues/asset-issue.repository.js';
+import { PgAssetIssueRepository } from './modules/asset-issues/pg-asset-issue.repository.js';
 import { registerAssetIssueRoutes } from './modules/asset-issues/asset-issue.routes.js';
 import { AssetIssueService } from './modules/asset-issues/asset-issue.service.js';
 import { LlmReportService } from './modules/analysis/llm-report.service.js';
@@ -15,11 +17,13 @@ import { ArtifactStore } from './modules/artifacts/artifact-store.js';
 import { RunIngestService } from './modules/ingest/run-ingest.service.js';
 import { ProfileService } from './modules/profiles/profile.service.js';
 import { InMemoryProfileRepository } from './modules/profiles/profile.repository.js';
+import { PgProfileRepository } from './modules/profiles/pg-profile.repository.js';
 import { registerProfileRoutes } from './modules/profiles/profile.routes.js';
 import { RunService } from './modules/runs/run.service.js';
 import { registerRunDetailRoutes } from './modules/runs/run-details.routes.js';
 import { registerRunLlmReportRoutes } from './modules/runs/run-llm-report.routes.js';
 import { InMemoryRunRepository } from './modules/runs/run.repository.js';
+import { PgRunRepository } from './modules/runs/pg-run.repository.js';
 import { registerRunRoutes } from './modules/runs/run.routes.js';
 import { ExtensionResolver } from './modules/extensions/extension-resolver.js';
 import { registerExtensionRoutes } from './modules/extensions/extension.routes.js';
@@ -33,6 +37,7 @@ type AppOptions = {
 	authValidate?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
 	storageRoot?: string;
 	modulesRoot?: string;
+	db?: Database;
 };
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -47,9 +52,15 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 {
 	const app = Fastify();
 	const storageRoot = options.storageRoot ?? resolveDefaultStorageRoot();
-	const profileRepository = new InMemoryProfileRepository(storageRoot);
-	const runRepository = new InMemoryRunRepository(storageRoot);
-	const assetIssueRepository = new InMemoryAssetIssueRepository(storageRoot);
+	const profileRepository = options.db
+		? new PgProfileRepository(options.db)
+		: new InMemoryProfileRepository(storageRoot);
+	const runRepository = options.db
+		? new PgRunRepository(options.db)
+		: new InMemoryRunRepository(storageRoot);
+	const assetIssueRepository = options.db
+		? new PgAssetIssueRepository(options.db)
+		: new InMemoryAssetIssueRepository(storageRoot);
 	const authSessionRepository = new AuthSessionRepository(storageRoot);
 	const artifactStore = new ArtifactStore(path.join(storageRoot, 'artifacts'));
 	const runIngestService = new RunIngestService(runRepository);
