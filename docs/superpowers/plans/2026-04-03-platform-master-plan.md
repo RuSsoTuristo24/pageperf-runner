@@ -35,8 +35,7 @@ JSON data migrated, 26 tests passing, smoke test passed.
 ## Phase 4: Scheduled Runs in webperf-hub
 
 **Project:** `C:\bitrix_repos\webperf-hub`
-**Detailed plan:** TBD (after Phase 3)
-**Status:** Not started
+**Status:** DONE (2026-04-03)
 
 **Key deliverables:**
 - node-cron integration in API
