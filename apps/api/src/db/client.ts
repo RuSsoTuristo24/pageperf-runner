@@ -1,6 +1,2 @@
-export function createDatabaseConfig()
-{
-	return {
-		databaseUrl: process.env.DATABASE_URL ?? '',
-	};
-}
+export { createDatabase, type Database } from './drizzle.js';
+export { runMigrations } from './migrate.js';
