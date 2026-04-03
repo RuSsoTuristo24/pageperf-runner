@@ -8,58 +8,27 @@
 
 **Project:** `C:\bitrix_repos\webperf-hub`
 **Detailed plan:** `docs/superpowers/plans/2026-04-03-phase1-docker-postgres.md`
-**Status:** Not started
+**Status:** DONE (2026-04-03)
 
-**Key deliverables:**
-- docker-compose.yml: postgres:17 (port 5434) + api (port 4310)
-- Dockerfile for API
-- Drizzle migrations (tables already defined in schema.ts)
-- Refactor repositories: JSON file storage → Drizzle queries
-- Artifacts stay on filesystem (Docker volume)
-- Worker stays native on Windows, connects to API at localhost:4310
-- Web UI stays native (Vite dev server)
-- .env.example updated
-
-**Key risks:**
-- Large refactor of data access layer (every repository touches json-file.ts)
-- Need to handle migration of existing JSON data to Postgres
-- Worker ↔ API communication must work cross Docker/native boundary
+**Completed:** 11 commits, all repositories migrated, Docker + Postgres working, 
+JSON data migrated, 26 tests passing, smoke test passed.
 
 ---
 
-## Phase 2: Grafana Setup
-
-**Project:** `C:\bitrix_repos\grafana-perf` (new)
-**Detailed plan:** TBD (after Phase 1)
-**Status:** Not started
-
-**Key deliverables:**
-- docker-compose.yml: grafana OSS (port 3000)
-- Provisioned datasources: ext-audit Postgres (:5433), webperf-hub Postgres (:5434)
-- Initial dashboards: Overview, Extension Health, Page Performance
-- Dashboard JSON files committed for reproducibility
-
-**Key decisions:**
-- Grafana connects to host.docker.internal for local Postgres instances
-- Dashboards provisioned via YAML + JSON (infrastructure as code)
-
----
-
-## Phase 3: perflog MySQL Integration
+## Phase 2+3: Grafana Setup + perflog Integration
 
 **Project:** `C:\bitrix_repos\grafana-perf`
-**Detailed plan:** TBD (after Phase 2)
-**Status:** Not started
+**Status:** DONE (2026-04-03) — perflog datasource prepared, awaiting credentials
 
-**Key deliverables:**
-- MySQL datasource for perflog production server
-- Production Metrics dashboard: P80 exec_time, query_count, user performance
-- Cross-datasource annotations (hg revision correlation)
-- SQL queries for key tables: b_bx24_metrics_log, b_bx24_userperformance_test, b_bx24_userperformance_assets
+**Completed:**
+- docker-compose.yml with Grafana OSS
+- Provisioned datasources: ext-audit Postgres (:5433), webperf-hub Postgres (:5434)
+- perflog MySQL datasource template ready (uncomment + add credentials)
+- 3 dashboards: Overview (cross-source), Extension Health, Page Performance
+- perflog SQL queries prepared in dashboards (will activate when datasource configured)
+- All provisioned, all working on http://localhost:3000
 
-**Key risks:**
-- Network access to production MySQL (user has server access, needs to configure)
-- Query performance on production tables (read-only, but may need indexes)
+**Remaining:** User provides perflog MySQL credentials → uncomment in datasources.yml
 
 ---
 
