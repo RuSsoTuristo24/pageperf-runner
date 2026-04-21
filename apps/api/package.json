@@ -6,16 +6,18 @@
   "scripts": {
     "build": "node -e \"console.log('api: build placeholder')\"",
     "dev": "corepack pnpm exec tsx src/server.ts",
+    "db:migrate": "tsx src/db/migrate.ts",
     "profile:pages": "corepack pnpm exec tsx src/dev/run-pages.ts",
     "test": "vitest run",
     "lint": "node -e \"console.log('api: lint placeholder')\""
   },
   "dependencies": {
-    "@webperf/worker": "workspace:*",
     "@webperf/shared": "workspace:*",
+    "@webperf/worker": "workspace:*",
     "drizzle-orm": "^0.44.5",
     "fastify": "^5.6.1",
     "node-cron": "^4.2.1",
+    "postgres": "^3.4.9",
     "zod": "^4.1.11"
   },
   "devDependencies": {

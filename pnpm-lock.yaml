@@ -18,13 +18,16 @@ importers:
         version: link:../worker
       drizzle-orm:
         specifier: ^0.44.5
-        version: 0.44.7
+        version: 0.44.7(postgres@3.4.9)
       fastify:
         specifier: ^5.6.1
         version: 5.8.2
       node-cron:
         specifier: ^4.2.1
         version: 4.2.1
+      postgres:
+        specifier: ^3.4.9
+        version: 3.4.9
       zod:
         specifier: ^4.1.11
         version: 4.3.6
@@ -1430,6 +1433,10 @@ packages:
     resolution: {integrity: sha512-OW/rX8O/jXnm82Ey1k44pObPtdblfiuWnrd8X7GJ7emImCOstunGbXUpp7HdBrFQX6rJzn3sPT397Wp5aCwCHg==}
     engines: {node: ^10 || ^12 || >=14}
 
+  postgres@3.4.9:
+    resolution: {integrity: sha512-GD3qdB0x1z9xgFI6cdRD6xu2Sp2WCOEoe3mtnyB5Ee0XrrL5Pe+e4CCnJrRMnL1zYtRDZmQQVbvOttLnKDLnaw==}
+    engines: {node: '>=12'}
+
   pretty-format@27.5.1:
     resolution: {integrity: sha512-Qb1gy5OrP5+zDf2Bvnzdl3jsTf1qXVMazbvCoKhtKqVs4/YK4ozX4gKQJJVyNe+cajNPn0KoC0MC3FUmaHWEmQ==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -2472,7 +2479,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.7: {}
+  drizzle-orm@0.44.7(postgres@3.4.9):
+    optionalDependencies:
+      postgres: 3.4.9
 
   electron-to-chromium@1.5.313: {}
 
@@ -2784,6 +2793,8 @@ snapshots:
       nanoid: 3.3.11
       picocolors: 1.1.1
       source-map-js: 1.2.1
+
+  postgres@3.4.9: {}
 
   pretty-format@27.5.1:
     dependencies:
