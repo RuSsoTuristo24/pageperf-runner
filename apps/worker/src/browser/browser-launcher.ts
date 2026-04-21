@@ -1,11 +1,13 @@
 export type BrowserLaunchInput = {
   chromePath?: string;
   headless?: boolean;
+  extraArgs?: string[];
 };
 
 type LaunchOptions = {
   executablePath: string;
   headless: boolean;
+  args: string[];
 };
 
 type BrowserLike = {
@@ -24,7 +26,27 @@ export function resolveChromePath(input: BrowserLaunchInput): string
     return input.chromePath;
   }
 
+  const fromEnv = process.env.CHROME_PATH;
+  if (fromEnv && fromEnv.trim())
+  {
+    return fromEnv;
+  }
+
+  if (process.platform === 'linux')
+  {
+    return '/usr/bin/google-chrome';
+  }
+
   return 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
+}
+
+function defaultArgs(): string[]
+{
+  if (process.platform === 'linux')
+  {
+    return ['--no-sandbox', '--disable-dev-shm-usage'];
+  }
+  return [];
 }
 
 export function createLaunchOptions(input: BrowserLaunchInput = {}): LaunchOptions
@@ -32,6 +54,7 @@ export function createLaunchOptions(input: BrowserLaunchInput = {}): LaunchOptio
   return {
     executablePath: resolveChromePath(input),
     headless: input.headless ?? true,
+    args: [...defaultArgs(), ...(input.extraArgs ?? [])],
   };
 }
 
