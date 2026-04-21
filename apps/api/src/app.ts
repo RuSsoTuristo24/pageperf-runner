@@ -11,6 +11,7 @@ import { LlmReportService } from './modules/analysis/llm-report.service.js';
 import { AuthSessionRepository } from './modules/auth/auth-session.repository.js';
 import { registerAuthSessionRoutes } from './modules/auth/auth-session.routes.js';
 import { AuthSessionService } from './modules/auth/auth-session.service.js';
+import { ArtifactCleanupService } from './modules/artifacts/artifact-cleanup.js';
 import { ArtifactStore } from './modules/artifacts/artifact-store.js';
 import { RunIngestService } from './modules/ingest/run-ingest.service.js';
 import { ProfileService } from './modules/profiles/profile.service.js';
@@ -47,6 +48,12 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 	const assetIssueRepository = new AssetIssueRepository(storageRoot);
 	const authSessionRepository = new AuthSessionRepository(storageRoot);
 	const artifactStore = new ArtifactStore(path.join(storageRoot, 'artifacts'));
+	const retentionDays = Number(process.env.ARTIFACT_RETENTION_DAYS ?? 30);
+	const artifactCleanup = new ArtifactCleanupService(artifactStore, retentionDays);
+	artifactCleanup.schedule(process.env.ARTIFACT_CLEANUP_CRON ?? '0 3 1 * *');
+	app.addHook('onClose', async () => {
+		artifactCleanup.stop();
+	});
 	const runIngestService = new RunIngestService(runRepository);
 	const profileService = new ProfileService(profileRepository);
 	const assetIssueService = new AssetIssueService(assetIssueRepository, runRepository);
