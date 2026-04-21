@@ -1,0 +1,76 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    ports:
+      - "127.0.0.1:5434:5432"
+    environment:
+      POSTGRES_DB: webperf_hub
+      POSTGRES_USER: ${POSTGRES_USER:-bitrix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-bitrix}", "-d", "webperf_hub"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    labels:
+      - autoheal=true
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4310:4310"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bitrix}:${POSTGRES_PASSWORD}@postgres:5432/webperf_hub
+      WORKER_URL: http://worker:4311
+      WEB_DIST_PATH: /app/apps/web/dist
+      ARTIFACT_RETENTION_DAYS: "30"
+    volumes:
+      - artifacts:/app/storage/artifacts
+      - auth:/app/storage/auth
+      - data:/app/storage/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4310/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    labels:
+      - autoheal=true
+
+  worker:
+    build:
+      context: .
+      dockerfile: apps/worker-server/Dockerfile
+    ports:
+      - "6080:6080"
+    init: true
+    ipc: host
+    shm_size: 1gb
+    environment:
+      DISPLAY: ":99"
+      WORKER_PORT: "4311"
+      CHROME_PATH: /usr/bin/google-chrome
+    volumes:
+      - artifacts:/app/storage/artifacts
+      - auth:/app/storage/auth
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4311/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    labels:
+      - autoheal=true
+
+volumes:
+  pgdata:
+  artifacts:
+  auth:
+  data:
