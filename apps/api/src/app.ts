@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { captureAuthSession, createRunner, defaultExecuteLiveRun, validateAuthSession } from '@webperf/worker';
+import { createRunner } from '@webperf/worker';
 import Fastify, { type FastifyInstance } from 'fastify';
 
 import { AssetIssueRepository } from './modules/asset-issues/asset-issue.repository.js';
@@ -22,6 +22,7 @@ import { registerRunDetailRoutes } from './modules/runs/run-details.routes.js';
 import { registerRunLlmReportRoutes } from './modules/runs/run-llm-report.routes.js';
 import { InMemoryRunRepository } from './modules/runs/run.repository.js';
 import { registerRunRoutes } from './modules/runs/run.routes.js';
+import { WorkerClient } from './modules/worker-client/worker-client.js';
 import { registerHealthRoutes } from './routes/health.js';
 
 type AppOptions = {
@@ -43,6 +44,8 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 {
 	const app = Fastify();
 	const storageRoot = options.storageRoot ?? resolveDefaultStorageRoot();
+	const workerUrl = process.env.WORKER_URL ?? 'http://localhost:4311';
+	const workerClient = new WorkerClient(workerUrl);
 	const profileRepository = new InMemoryProfileRepository(storageRoot);
 	const runRepository = new InMemoryRunRepository(storageRoot);
 	const assetIssueRepository = new AssetIssueRepository(storageRoot);
@@ -60,11 +63,11 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 	const llmReportService = new LlmReportService(runRepository, profileRepository, assetIssueService);
 	const authSessionService = new AuthSessionService(
 		authSessionRepository,
-		options.authCapture ?? captureAuthSession,
-		options.authValidate ?? validateAuthSession,
+		options.authCapture ?? ((input) => workerClient.captureAuthSession(input)),
+		options.authValidate ?? ((input) => workerClient.validateAuthSession(input)),
 	);
 	const runner = createRunner({
-		executeLiveRun: options.runExecutor ?? defaultExecuteLiveRun,
+		executeLiveRun: options.runExecutor ?? ((job) => workerClient.executeLiveRun(job)),
 	});
 	const runService = new RunService(
 		runRepository,
