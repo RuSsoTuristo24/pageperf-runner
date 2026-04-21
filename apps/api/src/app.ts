@@ -25,11 +25,16 @@ import { registerRunRoutes } from './modules/runs/run.routes.js';
 import { WorkerClient } from './modules/worker-client/worker-client.js';
 import { registerHealthRoutes } from './routes/health.js';
 
+type AppDb = {
+	execute: (sql: string) => Promise<unknown>;
+};
+
 type AppOptions = {
 	runExecutor?: Parameters<typeof createRunner>[0]['executeLiveRun'];
 	authCapture?: (input: { targetUrl: string; storageStatePath: string }) => Promise<void>;
 	authValidate?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
 	storageRoot?: string;
+	db?: AppDb;
 };
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -78,7 +83,31 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 		authSessionService,
 	);
 
-	registerHealthRoutes(app);
+	registerHealthRoutes(app, {
+		checkDb: async () => {
+			if (!options.db) return true;
+			try
+			{
+				await options.db.execute('SELECT 1');
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
+		},
+		checkWorker: async () => {
+			try
+			{
+				const res = await fetch(`${workerUrl}/health`);
+				return res.ok;
+			}
+			catch
+			{
+				return false;
+			}
+		},
+	});
 	registerAssetIssueRoutes(app, assetIssueService);
 	registerAuthSessionRoutes(app, authSessionService);
 	registerProfileRoutes(app, profileService);

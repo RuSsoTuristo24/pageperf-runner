@@ -25,14 +25,18 @@ afterAll(async () => {
 });
 
 describe('api app', () => {
-  it('returns health payload', async () => {
+  it('returns health payload with db + worker status', async () => {
     const response = await app.inject({
       method: 'GET',
       url: '/health',
     });
 
-    expect(response.statusCode).toBe(200);
-    expect(response.json()).toEqual({ ok: true });
+    const body = response.json();
+    // No db injected → checkDb returns true (default); no worker running → checkWorker returns false.
+    expect(response.statusCode).toBe(503);
+    expect(body.ok).toBe(false);
+    expect(body.db).toBe('ok');
+    expect(body.worker).toBe('fail');
   });
 });
 
