@@ -7,6 +7,7 @@ type CaptureAuthSessionInput = {
   targetUrl: string;
   storageStatePath: string;
   timeoutMs?: number;
+  chromePath?: string;
 };
 
 function isAuthorizedTargetUrl(currentUrl: URL, targetUrl: URL): boolean
@@ -16,7 +17,7 @@ function isAuthorizedTargetUrl(currentUrl: URL, targetUrl: URL): boolean
 
 export async function captureAuthSession(input: CaptureAuthSessionInput): Promise<void>
 {
-  const browser = await launchBrowser({ headless: false });
+  const browser = await launchBrowser({ headless: false, chromePath: input.chromePath });
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     viewport: { width: 1440, height: 900 },
@@ -38,6 +39,7 @@ export async function captureAuthSession(input: CaptureAuthSessionInput): Promis
 
     await context.storageState({
       path: path.resolve(input.storageStatePath),
+      indexedDB: true,
     });
   }
   finally
@@ -50,6 +52,7 @@ type ValidateAuthSessionInput = {
   targetUrl: string;
   storageStatePath: string;
   timeoutMs?: number;
+  chromePath?: string;
 };
 
 export async function validateAuthSession(input: ValidateAuthSessionInput): Promise<boolean>
@@ -59,7 +62,7 @@ export async function validateAuthSession(input: ValidateAuthSessionInput): Prom
     return false;
   }
 
-  const browser = await launchBrowser();
+  const browser = await launchBrowser({ chromePath: input.chromePath });
   const context = await browser.newContext({
     ignoreHTTPSErrors: true,
     viewport: { width: 1440, height: 900 },
