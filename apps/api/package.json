@@ -12,6 +12,7 @@
     "lint": "node -e \"console.log('api: lint placeholder')\""
   },
   "dependencies": {
+    "@fastify/static": "^8.3.0",
     "@webperf/shared": "workspace:*",
     "@webperf/worker": "workspace:*",
     "drizzle-orm": "^0.44.5",

@@ -15,7 +15,7 @@ let storageRoot = '';
 
 beforeAll(async () => {
   storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-asset-issues-'));
-  app = createApp({ runExecutor, authCapture, authValidate, storageRoot });
+  app = await createApp({ runExecutor, authCapture, authValidate, storageRoot });
 });
 
 afterAll(async () => {

@@ -94,7 +94,7 @@ describe('runPagesWithApp', () => {
       });
 
     storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-run-pages-'));
-    app = createApp({ runExecutor, storageRoot });
+    app = await createApp({ runExecutor, storageRoot });
 
     const results = await runPagesWithApp(app, {
       throttling: 'slow-4g',

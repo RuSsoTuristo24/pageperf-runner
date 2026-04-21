@@ -15,7 +15,7 @@ let appStorageRoot = '';
 
 beforeAll(async () => {
   appStorageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-suite-'));
-  app = createApp({ runExecutor, authCapture, authValidate, storageRoot: appStorageRoot });
+  app = await createApp({ runExecutor, authCapture, authValidate, storageRoot: appStorageRoot });
 });
 
 afterAll(async () => {
@@ -106,7 +106,7 @@ describe('profile crud', () => {
 describe('run crud', () => {
   it('persists profiles and runs across app restarts when using the same storage root', async () => {
     const storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-'));
-    const firstApp = createApp({ runExecutor, authCapture, storageRoot });
+    const firstApp = await createApp({ runExecutor, authCapture, storageRoot });
 
     try {
       const profile = await firstApp.inject({
@@ -132,7 +132,7 @@ describe('run crud', () => {
 
       await firstApp.close();
 
-      const secondApp = createApp({ runExecutor, authCapture, storageRoot });
+      const secondApp = await createApp({ runExecutor, authCapture, storageRoot });
 
       try {
         const profiles = await secondApp.inject({
@@ -231,7 +231,7 @@ describe('run crud', () => {
         }),
       );
 
-      const legacyApp = createApp({ runExecutor, authCapture, authValidate, storageRoot });
+      const legacyApp = await createApp({ runExecutor, authCapture, authValidate, storageRoot });
 
       try {
         const response = await legacyApp.inject({
@@ -724,7 +724,7 @@ describe('run crud', () => {
 describe('auth session api', () => {
   it('reports missing auth state and stores a captured session', async () => {
     const storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-auth-'));
-    const isolatedApp = createApp({ runExecutor, authCapture, authValidate, storageRoot });
+    const isolatedApp = await createApp({ runExecutor, authCapture, authValidate, storageRoot });
 
     const missing = await isolatedApp.inject({
       method: 'GET',

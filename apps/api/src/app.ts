@@ -1,8 +1,11 @@
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createRunner } from '@webperf/worker';
 import Fastify, { type FastifyInstance } from 'fastify';
+
+import { registerStatic } from './static.js';
 
 import { AssetIssueRepository } from './modules/asset-issues/asset-issue.repository.js';
 import { registerAssetIssueRoutes } from './modules/asset-issues/asset-issue.routes.js';
@@ -45,7 +48,7 @@ function resolveDefaultStorageRoot(): string
 	return path.resolve(currentDirectoryPath, '../../..', 'storage');
 }
 
-export function createApp(options: AppOptions = {}): FastifyInstance
+export async function createApp(options: AppOptions = {}): Promise<FastifyInstance>
 {
 	const app = Fastify();
 	const storageRoot = options.storageRoot ?? resolveDefaultStorageRoot();
@@ -114,6 +117,17 @@ export function createApp(options: AppOptions = {}): FastifyInstance
 	registerRunRoutes(app, runService);
 	registerRunDetailRoutes(app, runRepository);
 	registerRunLlmReportRoutes(app, llmReportService);
+
+	const distPath = process.env.WEB_DIST_PATH ?? '/app/apps/web/dist';
+	if (existsSync(distPath))
+	{
+		await registerStatic(app, distPath);
+		app.log.info({ distPath }, 'web UI static registered');
+	}
+	else
+	{
+		app.log.warn({ distPath }, 'web UI dist not found — UI disabled');
+	}
 
 	return app;
 }

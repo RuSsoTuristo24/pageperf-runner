@@ -13,7 +13,7 @@ let storageRoot = '';
 
 beforeAll(async () => {
   storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-health-'));
-  app = createApp({ storageRoot });
+  app = await createApp({ storageRoot });
 });
 
 afterAll(async () => {

@@ -8,4 +8,5 @@ build/
 storage/logs/
 storage/data/
 apps/api/storage/artifacts/
+apps/api/src/__tmp_dist/
 tmp-playwright-requests.txt

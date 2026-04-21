@@ -162,7 +162,7 @@ function resolveWorkspaceStorageRoot(): string
 async function main(): Promise<void>
 {
 	const options = parseRunPagesArgs(process.argv.slice(2));
-	const app = createApp({ storageRoot: resolveWorkspaceStorageRoot() });
+	const app = await createApp({ storageRoot: resolveWorkspaceStorageRoot() });
 
 	try
 	{

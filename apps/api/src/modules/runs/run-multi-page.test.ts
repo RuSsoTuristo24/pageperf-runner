@@ -29,7 +29,7 @@ describe('multi-page run api', () => {
 	});
 
 	it('stores and returns multiple page results inside one run', async () => {
-		const app = createApp({ runExecutor, authCapture, authValidate, storageRoot });
+		const app = await createApp({ runExecutor, authCapture, authValidate, storageRoot });
 
 		runExecutor.mockResolvedValue({
 			runId: 'ignored',
@@ -502,7 +502,7 @@ describe('multi-page run api', () => {
 	});
 
 	it('deletes a run and removes it from the list', async () => {
-		const app = createApp({ runExecutor, authCapture, authValidate, storageRoot });
+		const app = await createApp({ runExecutor, authCapture, authValidate, storageRoot });
 
 		const profileResponse = await app.inject({
 			method: 'POST',
