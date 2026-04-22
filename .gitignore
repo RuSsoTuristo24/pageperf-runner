@@ -5,8 +5,6 @@ build/
 .env
 .env.local
 
-storage/logs/
-storage/data/
-apps/api/storage/artifacts/
+storage/
 apps/api/src/__tmp_dist/
 tmp-playwright-requests.txt
