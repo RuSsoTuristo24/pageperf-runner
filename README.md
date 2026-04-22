@@ -1,4 +1,4 @@
-# WebPerf Hub
+# pageperf-runner
 
 Standalone browser performance diagnostics tool for Bitrix pages.
 
@@ -53,7 +53,7 @@ Authenticated Bitrix pages can reuse a saved browser session.
 4. Wait until the browser returns to the target Bitrix page and closes itself
 5. Enable `Use saved auth session` when creating a profile
 
-Before every authenticated run, WebPerf Hub automatically validates that the saved session still opens the target portal page. If the session has expired, the run is blocked and the UI asks you to capture login again.
+Before every authenticated run, pageperf-runner automatically validates that the saved session still opens the target portal page. If the session has expired, the run is blocked and the UI asks you to capture login again.
 
 ## Cache Modes
 
