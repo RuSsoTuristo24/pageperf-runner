@@ -1,8 +1,0 @@
-{
-  "cookies": [
-    {"name":"PHPSESSID","value":"04EohXBX7bZ9uzzic4yFJ9HLQQTikqgM","domain":"poolvm140.aquaterra.bx","path":"/","expires":-1,"httpOnly":true,"secure":false,"sameSite":"Lax"},
-    {"name":"BITRIX_SM_LOGIN","value":"bxadmin0%40mail.bx24.net","domain":"poolvm140.aquaterra.bx","path":"/","expires":1804856202,"httpOnly":true,"secure":false,"sameSite":"Lax"},
-    {"name":"BITRIX_SM_SOUND_LOGIN_PLAYED","value":"Y","domain":"poolvm140.aquaterra.bx","path":"/","expires":-1,"httpOnly":false,"secure":false,"sameSite":"Lax"}
-  ],
-  "origins": []
-}

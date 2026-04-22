@@ -4,13 +4,13 @@ services:
     ports:
       - "127.0.0.1:5434:5432"
     environment:
-      POSTGRES_DB: webperf_hub
+      POSTGRES_DB: pageperf_runner
       POSTGRES_USER: ${POSTGRES_USER:-bitrix}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-bitrix}", "-d", "webperf_hub"]
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-bitrix}", "-d", "pageperf_runner"]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -27,7 +27,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-bitrix}:${POSTGRES_PASSWORD}@postgres:5432/webperf_hub
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bitrix}:${POSTGRES_PASSWORD}@postgres:5432/pageperf_runner
       WORKER_URL: http://worker:4311
       WEB_DIST_PATH: /app/apps/web/dist
       ARTIFACT_RETENTION_DAYS: "30"

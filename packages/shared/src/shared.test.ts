@@ -9,7 +9,7 @@ import { parseEnv } from './env.js';
 
 const validEnv = {
   PORT: '4310',
-  DATABASE_URL: 'postgres://postgres:postgres@localhost:5432/webperf_hub',
+  DATABASE_URL: 'postgres://postgres:postgres@localhost:5432/pageperf_runner',
   ARTIFACT_ROOT: '.\\storage\\artifacts',
   CHROME_PATH: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
 };
