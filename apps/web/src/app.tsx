@@ -322,7 +322,7 @@ function toErrorMessage(error: unknown): string
 		return error.message;
 	}
 
-	return 'Не удалось загрузить данные WebPerf Hub.';
+	return 'Не удалось загрузить данные pageperf-runner.';
 }
 
 function getStatusDisplayLabel(status: string): string
@@ -403,7 +403,7 @@ export function App()
 			{
 				if (!isCancelled)
 				{
-					setErrorMessage('Не удалось загрузить данные WebPerf Hub.');
+					setErrorMessage('Не удалось загрузить данные pageperf-runner.');
 				}
 			}
 			finally
@@ -896,7 +896,7 @@ export function App()
 			<aside className="sidebar">
 				<div className="brand-block">
 					<p className="eyebrow">Bitrix Frontend Diagnostics</p>
-					<h1>WebPerf Hub</h1>
+					<h1>pageperf-runner</h1>
 					<p className="brand-copy">Диагностика загрузки страниц, сетевых запросов и JS-бандлов портала Bitrix.</p>
 				</div>
 

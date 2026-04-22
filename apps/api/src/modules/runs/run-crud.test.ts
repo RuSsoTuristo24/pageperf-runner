@@ -651,7 +651,7 @@ describe('run crud', () => {
       format: 'markdown',
       passLabel: 'cold',
     });
-    expect(reportResponse.json().content).toContain('# WebPerf Hub LLM Report');
+    expect(reportResponse.json().content).toContain('# pageperf-runner LLM Report');
     expect(reportResponse.json().content).toContain('call.bundle.min.js');
     expect(reportResponse.json().content).toContain('https://mantis.local/view.php?id=501');
     expect(reportResponse.json().content).toContain('Coverage Summary');

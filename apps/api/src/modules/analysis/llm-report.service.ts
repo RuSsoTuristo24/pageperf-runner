@@ -167,7 +167,7 @@ export class LlmReportService
 		const requestAssetKeys = new Set(selectedRequests.map((request) => normalizeAssetUrl(request.url)));
 		const trackedIssues = this.assetIssues.list().filter((issue) => requestAssetKeys.has(issue.assetKey));
 		const lines = [
-			'# WebPerf Hub LLM Report',
+			'# pageperf-runner LLM Report',
 			'',
 			'## Run Context',
 			`- Run ID: ${run.id}`,

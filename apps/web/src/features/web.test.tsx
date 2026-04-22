@@ -28,7 +28,7 @@ function createEmptyAssetIssuesResponse(url: string, method = 'GET'): Response |
   return null;
 }
 
-describe('WebPerf Hub app shell', () => {
+describe('pageperf-runner app shell', () => {
   it('creates a profile and starts a new run from the UI', async () => {
     fetchMock.mockImplementation(async (input, init) => {
       const url = String(input);
@@ -319,7 +319,7 @@ describe('WebPerf Hub app shell', () => {
     render(<App />);
 
     expect(
-      screen.getByRole('heading', { name: 'WebPerf Hub' }),
+      screen.getByRole('heading', { name: 'pageperf-runner' }),
     ).toBeTruthy();
 
     expect(await screen.findByRole('button', { name: /Blank page native/i })).toBeTruthy();
@@ -558,7 +558,7 @@ describe('WebPerf Hub app shell', () => {
           runId: 'run-1',
           passLabel: 'cold',
           format: 'markdown',
-          content: '# WebPerf Hub LLM Report\n\n## Heavy Assets\n- call.bundle.min.js',
+          content: '# pageperf-runner LLM Report\n\n## Heavy Assets\n- call.bundle.min.js',
         }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
@@ -575,7 +575,7 @@ describe('WebPerf Hub app shell', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Сформировать LLM-отчёт' }));
 
     expect(await screen.findByRole('heading', { name: 'LLM Report' })).toBeTruthy();
-    expect(await screen.findByDisplayValue(/# WebPerf Hub LLM Report/)).toBeTruthy();
+    expect(await screen.findByDisplayValue(/# pageperf-runner LLM Report/)).toBeTruthy();
 
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('/api/runs/run-1/llm-report'));
@@ -1264,7 +1264,7 @@ describe('WebPerf Hub app shell', () => {
 
     render(<App />);
 
-    expect(await screen.findByText('Не удалось загрузить данные WebPerf Hub.')).toBeTruthy();
+    expect(await screen.findByText('Не удалось загрузить данные pageperf-runner.')).toBeTruthy();
   });
 
   it('shows stage placeholders when a run has no page metrics yet', async () => {
