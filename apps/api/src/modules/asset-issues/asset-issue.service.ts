@@ -1,4 +1,4 @@
-import { assetIssueSchema, assetIssueStatusSchema, normalizeAssetUrl } from '@webperf/shared';
+import { assetIssueSchema, assetIssueStatusSchema, normalizeAssetUrl } from '@pageperf-runner/shared';
 
 import { InMemoryRunRepository, type RunRecord } from '../runs/run.repository.js';
 import { AssetIssueRepository, type StoredAssetIssue } from './asset-issue.repository.js';

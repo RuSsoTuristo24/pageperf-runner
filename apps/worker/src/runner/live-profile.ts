@@ -514,14 +514,14 @@ async function installPageObservers(page: Page): Promise<void>
 {
 	await page.addInitScript(() => {
 		type WebPerfWindow = Window & {
-			__webperfMetrics?: {
+			__pageperfRunnerMetrics?: {
 				lcp?: number;
 				cls: number;
 			};
 		};
 
 		const runtimeWindow = window as WebPerfWindow;
-		runtimeWindow.__webperfMetrics = {
+		runtimeWindow.__pageperfRunnerMetrics = {
 			lcp: undefined,
 			cls: 0,
 		};
@@ -531,7 +531,7 @@ async function installPageObservers(page: Page): Promise<void>
 			new PerformanceObserver((entryList) => {
 				for (const entry of entryList.getEntries())
 				{
-					runtimeWindow.__webperfMetrics!.lcp = entry.startTime;
+					runtimeWindow.__pageperfRunnerMetrics!.lcp = entry.startTime;
 				}
 			}).observe({ type: 'largest-contentful-paint', buffered: true });
 		}
@@ -544,7 +544,7 @@ async function installPageObservers(page: Page): Promise<void>
 				{
 					if (!entry.hadRecentInput)
 					{
-						runtimeWindow.__webperfMetrics!.cls += entry.value ?? 0;
+						runtimeWindow.__pageperfRunnerMetrics!.cls += entry.value ?? 0;
 					}
 				}
 			}).observe({ type: 'layout-shift', buffered: true });
@@ -924,7 +924,7 @@ async function executeMeasuredPass(
 
 		const timing = await page.evaluate(() => {
 			type WebPerfWindow = Window & {
-				__webperfMetrics?: {
+				__pageperfRunnerMetrics?: {
 					lcp?: number;
 					cls: number;
 				};
@@ -944,7 +944,7 @@ async function executeMeasuredPass(
 					loadEventEnd: navigationEntry.loadEventEnd,
 				} : undefined,
 				paintEntries,
-				pageObserverMetrics: runtimeWindow.__webperfMetrics ?? {
+				pageObserverMetrics: runtimeWindow.__pageperfRunnerMetrics ?? {
 					lcp: undefined,
 					cls: 0,
 				},

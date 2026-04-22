@@ -14,7 +14,7 @@ let app: FastifyInstance;
 let storageRoot = '';
 
 beforeAll(async () => {
-  storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-asset-issues-'));
+  storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-asset-issues-'));
   app = await createApp({ runExecutor, authCapture, authValidate, storageRoot });
 });
 

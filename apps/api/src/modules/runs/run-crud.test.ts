@@ -14,7 +14,7 @@ let app: FastifyInstance;
 let appStorageRoot = '';
 
 beforeAll(async () => {
-  appStorageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-suite-'));
+  appStorageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-suite-'));
   app = await createApp({ runExecutor, authCapture, authValidate, storageRoot: appStorageRoot });
 });
 
@@ -105,7 +105,7 @@ describe('profile crud', () => {
 
 describe('run crud', () => {
   it('persists profiles and runs across app restarts when using the same storage root', async () => {
-    const storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-'));
+    const storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-'));
     const firstApp = await createApp({ runExecutor, authCapture, storageRoot });
 
     try {
@@ -181,7 +181,7 @@ describe('run crud', () => {
   });
 
   it('normalizes legacy trace summaries when loading persisted run details', async () => {
-    const storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-legacy-trace-'));
+    const storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-legacy-trace-'));
     const legacyRunId = 'legacy-run-1';
     const legacyProfileId = 'legacy-profile-1';
 
@@ -723,7 +723,7 @@ describe('run crud', () => {
 
 describe('auth session api', () => {
   it('reports missing auth state and stores a captured session', async () => {
-    const storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-auth-'));
+    const storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-auth-'));
     const isolatedApp = await createApp({ runExecutor, authCapture, authValidate, storageRoot });
 
     const missing = await isolatedApp.inject({

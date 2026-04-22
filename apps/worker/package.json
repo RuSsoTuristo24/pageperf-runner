@@ -1,5 +1,5 @@
 {
-  "name": "@webperf/worker",
+  "name": "@pageperf-runner/worker",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,7 +13,7 @@
     "lint": "node -e \"console.log('worker: lint placeholder')\""
   },
   "dependencies": {
-    "@webperf/shared": "workspace:*",
+    "@pageperf-runner/shared": "workspace:*",
     "playwright": "^1.55.0"
   },
   "devDependencies": {

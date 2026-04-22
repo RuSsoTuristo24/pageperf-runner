@@ -93,7 +93,7 @@ describe('runPagesWithApp', () => {
         ],
       });
 
-    storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-run-pages-'));
+    storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-run-pages-'));
     app = await createApp({ runExecutor, storageRoot });
 
     const results = await runPagesWithApp(app, {

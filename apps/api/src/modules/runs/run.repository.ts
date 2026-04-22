@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, rmSync } from 'node:fs';
 import path from 'node:path';
 
-import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary } from '@webperf/worker';
+import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary } from '@pageperf-runner/worker';
 
 import { readJsonFileSync, writeJsonFileSync } from '../../storage/json-file.js';
 

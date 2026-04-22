@@ -14,7 +14,7 @@ describe('multi-page run api', () => {
 	let storageRoot = '';
 
 	beforeEach(async () => {
-		storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-multipage-'));
+		storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-multipage-'));
 		runExecutor.mockReset();
 		authCapture.mockReset();
 		authValidate.mockReset();

@@ -1,4 +1,4 @@
-import { throttlingProfiles } from '@webperf/shared';
+import { throttlingProfiles } from '@pageperf-runner/shared';
 
 type RunnerNetworkInput = {
   throttling: 'native' | 'slow-4g' | 'fast-3g' | 'slow-3g' | 'custom';

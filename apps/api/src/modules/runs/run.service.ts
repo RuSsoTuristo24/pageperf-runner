@@ -1,11 +1,11 @@
-import { runSchema } from '@webperf/shared';
-import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary } from '@webperf/worker';
+import { runSchema } from '@pageperf-runner/shared';
+import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary } from '@pageperf-runner/worker';
 import { AuthSessionExpiredError, AuthSessionService } from '../auth/auth-session.service.js';
 import { buildAiSnapshot } from '../analysis/ai-snapshot.service.js';
 import { ArtifactStore } from '../artifacts/artifact-store.js';
 import { RunIngestService } from '../ingest/run-ingest.service.js';
 import { detectIssues } from '../issues/rule-engine.js';
-import { createQueuedRunJob } from '@webperf/worker';
+import { createQueuedRunJob } from '@pageperf-runner/worker';
 
 import { InMemoryProfileRepository } from '../profiles/profile.repository.js';
 import {

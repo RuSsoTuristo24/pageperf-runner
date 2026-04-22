@@ -25,7 +25,7 @@ COPY apps/worker apps/worker
 COPY packages/shared packages/shared
 
 # Build web UI (produces apps/web/dist)
-RUN corepack pnpm --filter @webperf/web build
+RUN corepack pnpm --filter @pageperf-runner/web build
 
 # ----------------------------------------------------------------------------
 FROM node:22-bookworm-slim AS runtime
@@ -47,4 +47,4 @@ ENV WEB_DIST_PATH=/app/apps/web/dist
 
 EXPOSE 4310
 
-CMD ["corepack", "pnpm", "--filter", "@webperf/api", "exec", "tsx", "src/server.ts"]
+CMD ["corepack", "pnpm", "--filter", "@pageperf-runner/api", "exec", "tsx", "src/server.ts"]

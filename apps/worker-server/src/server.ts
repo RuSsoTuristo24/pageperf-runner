@@ -3,7 +3,7 @@ import {
   captureAuthSession,
   defaultExecuteLiveRun,
   validateAuthSession,
-} from '@webperf/worker';
+} from '@pageperf-runner/worker';
 
 import { registerWorkerRoutes } from './routes.js';
 import { checkWorkerHealth } from './health-check.js';

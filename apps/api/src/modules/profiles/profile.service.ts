@@ -1,4 +1,4 @@
-import { profileSchema, type Profile } from '@webperf/shared';
+import { profileSchema, type Profile } from '@pageperf-runner/shared';
 
 import { InMemoryProfileRepository } from './profile.repository.js';
 

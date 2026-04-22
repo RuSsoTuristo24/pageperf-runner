@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 
-import type { Profile } from '@webperf/shared';
+import type { Profile } from '@pageperf-runner/shared';
 import { readJsonFileSync, writeJsonFileSync } from '../../storage/json-file.js';
 
 type StoredProfile = Profile & { id: string };

@@ -12,7 +12,7 @@ let app: FastifyInstance;
 let storageRoot = '';
 
 beforeAll(async () => {
-  storageRoot = await mkdtemp(path.join(tmpdir(), 'webperf-api-health-'));
+  storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-health-'));
   app = await createApp({ storageRoot });
 });
 

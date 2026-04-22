@@ -1,5 +1,5 @@
 {
-  "name": "webperf-hub",
+  "name": "pageperf-runner",
   "private": true,
   "packageManager": "pnpm@10.32.1",
   "engines": {
@@ -7,9 +7,9 @@
   },
   "scripts": {
     "build": "corepack pnpm -r build",
-    "dev:api": "corepack pnpm --filter @webperf/api dev",
-    "dev:web": "corepack pnpm --filter @webperf/web dev",
-    "profile:pages": "corepack pnpm --filter @webperf/api profile:pages",
+    "dev:api": "corepack pnpm --filter @pageperf-runner/api dev",
+    "dev:web": "corepack pnpm --filter @pageperf-runner/web dev",
+    "profile:pages": "corepack pnpm --filter @pageperf-runner/api profile:pages",
     "test": "corepack pnpm -r test",
     "lint": "corepack pnpm -r lint"
   }

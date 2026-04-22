@@ -18,13 +18,13 @@ if ($SeparateWindows)
 	$apiProcess = Start-Process powershell -ArgumentList @(
 		'-NoExit',
 		'-Command',
-		"Set-Location '$root'; corepack pnpm --filter @webperf/api dev"
+		"Set-Location '$root'; corepack pnpm --filter @pageperf-runner/api dev"
 	) -PassThru
 
 	$webProcess = Start-Process powershell -ArgumentList @(
 		'-NoExit',
 		'-Command',
-		"Set-Location '$root'; corepack pnpm --filter @webperf/web dev"
+		"Set-Location '$root'; corepack pnpm --filter @pageperf-runner/web dev"
 	) -PassThru
 
 	Write-Host "API PID: $($apiProcess.Id)"
@@ -42,13 +42,13 @@ $webErrorLog = Join-Path $logRoot 'web-dev.err.log'
 $apiProcess = Start-Process powershell -WindowStyle Hidden -ArgumentList @(
 	'-NoProfile',
 	'-Command',
-	"Set-Location '$root'; corepack pnpm --filter @webperf/api dev"
+	"Set-Location '$root'; corepack pnpm --filter @pageperf-runner/api dev"
 ) -RedirectStandardOutput $apiLog -RedirectStandardError $apiErrorLog -PassThru
 
 $webProcess = Start-Process powershell -WindowStyle Hidden -ArgumentList @(
 	'-NoProfile',
 	'-Command',
-	"Set-Location '$root'; corepack pnpm --filter @webperf/web dev"
+	"Set-Location '$root'; corepack pnpm --filter @pageperf-runner/web dev"
 ) -RedirectStandardOutput $webLog -RedirectStandardError $webErrorLog -PassThru
 
 @{

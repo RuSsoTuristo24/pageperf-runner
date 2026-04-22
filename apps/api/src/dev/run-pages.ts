@@ -2,7 +2,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import type { FastifyInstance } from 'fastify';
-import type { Profile } from '@webperf/shared';
+import type { Profile } from '@pageperf-runner/shared';
 
 import { createApp } from '../app.js';
 

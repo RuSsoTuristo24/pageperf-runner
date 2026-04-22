@@ -1,4 +1,4 @@
-import { requestSchema, type WebPerfRequest } from '@webperf/shared';
+import { requestSchema, type WebPerfRequest } from '@pageperf-runner/shared';
 
 export type RawNetworkEntry = {
   url: string;

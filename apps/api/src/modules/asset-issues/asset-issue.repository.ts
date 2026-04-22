@@ -1,6 +1,6 @@
 import path from 'node:path';
 
-import type { AssetIssue } from '@webperf/shared';
+import type { AssetIssue } from '@pageperf-runner/shared';
 
 import { readJsonFileSync, writeJsonFileSync } from '../../storage/json-file.js';
 

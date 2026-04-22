@@ -1,4 +1,4 @@
-import { normalizeAssetUrl } from '@webperf/shared';
+import { normalizeAssetUrl } from '@pageperf-runner/shared';
 
 import { detectIssues } from '../issues/rule-engine.js';
 import type { InMemoryProfileRepository } from '../profiles/profile.repository.js';

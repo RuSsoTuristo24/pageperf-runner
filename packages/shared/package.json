@@ -1,5 +1,5 @@
 {
-  "name": "@webperf/shared",
+  "name": "@pageperf-runner/shared",
   "version": "0.0.0",
   "private": true,
   "type": "module",

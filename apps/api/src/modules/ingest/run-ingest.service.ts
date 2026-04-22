@@ -1,5 +1,5 @@
-import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary } from '@webperf/worker';
-import { requestSchema } from '@webperf/shared';
+import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary } from '@pageperf-runner/worker';
+import { requestSchema } from '@pageperf-runner/shared';
 
 import {
   InMemoryRunRepository,

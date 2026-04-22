@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { createRunner } from '@webperf/worker';
+import { createRunner } from '@pageperf-runner/worker';
 import Fastify, { type FastifyInstance } from 'fastify';
 
 import { registerStatic } from './static.js';
