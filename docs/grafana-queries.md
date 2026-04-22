@@ -1,6 +1,6 @@
 # Grafana Queries
 
-`WebPerf Hub` exposes SQL-ready summary views intended for Grafana dashboards.
+`pageperf-runner` exposes SQL-ready summary views intended for Grafana dashboards.
 
 ## Expected Views
 
