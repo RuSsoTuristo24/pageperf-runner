@@ -13,10 +13,10 @@ importers:
       '@fastify/static':
         specifier: ^8.3.0
         version: 8.3.0
-      '@webperf/shared':
+      '@pageperf-runner/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@webperf/worker':
+      '@pageperf-runner/worker':
         specifier: workspace:*
         version: link:../worker
       drizzle-orm:
@@ -84,7 +84,7 @@ importers:
 
   apps/worker:
     dependencies:
-      '@webperf/shared':
+      '@pageperf-runner/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       playwright:
@@ -103,10 +103,10 @@ importers:
 
   apps/worker-server:
     dependencies:
-      '@webperf/shared':
+      '@pageperf-runner/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@webperf/worker':
+      '@pageperf-runner/worker':
         specifier: workspace:*
         version: link:../worker
       fastify:
