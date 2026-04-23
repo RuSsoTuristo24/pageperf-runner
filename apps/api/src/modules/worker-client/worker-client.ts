@@ -23,6 +23,12 @@ export class WorkerClient
     return body.valid;
   }
 
+  async refreshAuthSession(input: { targetUrl: string; storageStatePath: string; chromePath?: string; timeoutMs?: number }): Promise<boolean>
+  {
+    const body = await this.postJson('/refresh-auth', input) as { refreshed: boolean };
+    return body.refreshed;
+  }
+
   private async postJson(path: string, payload: unknown, opts: { expectBody?: boolean } = {}): Promise<unknown>
   {
     const res = await this.fetchImpl(`${this.baseUrl}${path}`, {

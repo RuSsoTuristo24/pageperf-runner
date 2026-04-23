@@ -5,6 +5,7 @@ export type WorkerRoutesDeps = {
   executeLiveRun: (input: unknown) => Promise<unknown>;
   captureAuthSession: (input: { targetUrl: string; storageStatePath: string; chromePath?: string; timeoutMs?: number }) => Promise<void>;
   validateAuthSession: (input: { targetUrl: string; storageStatePath: string; chromePath?: string; timeoutMs?: number }) => Promise<boolean>;
+  refreshAuthSession: (input: { targetUrl: string; storageStatePath: string; chromePath?: string; timeoutMs?: number }) => Promise<boolean>;
   checkWorker?: () => Promise<{ ok: boolean; xvfb: boolean; chrome: boolean }>;
 };
 
@@ -37,6 +38,13 @@ export function registerWorkerRoutes(app: FastifyInstance, deps: WorkerRoutesDep
     const valid = await deps.validateAuthSession(body);
     reply.code(200);
     return { valid };
+  });
+
+  app.post('/refresh-auth', async (req, reply) => {
+    const body = AuthSchema.parse(req.body);
+    const refreshed = await deps.refreshAuthSession(body);
+    reply.code(200);
+    return { refreshed };
   });
 
   app.get('/health', async (_req, reply) => {

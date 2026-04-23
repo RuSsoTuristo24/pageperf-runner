@@ -22,11 +22,13 @@ async function writeStateFile(filePath: string): Promise<void>
 function createService(overrides?: {
   capture?: (input: { targetUrl: string; storageStatePath: string }) => Promise<void>;
   validate?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
+  refresh?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
 }): {
   service: AuthSessionService;
   repository: AuthSessionRepository;
   captureFn: ReturnType<typeof vi.fn>;
   validateFn: ReturnType<typeof vi.fn>;
+  refreshFn: ReturnType<typeof vi.fn>;
 }
 {
   const repository = new AuthSessionRepository(storageRoot);
@@ -34,13 +36,15 @@ function createService(overrides?: {
     await writeStateFile(storageStatePath);
   }));
   const validateFn = vi.fn(overrides?.validate ?? (async () => true));
+  const refreshFn = vi.fn(overrides?.refresh ?? (async () => true));
   const service = new AuthSessionService(
     repository,
     captureFn as (input: { targetUrl: string; storageStatePath: string }) => Promise<void>,
     validateFn as (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>,
+    refreshFn as (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>,
   );
 
-  return { service, repository, captureFn, validateFn };
+  return { service, repository, captureFn, validateFn, refreshFn };
 }
 
 beforeEach(async () => {
@@ -131,5 +135,76 @@ describe('AuthSessionService.ensureReadyForUrl', () => {
     const statePath = await service.ensureReadyForUrl('https://portal.bitrix24.ru/blank.php');
 
     expect(statePath).toBe(repository.getStateFilePath('portal.bitrix24.ru'));
+  });
+});
+
+describe('AuthSessionService.refresh', () => {
+  it('calls the refresh fn and updates updatedAt on success', async () => {
+    const { service, refreshFn } = createService();
+    await service.capture({ targetUrl: 'https://portal.bitrix24.ru/' });
+    const before = service.getForHost('portal.bitrix24.ru').updatedAt ?? '';
+
+    // clock advance without fake-timers: flush microtasks and wait 10ms
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    const ok = await service.refresh('portal.bitrix24.ru');
+
+    expect(ok).toBe(true);
+    expect(refreshFn).toHaveBeenCalledTimes(1);
+    expect(refreshFn).toHaveBeenCalledWith(expect.objectContaining({
+      targetUrl: 'https://portal.bitrix24.ru/',
+    }));
+    const after = service.getForHost('portal.bitrix24.ru').updatedAt ?? '';
+    expect(after > before).toBe(true);
+  });
+
+  it('returns false and does not touch state when there is no saved session', async () => {
+    const { service, refreshFn } = createService();
+
+    const ok = await service.refresh('unknown.bitrix24.ru');
+
+    expect(ok).toBe(false);
+    expect(refreshFn).not.toHaveBeenCalled();
+  });
+
+  it('returns false when the saved session is not ready', async () => {
+    const { service, refreshFn } = createService({
+      capture: async () => {
+        throw new Error('boom');
+      },
+    });
+    await service.capture({ targetUrl: 'https://portal.bitrix24.ru/' });
+
+    const ok = await service.refresh('portal.bitrix24.ru');
+
+    expect(ok).toBe(false);
+    expect(refreshFn).not.toHaveBeenCalled();
+  });
+
+  it('returns false without mutating the record when refresh fn returns false', async () => {
+    const { service, refreshFn } = createService({
+      refresh: async () => false,
+    });
+    await service.capture({ targetUrl: 'https://portal.bitrix24.ru/' });
+    const before = service.getForHost('portal.bitrix24.ru');
+
+    const ok = await service.refresh('portal.bitrix24.ru');
+
+    expect(ok).toBe(false);
+    expect(refreshFn).toHaveBeenCalledTimes(1);
+    expect(service.getForHost('portal.bitrix24.ru').updatedAt).toBe(before.updatedAt);
+  });
+
+  it('swallows exceptions from the refresh fn', async () => {
+    const { service } = createService({
+      refresh: async () => {
+        throw new Error('worker down');
+      },
+    });
+    await service.capture({ targetUrl: 'https://portal.bitrix24.ru/' });
+
+    const ok = await service.refresh('portal.bitrix24.ru');
+
+    expect(ok).toBe(false);
   });
 });

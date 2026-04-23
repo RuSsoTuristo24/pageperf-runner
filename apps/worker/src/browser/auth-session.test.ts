@@ -28,7 +28,7 @@ vi.mock('playwright', () => {
 });
 
 import * as playwrightMock from 'playwright';
-import { captureAuthSession, validateAuthSession } from './auth-session.js';
+import { captureAuthSession, refreshAuthSession, validateAuthSession } from './auth-session.js';
 
 describe('auth-session chromePath propagation', () => {
   it('captureAuthSession passes chromePath to launchBrowser', async () => {
@@ -58,6 +58,53 @@ describe('auth-session chromePath propagation', () => {
     expect(__internals.storageState).toHaveBeenCalledWith(
       expect.objectContaining({ indexedDB: true }),
     );
+  });
+
+  it('refreshAuthSession persists storageState back to the same file when still authorized', async () => {
+    const { __internals } = playwrightMock as any;
+    __internals.launch.mockClear();
+    __internals.storageState.mockClear();
+
+    const { writeFileSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const nodePath = await import('node:path');
+    const storagePath = nodePath.join(tmpdir(), 'refresh-state.json');
+    writeFileSync(storagePath, '{}');
+
+    const ok = await refreshAuthSession({
+      targetUrl: 'https://example.bitrix24.com/',
+      storageStatePath: storagePath,
+    });
+
+    expect(ok).toBe(true);
+    expect(__internals.launch).toHaveBeenCalledWith(
+      expect.objectContaining({ headless: true }),
+    );
+    expect(__internals.storageState).toHaveBeenCalledWith(
+      expect.objectContaining({
+        indexedDB: true,
+        path: nodePath.resolve(storagePath),
+      }),
+    );
+  });
+
+  it('refreshAuthSession returns false and skips persistence when target host mismatches', async () => {
+    const { __internals } = playwrightMock as any;
+    __internals.storageState.mockClear();
+
+    const { writeFileSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const nodePath = await import('node:path');
+    const storagePath = nodePath.join(tmpdir(), 'refresh-state.json');
+    writeFileSync(storagePath, '{}');
+
+    const ok = await refreshAuthSession({
+      targetUrl: 'https://different.bitrix24.com/',
+      storageStatePath: storagePath,
+    });
+
+    expect(ok).toBe(false);
+    expect(__internals.storageState).not.toHaveBeenCalled();
   });
 
   it('validateAuthSession passes chromePath to launchBrowser', async () => {

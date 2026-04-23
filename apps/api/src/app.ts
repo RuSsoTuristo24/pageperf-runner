@@ -13,6 +13,7 @@ import { AssetIssueService } from './modules/asset-issues/asset-issue.service.js
 import { LlmReportService } from './modules/analysis/llm-report.service.js';
 import { AuthSessionRepository } from './modules/auth/auth-session.repository.js';
 import { registerAuthSessionRoutes } from './modules/auth/auth-session.routes.js';
+import { AuthSessionScheduler } from './modules/auth/auth-session-scheduler.js';
 import { AuthSessionService } from './modules/auth/auth-session.service.js';
 import { registerConfigRoutes } from './modules/config/config.routes.js';
 import { ArtifactCleanupService } from './modules/artifacts/artifact-cleanup.js';
@@ -37,6 +38,7 @@ type AppOptions = {
 	runExecutor?: Parameters<typeof createRunner>[0]['executeLiveRun'];
 	authCapture?: (input: { targetUrl: string; storageStatePath: string }) => Promise<void>;
 	authValidate?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
+	authRefresh?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
 	storageRoot?: string;
 	db?: AppDb;
 };
@@ -66,6 +68,9 @@ export async function createApp(options: AppOptions = {}): Promise<FastifyInstan
 	app.addHook('onClose', async () => {
 		artifactCleanup.stop();
 	});
+	// Auth-session refresh scheduler: keep saved logins alive without manual
+	// recapture. Default every 6 hours; override with AUTH_REFRESH_CRON.
+	// Empty string disables the scheduler entirely.
 	const runIngestService = new RunIngestService(runRepository);
 	const profileService = new ProfileService(profileRepository);
 	const assetIssueService = new AssetIssueService(assetIssueRepository, runRepository);
@@ -74,7 +79,19 @@ export async function createApp(options: AppOptions = {}): Promise<FastifyInstan
 		authSessionRepository,
 		options.authCapture ?? ((input) => workerClient.captureAuthSession(input)),
 		options.authValidate ?? ((input) => workerClient.validateAuthSession(input)),
+		options.authRefresh ?? ((input) => workerClient.refreshAuthSession(input)),
 	);
+	const authRefreshCron = process.env.AUTH_REFRESH_CRON ?? '0 */6 * * *';
+	const authRefreshScheduler = authRefreshCron.trim() === ''
+		? null
+		: new AuthSessionScheduler(authSessionService);
+	if (authRefreshScheduler)
+	{
+		authRefreshScheduler.schedule(authRefreshCron);
+		app.addHook('onClose', async () => {
+			authRefreshScheduler.stop();
+		});
+	}
 	const runner = createRunner({
 		executeLiveRun: options.runExecutor ?? ((job) => workerClient.executeLiveRun(job)),
 	});

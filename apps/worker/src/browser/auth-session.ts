@@ -91,3 +91,62 @@ export async function validateAuthSession(input: ValidateAuthSessionInput): Prom
     await browser.close();
   }
 }
+
+type RefreshAuthSessionInput = {
+  targetUrl: string;
+  storageStatePath: string;
+  timeoutMs?: number;
+  chromePath?: string;
+};
+
+// Load the saved storageState into a headless context, visit targetUrl, and
+// if we still end up on the same host — rewrite storageState from the live
+// context. Bitrix rotates PHPSESSID and bumps persistent cookie expiry on
+// every visit, so this is what actually keeps captured sessions from dying.
+export async function refreshAuthSession(input: RefreshAuthSessionInput): Promise<boolean>
+{
+  if (!existsSync(input.storageStatePath))
+  {
+    return false;
+  }
+
+  const browser = await launchBrowser({ chromePath: input.chromePath });
+  const context = await browser.newContext({
+    ignoreHTTPSErrors: true,
+    viewport: { width: 1440, height: 900 },
+    storageState: path.resolve(input.storageStatePath),
+  });
+  const page = await context.newPage();
+  const targetUrl = new URL(input.targetUrl);
+
+  try
+  {
+    await page.goto(input.targetUrl, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000,
+    });
+
+    await page.waitForLoadState('networkidle', { timeout: input.timeoutMs ?? 10000 }).catch(() => undefined);
+
+    const stillAuthorized = isAuthorizedTargetUrl(new URL(page.url()), targetUrl);
+    if (!stillAuthorized)
+    {
+      return false;
+    }
+
+    await context.storageState({
+      path: path.resolve(input.storageStatePath),
+      indexedDB: true,
+    });
+
+    return true;
+  }
+  catch
+  {
+    return false;
+  }
+  finally
+  {
+    await browser.close();
+  }
+}

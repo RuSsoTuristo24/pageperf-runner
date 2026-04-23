@@ -2,6 +2,7 @@ import Fastify from 'fastify';
 import {
   captureAuthSession,
   defaultExecuteLiveRun,
+  refreshAuthSession,
   validateAuthSession,
 } from '@pageperf-runner/worker';
 
@@ -20,6 +21,7 @@ async function main(): Promise<void>
     executeLiveRun: defaultExecuteLiveRun,
     captureAuthSession,
     validateAuthSession,
+    refreshAuthSession,
     checkWorker: () => checkWorkerHealth(chromePath, display),
   });
 

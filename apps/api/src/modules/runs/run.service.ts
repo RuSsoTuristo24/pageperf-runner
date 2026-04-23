@@ -190,6 +190,22 @@ export class RunService
         pages: executionResult.pages ?? [],
       });
 
+      // Fire-and-forget: refresh the saved auth state so PHPSESSID rotation
+      // and persistent-cookie expiry bumps land on disk. Any failure here is
+      // intentionally swallowed — it must never fail a completed run.
+      if (profile.authMode === 'session' && this.authSessionService)
+      {
+        try
+        {
+          const host = new URL(profile.url).host;
+          void this.authSessionService.refresh(host).catch(() => undefined);
+        }
+        catch
+        {
+          // URL parsing failure — skip
+        }
+      }
+
       return {
         ...stored,
         issues,
