@@ -492,12 +492,24 @@ export type CreateProfilePayload = {
 };
 
 export type ApiAuthSession = {
-	id: string;
+	host: string;
 	status: 'missing' | 'capturing' | 'ready' | 'failed';
 	targetUrl?: string;
 	updatedAt?: string;
 	error?: string;
 };
+
+export function hostFromUrl(url: string): string | null
+{
+	try
+	{
+		return new URL(url).host;
+	}
+	catch
+	{
+		return null;
+	}
+}
 
 type ApiTraceSummary = NonNullable<ApiRunDetails['traceSummary']>;
 type ApiJsExecutionSummary = NonNullable<ApiRunDetails['jsExecutionSummary']>;
@@ -724,19 +736,24 @@ type AssetIssuePayload = {
 	closedAt?: string;
 };
 
-async function sendJson<T>(url: string, method: 'POST' | 'PATCH' | 'DELETE', body: unknown): Promise<T>
+async function sendJson<T>(url: string, method: 'POST' | 'PATCH' | 'DELETE', body?: unknown): Promise<T>
 {
-	const response = await fetch(url, {
-		method,
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(body),
-	});
+	const init: RequestInit = { method };
+	if (body !== undefined)
+	{
+		init.headers = { 'Content-Type': 'application/json' };
+		init.body = JSON.stringify(body);
+	}
+	const response = await fetch(url, init);
 
 	if (!response.ok)
 	{
 		throw await toApiError(response, url);
+	}
+
+	if (response.status === 204)
+	{
+		return undefined as T;
 	}
 
 	return response.json() as Promise<T>;
@@ -762,9 +779,14 @@ export function createProfile(payload: CreateProfilePayload): Promise<ApiProfile
 	return sendJson<ApiProfile>('/api/profiles', 'POST', payload);
 }
 
-export function fetchAuthSession(): Promise<ApiAuthSession>
+export function fetchAuthSessions(): Promise<ApiAuthSession[]>
 {
-	return fetchJson<ApiAuthSession>('/api/auth/session');
+	return fetchJson<ApiAuthSession[]>('/api/auth/sessions');
+}
+
+export function fetchAuthSessionForHost(host: string): Promise<ApiAuthSession>
+{
+	return fetchJson<ApiAuthSession>(`/api/auth/sessions/${encodeURIComponent(host)}`);
 }
 
 export function fetchAssetIssues(): Promise<ApiAssetIssue[]>
@@ -774,7 +796,12 @@ export function fetchAssetIssues(): Promise<ApiAssetIssue[]>
 
 export function captureAuthSession(targetUrl: string): Promise<ApiAuthSession>
 {
-	return sendJson<ApiAuthSession>('/api/auth/session/capture', 'POST', { targetUrl });
+	return sendJson<ApiAuthSession>('/api/auth/sessions/capture', 'POST', { targetUrl });
+}
+
+export function deleteAuthSession(host: string): Promise<void>
+{
+	return sendJson<void>(`/api/auth/sessions/${encodeURIComponent(host)}`, 'DELETE');
 }
 
 export function createRun(profileId: string): Promise<ApiRun>

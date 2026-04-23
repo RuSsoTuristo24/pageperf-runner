@@ -1,44 +1,76 @@
-import { AuthSessionRepository, type AuthSessionRecord } from './auth-session.repository.js';
+import { hostFromUrl, type AuthSessionRecord } from '@pageperf-runner/shared';
+
+import { AuthSessionRepository } from './auth-session.repository.js';
 
 export class AuthSessionValidationError extends Error {}
 export class AuthSessionExpiredError extends Error {}
+export class AuthSessionNotFoundError extends Error {}
+
+type CaptureFn = (input: { targetUrl: string; storageStatePath: string }) => Promise<void>;
+type ValidateFn = (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
+
+function parseCaptureInput(input: unknown): string
+{
+  if (
+    !input
+    || typeof input !== 'object'
+    || typeof (input as { targetUrl?: unknown }).targetUrl !== 'string'
+    || (input as { targetUrl: string }).targetUrl.trim() === ''
+  )
+  {
+    throw new AuthSessionValidationError('Invalid auth session payload: targetUrl required');
+  }
+
+  const targetUrl = (input as { targetUrl: string }).targetUrl;
+
+  try
+  {
+    hostFromUrl(targetUrl);
+  }
+  catch
+  {
+    throw new AuthSessionValidationError(`Invalid targetUrl: ${targetUrl}`);
+  }
+
+  return targetUrl;
+}
 
 export class AuthSessionService
 {
   constructor(
     private readonly repository: AuthSessionRepository,
-    private readonly captureSession: (input: { targetUrl: string; storageStatePath: string }) => Promise<void>,
-    private readonly validateSession: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>,
+    private readonly captureSession: CaptureFn,
+    private readonly validateSession: ValidateFn,
   )
   {
   }
 
-  getStatus(): AuthSessionRecord
+  list(): AuthSessionRecord[]
   {
-    return this.repository.get();
+    return this.repository.list();
   }
 
-  getStateFilePath(): string
+  getForHost(host: string): AuthSessionRecord
   {
-    return this.repository.getStateFilePath();
+    return this.repository.get(host) ?? {
+      host,
+      status: 'missing',
+    };
+  }
+
+  delete(host: string): void
+  {
+    this.repository.delete(host);
   }
 
   async capture(input: unknown): Promise<AuthSessionRecord>
   {
-    if (
-      !input
-      || typeof input !== 'object'
-      || typeof (input as { targetUrl?: unknown }).targetUrl !== 'string'
-      || (input as { targetUrl: string }).targetUrl.trim() === ''
-    )
-    {
-      throw new AuthSessionValidationError('Invalid auth session payload');
-    }
-
-    const targetUrl = (input as { targetUrl: string }).targetUrl;
+    const targetUrl = parseCaptureInput(input);
+    const host = hostFromUrl(targetUrl);
+    const storageStatePath = this.repository.getStateFilePath(host);
 
     this.repository.save({
-      id: 'default',
+      host,
       status: 'capturing',
       targetUrl,
       updatedAt: new Date().toISOString(),
@@ -46,13 +78,10 @@ export class AuthSessionService
 
     try
     {
-      await this.captureSession({
-        targetUrl,
-        storageStatePath: this.repository.getStateFilePath(),
-      });
+      await this.captureSession({ targetUrl, storageStatePath });
 
       return this.repository.save({
-        id: 'default',
+        host,
         status: 'ready',
         targetUrl,
         updatedAt: new Date().toISOString(),
@@ -61,7 +90,7 @@ export class AuthSessionService
     catch (error)
     {
       return this.repository.save({
-        id: 'default',
+        host,
         status: 'failed',
         targetUrl,
         updatedAt: new Date().toISOString(),
@@ -70,40 +99,44 @@ export class AuthSessionService
     }
   }
 
-  async ensureReady(targetUrl?: string): Promise<string>
+  // Called by RunService right before a run starts.
+  // Resolves host from the run's profile URL, validates the saved session is
+  // still fresh, returns the storage state file path for the worker.
+  async ensureReadyForUrl(profileUrl: string): Promise<string>
   {
-    const session = this.getStatus();
+    const host = hostFromUrl(profileUrl);
+    const session = this.repository.get(host);
 
-    if (session.status !== 'ready')
+    if (!session || session.status !== 'ready')
     {
-      throw new AuthSessionExpiredError('Auth session is not ready');
+      throw new AuthSessionExpiredError(
+        `No ready auth session for host ${host}. Capture one first.`,
+      );
     }
 
-    const effectiveTargetUrl = targetUrl ?? session.targetUrl;
-
-    if (!effectiveTargetUrl)
-    {
-      throw new AuthSessionExpiredError('Saved auth session has no target URL');
-    }
+    const storageStatePath = this.repository.getStateFilePath(host);
+    const effectiveTargetUrl = session.targetUrl ?? profileUrl;
 
     const isValid = await this.validateSession({
       targetUrl: effectiveTargetUrl,
-      storageStatePath: this.repository.getStateFilePath(),
+      storageStatePath,
     });
 
     if (!isValid)
     {
       this.repository.save({
-        id: 'default',
+        host,
         status: 'failed',
         targetUrl: effectiveTargetUrl,
         updatedAt: new Date().toISOString(),
         error: 'Saved auth session is no longer valid. Capture it again.',
       });
 
-      throw new AuthSessionExpiredError('Saved auth session is no longer valid. Capture it again.');
+      throw new AuthSessionExpiredError(
+        `Saved auth session for ${host} is no longer valid. Capture it again.`,
+      );
     }
 
-    return this.repository.getStateFilePath();
+    return storageStatePath;
   }
 }

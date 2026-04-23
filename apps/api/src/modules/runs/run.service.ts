@@ -241,7 +241,7 @@ export class RunService
 
     try
     {
-      return await this.authSessionService.ensureReady(targetUrl);
+      return await this.authSessionService.ensureReadyForUrl(targetUrl);
     }
     catch (error)
     {
