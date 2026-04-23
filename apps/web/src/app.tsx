@@ -20,6 +20,7 @@ import {
 	deleteAuthSession,
 	deleteRun,
 	deleteAssetIssue,
+	fetchAppConfig,
 	fetchAuthSessions,
 	fetchAssetIssues,
 	fetchLlmReport,
@@ -30,6 +31,7 @@ import {
 	startRun,
 	type ApiAuthSession,
 	type ApiAssetIssue,
+	type ApiAppConfig,
 	type ApiLlmReport,
 	type ApiProfile,
 	type ApiRun,
@@ -346,6 +348,7 @@ export function App()
 	const [profiles, setProfiles] = useState<ApiProfile[]>([]);
 	const [runs, setRuns] = useState<ApiRun[]>([]);
 	const [authSessions, setAuthSessions] = useState<ApiAuthSession[]>([]);
+	const [appConfig, setAppConfig] = useState<ApiAppConfig>({ vncUrl: null });
 	const [assetIssues, setAssetIssues] = useState<ApiAssetIssue[]>([]);
 	const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 	const [selectedRunDetails, setSelectedRunDetails] = useState<ApiRunDetails | null>(null);
@@ -382,11 +385,12 @@ export function App()
 				setIsBootstrapping(true);
 				setErrorMessage(null);
 
-				const [loadedProfiles, loadedRuns, loadedAuthSessions, loadedAssetIssues] = await Promise.all([
+				const [loadedProfiles, loadedRuns, loadedAuthSessions, loadedAssetIssues, loadedAppConfig] = await Promise.all([
 					fetchProfiles(),
 					fetchRuns(),
 					fetchAuthSessions(),
 					fetchAssetIssues(),
+					fetchAppConfig().catch(() => ({ vncUrl: null } as ApiAppConfig)),
 				]);
 
 				if (isCancelled)
@@ -398,6 +402,7 @@ export function App()
 				setRuns(loadedRuns);
 				setAuthSessions(loadedAuthSessions);
 				setAssetIssues(loadedAssetIssues);
+				setAppConfig(loadedAppConfig);
 				setSelectedRunId((currentSelectedRunId) => currentSelectedRunId ?? pickDefaultRunId(loadedRuns));
 			}
 			catch
@@ -962,6 +967,7 @@ export function App()
 				<AuthSessionsList
 					sessions={authSessions}
 					capturingHost={capturingAuthHost}
+					vncUrl={appConfig.vncUrl}
 					onCapture={(targetUrl) => {
 						void handleCaptureAuth(targetUrl);
 					}}

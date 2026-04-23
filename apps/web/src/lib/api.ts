@@ -784,6 +784,15 @@ export function fetchAuthSessions(): Promise<ApiAuthSession[]>
 	return fetchJson<ApiAuthSession[]>('/api/auth/sessions');
 }
 
+export type ApiAppConfig = {
+	vncUrl: string | null;
+};
+
+export function fetchAppConfig(): Promise<ApiAppConfig>
+{
+	return fetchJson<ApiAppConfig>('/api/config');
+}
+
 export function fetchAuthSessionForHost(host: string): Promise<ApiAuthSession>
 {
 	return fetchJson<ApiAuthSession>(`/api/auth/sessions/${encodeURIComponent(host)}`);

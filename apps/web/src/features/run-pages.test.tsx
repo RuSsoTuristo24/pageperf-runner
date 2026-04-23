@@ -231,6 +231,11 @@ describe('multi-page run UI', () => {
 				});
 			}
 
+			if (url.endsWith('/api/config') && method === 'GET')
+			{
+				return jsonResponse({ vncUrl: null });
+			}
+
 			throw new Error(`Unexpected fetch ${method} ${url}`);
 		});
 

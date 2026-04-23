@@ -14,6 +14,7 @@ import { LlmReportService } from './modules/analysis/llm-report.service.js';
 import { AuthSessionRepository } from './modules/auth/auth-session.repository.js';
 import { registerAuthSessionRoutes } from './modules/auth/auth-session.routes.js';
 import { AuthSessionService } from './modules/auth/auth-session.service.js';
+import { registerConfigRoutes } from './modules/config/config.routes.js';
 import { ArtifactCleanupService } from './modules/artifacts/artifact-cleanup.js';
 import { ArtifactStore } from './modules/artifacts/artifact-store.js';
 import { RunIngestService } from './modules/ingest/run-ingest.service.js';
@@ -113,6 +114,7 @@ export async function createApp(options: AppOptions = {}): Promise<FastifyInstan
 	});
 	registerAssetIssueRoutes(app, assetIssueService);
 	registerAuthSessionRoutes(app, authSessionService);
+	registerConfigRoutes(app, { vncUrl: process.env.VNC_URL?.trim() || null });
 	registerProfileRoutes(app, profileService);
 	registerRunRoutes(app, runService);
 	registerRunDetailRoutes(app, runRepository);

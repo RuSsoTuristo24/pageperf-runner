@@ -160,6 +160,14 @@ describe('asset issues workflow', () => {
         });
       }
 
+      if (url.endsWith('/api/config') && method === 'GET')
+      {
+        return new Response(JSON.stringify({ vncUrl: null }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
       throw new Error(`Unexpected fetch ${method} ${url}`);
     });
 

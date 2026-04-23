@@ -5,6 +5,7 @@ import type { ApiAuthSession } from '../../lib/api.js';
 type AuthSessionsListProps = {
   sessions: ApiAuthSession[];
   capturingHost: string | null;
+  vncUrl?: string | null;
   onCapture: (targetUrl: string) => void;
   onRecapture: (host: string, targetUrl?: string) => void;
   onDelete: (host: string) => void;
@@ -64,9 +65,32 @@ function formatUpdatedAt(updatedAt: string | undefined): string | null
 
 export function AuthSessionsList(props: AuthSessionsListProps)
 {
-  const { sessions, capturingHost, onCapture, onRecapture, onDelete } = props;
+  const { sessions, capturingHost, vncUrl, onCapture, onRecapture, onDelete } = props;
   const [isAdding, setIsAdding] = useState(false);
   const [newTargetUrl, setNewTargetUrl] = useState('');
+
+  // Chrome runs inside the worker container on a virtual Xvfb display.
+  // The only way a human can interact with it is via noVNC. Auto-open it
+  // in a new tab on capture so nobody has to remember the URL.
+  function openVncTab(): void
+  {
+    if (vncUrl)
+    {
+      window.open(vncUrl, 'pageperf-runner-vnc', 'noopener,noreferrer');
+    }
+  }
+
+  function handleCaptureStart(targetUrl: string): void
+  {
+    openVncTab();
+    onCapture(targetUrl);
+  }
+
+  function handleRecaptureStart(host: string, targetUrl: string | undefined): void
+  {
+    openVncTab();
+    onRecapture(host, targetUrl);
+  }
 
   function handleSubmitNew(): void
   {
@@ -76,7 +100,7 @@ export function AuthSessionsList(props: AuthSessionsListProps)
       return;
     }
 
-    onCapture(trimmed);
+    handleCaptureStart(trimmed);
     setNewTargetUrl('');
     setIsAdding(false);
   }
@@ -91,7 +115,13 @@ export function AuthSessionsList(props: AuthSessionsListProps)
       </div>
 
       <p className="sidebar-copy">
-        Откроется отдельное окно Chrome. Войдите один раз и дождитесь возврата на целевую страницу. Перед каждым авторизованным прогоном сессия проверяется автоматически.
+        Chrome откроется в виртуальном дисплее на сервере. Вход делается через окно{' '}
+        {vncUrl ? (
+          <a href={vncUrl} target="_blank" rel="noopener noreferrer">noVNC</a>
+        ) : (
+          <span>noVNC</span>
+        )}
+        : после «Открыть окно входа» это окно появится автоматически. Войдите один раз и дождитесь возврата на целевую страницу.
       </p>
 
       {sessions.length === 0 && !isAdding ? (
@@ -125,7 +155,7 @@ export function AuthSessionsList(props: AuthSessionsListProps)
                 type="button"
                 className="primary-button primary-button-inline"
                 disabled={isBusy || !canRecapture}
-                onClick={() => onRecapture(session.host, session.targetUrl)}
+                onClick={() => handleRecaptureStart(session.host, session.targetUrl)}
               >
                 {isBusy
                   ? 'Ожидание входа…'

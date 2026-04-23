@@ -28,6 +28,19 @@ function createEmptyAssetIssuesResponse(url: string, method = 'GET'): Response |
   return null;
 }
 
+function createDefaultConfigResponse(url: string, method = 'GET'): Response | null
+{
+  if (url.endsWith('/api/config') && method === 'GET')
+  {
+    return new Response(JSON.stringify({ vncUrl: null }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  return null;
+}
+
 describe('pageperf-runner app shell', () => {
   it('creates a profile and starts a new run from the UI', async () => {
     fetchMock.mockImplementation(async (input, init) => {
@@ -38,6 +51,13 @@ describe('pageperf-runner app shell', () => {
       if (assetIssuesResponse)
       {
         return assetIssuesResponse;
+      }
+
+      const configResponse = createDefaultConfigResponse(url, method);
+
+      if (configResponse)
+      {
+        return configResponse;
       }
 
       if (url.endsWith('/api/profiles') && method === 'GET')
@@ -1370,6 +1390,13 @@ describe('pageperf-runner app shell', () => {
         return assetIssuesResponse;
       }
 
+      const configResponse = createDefaultConfigResponse(url, method);
+
+      if (configResponse)
+      {
+        return configResponse;
+      }
+
       if (url.endsWith('/api/profiles') && method === 'GET')
       {
         return new Response(JSON.stringify([]), {
@@ -1453,6 +1480,13 @@ describe('pageperf-runner app shell', () => {
       if (assetIssuesResponse)
       {
         return assetIssuesResponse;
+      }
+
+      const configResponse = createDefaultConfigResponse(url, method);
+
+      if (configResponse)
+      {
+        return configResponse;
       }
 
       if (url.endsWith('/api/profiles') && method === 'GET')
