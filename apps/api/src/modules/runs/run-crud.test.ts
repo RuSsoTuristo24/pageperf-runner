@@ -667,7 +667,7 @@ describe('run crud', () => {
 
     const capture = await app.inject({
       method: 'POST',
-      url: '/api/auth/session/capture',
+      url: '/api/auth/sessions/capture',
       payload: {
         targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
       },
@@ -701,12 +701,12 @@ describe('run crud', () => {
 
     expect(startRun.statusCode).toBe(404);
     expect(startRun.json()).toMatchObject({
-      error: 'Saved auth session is no longer valid. Capture it again.',
+      error: 'Saved auth session for russeltest.bitrix24.ru is no longer valid. Capture it again.',
     });
 
     const authStatus = await app.inject({
       method: 'GET',
-      url: '/api/auth/session',
+      url: '/api/auth/sessions/russeltest.bitrix24.ru',
     });
 
     expect(authValidate).toHaveBeenCalledWith({
@@ -715,6 +715,7 @@ describe('run crud', () => {
     });
     expect(authStatus.statusCode).toBe(200);
     expect(authStatus.json()).toMatchObject({
+      host: 'russeltest.bitrix24.ru',
       status: 'failed',
       error: 'Saved auth session is no longer valid. Capture it again.',
     });
@@ -726,20 +727,28 @@ describe('auth session api', () => {
     const storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-auth-'));
     const isolatedApp = await createApp({ runExecutor, authCapture, authValidate, storageRoot });
 
+    const listEmpty = await isolatedApp.inject({
+      method: 'GET',
+      url: '/api/auth/sessions',
+    });
+
+    expect(listEmpty.statusCode).toBe(200);
+    expect(listEmpty.json()).toEqual([]);
+
     const missing = await isolatedApp.inject({
       method: 'GET',
-      url: '/api/auth/session',
+      url: '/api/auth/sessions/russeltest.bitrix24.ru',
     });
 
     expect(missing.statusCode).toBe(200);
     expect(missing.json()).toMatchObject({
-      id: 'default',
+      host: 'russeltest.bitrix24.ru',
       status: 'missing',
     });
 
     const capture = await isolatedApp.inject({
       method: 'POST',
-      url: '/api/auth/session/capture',
+      url: '/api/auth/sessions/capture',
       payload: {
         targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
       },
@@ -751,22 +760,35 @@ describe('auth session api', () => {
       storageStatePath: expect.stringContaining('auth'),
     });
     expect(capture.json()).toMatchObject({
-      id: 'default',
+      host: 'russeltest.bitrix24.ru',
       status: 'ready',
       targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
     });
 
     const ready = await isolatedApp.inject({
       method: 'GET',
-      url: '/api/auth/session',
+      url: '/api/auth/sessions/russeltest.bitrix24.ru',
     });
 
     expect(ready.statusCode).toBe(200);
     expect(ready.json()).toMatchObject({
-      id: 'default',
+      host: 'russeltest.bitrix24.ru',
       status: 'ready',
       targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
     });
+
+    const list = await isolatedApp.inject({
+      method: 'GET',
+      url: '/api/auth/sessions',
+    });
+
+    expect(list.statusCode).toBe(200);
+    expect(list.json()).toEqual([
+      expect.objectContaining({
+        host: 'russeltest.bitrix24.ru',
+        status: 'ready',
+      }),
+    ]);
 
     await isolatedApp.close();
     await rm(storageRoot, { recursive: true, force: true });

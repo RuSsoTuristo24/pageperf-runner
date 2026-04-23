@@ -52,12 +52,9 @@ describe('multi-page run UI', () => {
 				]);
 			}
 
-			if (url.endsWith('/api/auth/session') && method === 'GET')
+			if (url.endsWith('/api/auth/sessions') && method === 'GET')
 			{
-				return jsonResponse({
-					id: 'default',
-					status: 'missing',
-				});
+				return jsonResponse([]);
 			}
 
 			if (url.endsWith('/api/runs') && method === 'GET')

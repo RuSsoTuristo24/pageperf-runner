@@ -56,12 +56,9 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session') && method === 'GET')
+      if (url.endsWith('/api/auth/sessions') && method === 'GET')
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'missing',
-        }), {
+        return new Response(JSON.stringify([]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -223,13 +220,15 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-          targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+            targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -370,12 +369,9 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'missing',
-        }), {
+        return new Response(JSON.stringify([]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -473,12 +469,14 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -608,12 +606,14 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -717,12 +717,14 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -824,12 +826,14 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -924,12 +928,14 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -1035,12 +1041,14 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -1155,12 +1163,14 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -1293,12 +1303,14 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -1345,7 +1357,9 @@ describe('pageperf-runner app shell', () => {
     expect((await screen.findAllByText('Ожидание')).length).toBeGreaterThanOrEqual(6);
   });
 
-  it('shows auth session status and captures it from the UI', async () => {
+  it('adds a new login and captures a per-host session from the UI', async () => {
+    let hasCaptured = false;
+
     fetchMock.mockImplementation(async (input, init) => {
       const url = String(input);
       const method = init?.method ?? 'GET';
@@ -1372,27 +1386,34 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session') && method === 'GET')
+      if (url.endsWith('/api/auth/sessions') && method === 'GET')
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'missing',
-        }), {
+        const payload = hasCaptured
+          ? [{
+            host: 'portal.bitrix24.com',
+            status: 'ready',
+            targetUrl: 'https://portal.bitrix24.com/',
+          }]
+          : [];
+
+        return new Response(JSON.stringify(payload), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
       }
 
-      if (url.endsWith('/api/auth/session/capture') && method === 'POST')
+      if (url.endsWith('/api/auth/sessions/capture') && method === 'POST')
       {
         expect(init?.body).toBe(JSON.stringify({
-          targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
+          targetUrl: 'https://portal.bitrix24.com/',
         }));
 
+        hasCaptured = true;
+
         return new Response(JSON.stringify({
-          id: 'default',
+          host: 'portal.bitrix24.com',
           status: 'ready',
-          targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
+          targetUrl: 'https://portal.bitrix24.com/',
         }), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
@@ -1404,13 +1425,20 @@ describe('pageperf-runner app shell', () => {
 
     render(<App />);
 
-    expect(await screen.findByText('Сессия не сохранена')).toBeTruthy();
+    expect(await screen.findByText('Нет сохранённых сессий.')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('button', { name: /Добавить вход/ }));
+
+    fireEvent.change(screen.getByLabelText('URL для входа'), {
+      target: { value: 'https://portal.bitrix24.com/' },
+    });
 
     fireEvent.click(screen.getByRole('button', { name: 'Открыть окно входа' }));
 
-    expect(await screen.findByText('Сессия готова')).toBeTruthy();
+    expect(await screen.findByText('Сессия готова', { exact: false })).toBeTruthy();
+    expect(await screen.findByText('portal.bitrix24.com')).toBeTruthy();
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledWith('/api/auth/session/capture', expect.objectContaining({
+      expect(fetchMock).toHaveBeenCalledWith('/api/auth/sessions/capture', expect.objectContaining({
         method: 'POST',
       }));
     });
@@ -1443,13 +1471,15 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session') && method === 'GET')
+      if (url.endsWith('/api/auth/sessions') && method === 'GET')
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'ready',
-          targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
-        }), {
+        return new Response(JSON.stringify([
+          {
+            host: 'russeltest.bitrix24.ru',
+            status: 'ready',
+            targetUrl: 'https://russeltest.bitrix24.ru/blank.php',
+          },
+        ]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
@@ -1530,12 +1560,9 @@ describe('pageperf-runner app shell', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session'))
+      if (url.endsWith('/api/auth/sessions'))
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'missing',
-        }), {
+        return new Response(JSON.stringify([]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });

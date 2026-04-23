@@ -52,12 +52,9 @@ describe('asset issues workflow', () => {
         });
       }
 
-      if (url.endsWith('/api/auth/session') && method === 'GET')
+      if (url.endsWith('/api/auth/sessions') && method === 'GET')
       {
-        return new Response(JSON.stringify({
-          id: 'default',
-          status: 'missing',
-        }), {
+        return new Response(JSON.stringify([]), {
           status: 200,
           headers: { 'Content-Type': 'application/json' },
         });
