@@ -12,7 +12,7 @@ async function main(): Promise<void>
 	}
 	const client = postgres(url, { max: 1 });
 	const db = drizzle(client);
-	await migrate(db, { migrationsFolder: 'apps/api/drizzle' });
+	await migrate(db, { migrationsFolder: './drizzle' });
 	await client.end();
 	console.log('migrations applied');
 }
