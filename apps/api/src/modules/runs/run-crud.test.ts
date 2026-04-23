@@ -794,3 +794,189 @@ describe('auth session api', () => {
     await rm(storageRoot, { recursive: true, force: true });
   });
 });
+
+describe('pg dual-write', () => {
+  function createSpyDb() {
+    const valuesSpy = vi.fn().mockResolvedValue(undefined);
+    const whereSpy = vi.fn().mockResolvedValue(undefined);
+    const setSpy = vi.fn().mockReturnValue({ where: whereSpy });
+    const insert = vi.fn().mockReturnValue({ values: valuesSpy });
+    const update = vi.fn().mockReturnValue({ set: setSpy });
+    const execute = vi.fn().mockResolvedValue(undefined);
+    return {
+      db: { insert, update, execute } as unknown as import('../../db/client.js').Db,
+      insert,
+      update,
+      valuesSpy,
+      setSpy,
+      whereSpy,
+    };
+  }
+
+  it('inserts profile, run, metrics and requests into PG through services', async () => {
+    const storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-pg-'));
+    const { db, insert, update, valuesSpy, setSpy } = createSpyDb();
+    const localRunExecutor = vi.fn().mockResolvedValue({
+      runId: 'ignored',
+      status: 'running',
+      pageMetrics: [
+        { name: 'ttfb', value: 100 },
+        { name: 'load', value: 400 },
+      ],
+      requests: [
+        {
+          url: 'https://russeltest.bitrix24.ru/blank.php',
+          method: 'GET',
+          status: 200,
+          resourceType: 'document',
+          contentEncoding: 'gzip',
+          fromDiskCache: false,
+          fromMemoryCache: false,
+          revalidated: false,
+          transferSize: 1000,
+          encodedBodySize: 900,
+          decodedBodySize: 2000,
+        },
+      ],
+      traceSummary: {
+        criticalChain: [],
+        mainThread: { parse: 1, evaluate: 2, layout: 1, paint: 1, other: 1, longTaskCount: 0, longTaskTotal: 0 },
+      },
+      jsExecutionSummary: { resources: [], unattributed: { parseMs: 0, evaluateMs: 0, totalMs: 0 } },
+      coverageSummary: { totals: { js: { usedBytes: 0, unusedBytes: 0 }, css: { usedBytes: 0, unusedBytes: 0 } }, resources: [] },
+      passes: [],
+    });
+
+    const pgApp = await createApp({
+      runExecutor: localRunExecutor,
+      authCapture,
+      authValidate,
+      storageRoot,
+      db,
+    });
+
+    try {
+      const profile = await pgApp.inject({
+        method: 'POST',
+        url: '/api/profiles',
+        payload: {
+          name: 'PG profile',
+          url: 'https://russeltest.bitrix24.ru/blank.php',
+          throttling: 'native',
+        },
+      });
+      expect(profile.statusCode).toBe(201);
+
+      const run = await pgApp.inject({
+        method: 'POST',
+        url: '/api/runs',
+        payload: { profileId: profile.json().id },
+      });
+      expect(run.statusCode).toBe(201);
+
+      const start = await pgApp.inject({
+        method: 'POST',
+        url: `/api/runs/${run.json().id}/start`,
+      });
+      expect(start.statusCode).toBe(200);
+
+      // Allow fire-and-forget void pg* calls to settle.
+      await new Promise((resolve) => setImmediate(resolve));
+
+      // profile insert + run insert (status=running) + metrics insert + requests insert = 4
+      expect(insert).toHaveBeenCalled();
+      const insertedPayloads = valuesSpy.mock.calls.map((args) => args[0]);
+
+      // Profile row with matching id/name.
+      const profileRow = insertedPayloads.find(
+        (row) => row && !Array.isArray(row) && row.name === 'PG profile',
+      );
+      expect(profileRow).toMatchObject({
+        id: profile.json().id,
+        name: 'PG profile',
+        url: 'https://russeltest.bitrix24.ru/blank.php',
+        throttling: 'native',
+      });
+
+      // Run row inserted with status 'running'.
+      const runRow = insertedPayloads.find(
+        (row) => row && !Array.isArray(row) && row.id === run.json().id,
+      );
+      expect(runRow).toMatchObject({
+        id: run.json().id,
+        profileId: profile.json().id,
+        status: 'running',
+      });
+
+      // page_metrics batch — an array with the expected metric names.
+      const metricsRows = insertedPayloads.find(
+        (row) => Array.isArray(row) && row[0]?.name === 'ttfb',
+      ) as Array<{ runId: string; name: string; value: number }> | undefined;
+      expect(metricsRows).toBeDefined();
+      expect(metricsRows).toHaveLength(2);
+
+      // requests batch.
+      const requestRows = insertedPayloads.find(
+        (row) => Array.isArray(row) && row[0]?.url?.includes('blank.php') && 'resourceType' in row[0],
+      ) as Array<{ runId: string; url: string; resourceType: string; status: number }> | undefined;
+      expect(requestRows).toBeDefined();
+      expect(requestRows?.[0]).toMatchObject({ resourceType: 'document', status: 200 });
+
+      // Status update to 'completed' after start() succeeded.
+      expect(update).toHaveBeenCalled();
+      expect(setSpy).toHaveBeenCalledWith({ status: 'completed' });
+    }
+    finally {
+      await pgApp.close();
+      await rm(storageRoot, { recursive: true, force: true });
+    }
+  });
+
+  it('continues to return success when PG inserts reject', async () => {
+    const storageRoot = await mkdtemp(path.join(tmpdir(), 'pageperf-runner-api-pg-fail-'));
+    const valuesSpy = vi.fn().mockRejectedValue(new Error('pg down'));
+    const whereSpy = vi.fn().mockRejectedValue(new Error('pg down'));
+    const setSpy = vi.fn().mockReturnValue({ where: whereSpy });
+    const insert = vi.fn().mockReturnValue({ values: valuesSpy });
+    const update = vi.fn().mockReturnValue({ set: setSpy });
+    const execute = vi.fn().mockResolvedValue(undefined);
+    const db = { insert, update, execute } as unknown as import('../../db/client.js').Db;
+
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    const pgApp = await createApp({
+      runExecutor,
+      authCapture,
+      authValidate,
+      storageRoot,
+      db,
+    });
+
+    try {
+      const profile = await pgApp.inject({
+        method: 'POST',
+        url: '/api/profiles',
+        payload: {
+          name: 'PG failing profile',
+          url: 'https://russeltest.bitrix24.ru/blank.php',
+          throttling: 'native',
+        },
+      });
+      expect(profile.statusCode).toBe(201);
+
+      const run = await pgApp.inject({
+        method: 'POST',
+        url: '/api/runs',
+        payload: { profileId: profile.json().id },
+      });
+      expect(run.statusCode).toBe(201);
+
+      await new Promise((resolve) => setImmediate(resolve));
+    }
+    finally {
+      warnSpy.mockRestore();
+      await pgApp.close();
+      await rm(storageRoot, { recursive: true, force: true });
+    }
+  });
+});
