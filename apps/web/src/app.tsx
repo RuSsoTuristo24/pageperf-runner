@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { AuthSessionCard } from './features/auth/auth-session-card.js';
+import { AuthSessionsList } from './features/auth/auth-sessions-list.js';
 import { IssueWatch } from './features/asset-issues/issue-watch.js';
 import { AssetTable } from './features/assets/asset-table.js';
 import { RequestTable } from './features/requests/request-table.js';
@@ -17,14 +17,16 @@ import {
 	createProfile,
 	createRun,
 	createAssetIssue,
+	deleteAuthSession,
 	deleteRun,
 	deleteAssetIssue,
-	fetchAuthSession,
+	fetchAuthSessions,
 	fetchAssetIssues,
 	fetchLlmReport,
 	fetchProfiles,
 	fetchRunDetails,
 	fetchRuns,
+	hostFromUrl,
 	startRun,
 	type ApiAuthSession,
 	type ApiAssetIssue,
@@ -343,7 +345,7 @@ export function App()
 {
 	const [profiles, setProfiles] = useState<ApiProfile[]>([]);
 	const [runs, setRuns] = useState<ApiRun[]>([]);
-	const [authSession, setAuthSession] = useState<ApiAuthSession | null>(null);
+	const [authSessions, setAuthSessions] = useState<ApiAuthSession[]>([]);
 	const [assetIssues, setAssetIssues] = useState<ApiAssetIssue[]>([]);
 	const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 	const [selectedRunDetails, setSelectedRunDetails] = useState<ApiRunDetails | null>(null);
@@ -357,7 +359,7 @@ export function App()
 	const [isBootstrapping, setIsBootstrapping] = useState(true);
 	const [isLoadingDetails, setIsLoadingDetails] = useState(false);
 	const [isSubmittingRun, setIsSubmittingRun] = useState(false);
-	const [isCapturingAuthSession, setIsCapturingAuthSession] = useState(false);
+	const [capturingAuthHost, setCapturingAuthHost] = useState<string | null>(null);
 	const [isGeneratingLlmReport, setIsGeneratingLlmReport] = useState(false);
 	const [isDeletingRun, setIsDeletingRun] = useState(false);
 	const [savingAssetKey, setSavingAssetKey] = useState<string | null>(null);
@@ -380,10 +382,10 @@ export function App()
 				setIsBootstrapping(true);
 				setErrorMessage(null);
 
-				const [loadedProfiles, loadedRuns, loadedAuthSession, loadedAssetIssues] = await Promise.all([
+				const [loadedProfiles, loadedRuns, loadedAuthSessions, loadedAssetIssues] = await Promise.all([
 					fetchProfiles(),
 					fetchRuns(),
-					fetchAuthSession(),
+					fetchAuthSessions(),
 					fetchAssetIssues(),
 				]);
 
@@ -394,9 +396,8 @@ export function App()
 
 				setProfiles(loadedProfiles);
 				setRuns(loadedRuns);
-				setAuthSession(loadedAuthSession);
+				setAuthSessions(loadedAuthSessions);
 				setAssetIssues(loadedAssetIssues);
-				setUseAuthSession(loadedAuthSession.status === 'ready');
 				setSelectedRunId((currentSelectedRunId) => currentSelectedRunId ?? pickDefaultRunId(loadedRuns));
 			}
 			catch
@@ -726,17 +727,35 @@ export function App()
 		}
 	}
 
-	async function handleCaptureAuth(): Promise<void>
+	async function handleCaptureAuth(targetUrl: string): Promise<void>
 	{
+		const trimmed = targetUrl.trim();
+		if (!trimmed)
+		{
+			return;
+		}
+
+		const host = hostFromUrl(trimmed);
+
 		try
 		{
-			setIsCapturingAuthSession(true);
+			setCapturingAuthHost(host);
 			setErrorMessage(null);
 
-			const nextAuthSession = await captureAuthSession(draftProfileUrl);
+			await captureAuthSession(trimmed);
 
-			setAuthSession(nextAuthSession);
-			setUseAuthSession(nextAuthSession.status === 'ready');
+			const nextSessions = await fetchAuthSessions();
+			setAuthSessions(nextSessions);
+
+			const draftHost = hostFromUrl(draftProfileUrl);
+			if (host && draftHost && host === draftHost)
+			{
+				const nextForDraft = nextSessions.find((session) => session.host === draftHost);
+				if (nextForDraft?.status === 'ready')
+				{
+					setUseAuthSession(true);
+				}
+			}
 		}
 		catch (error)
 		{
@@ -744,7 +763,28 @@ export function App()
 		}
 		finally
 		{
-			setIsCapturingAuthSession(false);
+			setCapturingAuthHost(null);
+		}
+	}
+
+	async function handleDeleteAuth(host: string): Promise<void>
+	{
+		try
+		{
+			setErrorMessage(null);
+			await deleteAuthSession(host);
+			const nextSessions = await fetchAuthSessions();
+			setAuthSessions(nextSessions);
+
+			const draftHost = hostFromUrl(draftProfileUrl);
+			if (draftHost && draftHost === host)
+			{
+				setUseAuthSession(false);
+			}
+		}
+		catch (error)
+		{
+			setErrorMessage(toErrorMessage(error));
 		}
 	}
 
@@ -919,12 +959,17 @@ export function App()
 					}}
 				/>
 
-				<AuthSessionCard
-					authSession={authSession}
-					isCapturing={isCapturingAuthSession}
-					targetUrl={draftProfileUrl}
-					onCapture={() => {
-						void handleCaptureAuth();
+				<AuthSessionsList
+					sessions={authSessions}
+					capturingHost={capturingAuthHost}
+					onCapture={(targetUrl) => {
+						void handleCaptureAuth(targetUrl);
+					}}
+					onRecapture={(host, targetUrl) => {
+						void handleCaptureAuth(targetUrl ?? `https://${host}/`);
+					}}
+					onDelete={(host) => {
+						void handleDeleteAuth(host);
 					}}
 				/>
 

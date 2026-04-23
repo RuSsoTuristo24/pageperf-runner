@@ -475,6 +475,23 @@ textarea {
 	word-break: break-word;
 }
 
+.auth-session-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 4px;
+}
+
+.auth-session-add {
+	display: grid;
+	gap: 8px;
+	margin: 0 0 14px;
+	padding: 12px 14px;
+	border: 1px dashed var(--line);
+	border-radius: var(--radius-md);
+	background: rgba(255, 255, 255, 0.02);
+}
+
 .workspace-grid {
 	display: grid;
 	grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
