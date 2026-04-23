@@ -3,8 +3,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { createRunner } from '@pageperf-runner/worker';
+import { sql } from 'drizzle-orm';
 import Fastify, { type FastifyInstance } from 'fastify';
 
+import { createDb, type Db } from './db/client.js';
 import { registerStatic } from './static.js';
 
 import { AssetIssueRepository } from './modules/asset-issues/asset-issue.repository.js';
@@ -30,17 +32,13 @@ import { registerRunRoutes } from './modules/runs/run.routes.js';
 import { WorkerClient } from './modules/worker-client/worker-client.js';
 import { registerHealthRoutes } from './routes/health.js';
 
-type AppDb = {
-	execute: (sql: string) => Promise<unknown>;
-};
-
 type AppOptions = {
 	runExecutor?: Parameters<typeof createRunner>[0]['executeLiveRun'];
 	authCapture?: (input: { targetUrl: string; storageStatePath: string }) => Promise<void>;
 	authValidate?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
 	authRefresh?: (input: { targetUrl: string; storageStatePath: string }) => Promise<boolean>;
 	storageRoot?: string;
-	db?: AppDb;
+	db?: Db;
 };
 
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -68,11 +66,17 @@ export async function createApp(options: AppOptions = {}): Promise<FastifyInstan
 	app.addHook('onClose', async () => {
 		artifactCleanup.stop();
 	});
+	// Optional Postgres dual-write. When DATABASE_URL is set, services mirror
+	// a subset of data (profiles, runs, page_metrics, requests) into PG so
+	// Grafana dashboards and alert rules have data to query. InMemory repos
+	// remain the source of truth for the web UI.
+	const db: Db | undefined = options.db
+		?? (process.env.DATABASE_URL ? createDb(process.env.DATABASE_URL) : undefined);
 	// Auth-session refresh scheduler: keep saved logins alive without manual
 	// recapture. Default every 6 hours; override with AUTH_REFRESH_CRON.
 	// Empty string disables the scheduler entirely.
-	const runIngestService = new RunIngestService(runRepository);
-	const profileService = new ProfileService(profileRepository);
+	const runIngestService = new RunIngestService(runRepository, db);
+	const profileService = new ProfileService(profileRepository, db);
 	const assetIssueService = new AssetIssueService(assetIssueRepository, runRepository);
 	const llmReportService = new LlmReportService(runRepository, profileRepository, assetIssueService);
 	const authSessionService = new AuthSessionService(
@@ -102,14 +106,15 @@ export async function createApp(options: AppOptions = {}): Promise<FastifyInstan
 		artifactStore,
 		(job) => runner.start(job),
 		authSessionService,
+		db,
 	);
 
 	registerHealthRoutes(app, {
 		checkDb: async () => {
-			if (!options.db) return true;
+			if (!db) return true;
 			try
 			{
-				await options.db.execute('SELECT 1');
+				await db.execute(sql`SELECT 1`);
 				return true;
 			}
 			catch

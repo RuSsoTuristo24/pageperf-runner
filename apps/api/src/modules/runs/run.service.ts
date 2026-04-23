@@ -6,6 +6,8 @@ import { ArtifactStore } from '../artifacts/artifact-store.js';
 import { RunIngestService } from '../ingest/run-ingest.service.js';
 import { detectIssues } from '../issues/rule-engine.js';
 import { createQueuedRunJob } from '@pageperf-runner/worker';
+import type { Db } from '../../db/client.js';
+import { pgInsertRun, pgUpdateRunStatus } from '../../db/pg-ingest.js';
 
 import { InMemoryProfileRepository } from '../profiles/profile.repository.js';
 import {
@@ -48,6 +50,7 @@ export class RunService
     private readonly artifactStore?: ArtifactStore,
     private readonly runExecutor?: RunExecutor,
     private readonly authSessionService?: AuthSessionService,
+    private readonly db?: Db,
   )
   {
   }
@@ -77,6 +80,14 @@ export class RunService
       id: run.id,
       profileId: run.profileId,
       status: run.status,
+    });
+
+    // Dual-write: record the run in PG for Grafana. Status starts as 'running'
+    // so dashboards can see it right away; start() flips it to completed/failed.
+    void pgInsertRun(this.db, {
+      id: run.id,
+      profileId: run.profileId,
+      status: 'running',
     });
 
     return run;
@@ -206,6 +217,8 @@ export class RunService
         }
       }
 
+      void pgUpdateRunStatus(this.db, run.id, 'completed');
+
       return {
         ...stored,
         issues,
@@ -219,6 +232,7 @@ export class RunService
     catch (error)
     {
       this.runs.setStatus(run.id, 'failed');
+      void pgUpdateRunStatus(this.db, run.id, 'failed');
       throw error;
     }
   }

@@ -1,12 +1,18 @@
 import { profileSchema, type Profile } from '@pageperf-runner/shared';
 
+import type { Db } from '../../db/client.js';
+import { pgInsertProfile } from '../../db/pg-ingest.js';
+
 import { InMemoryProfileRepository } from './profile.repository.js';
 
 export class ProfileValidationError extends Error {}
 
 export class ProfileService
 {
-  constructor(private readonly repository: InMemoryProfileRepository)
+  constructor(
+    private readonly repository: InMemoryProfileRepository,
+    private readonly db?: Db,
+  )
   {
   }
 
@@ -19,7 +25,7 @@ export class ProfileService
       throw new ProfileValidationError(parsed.error.message);
     }
 
-    return this.repository.create({
+    const stored = this.repository.create({
       name: parsed.data.name,
       url: parsed.data.url,
       pages: parsed.data.pages ?? [parsed.data.url],
@@ -27,6 +33,18 @@ export class ProfileService
       authMode: parsed.data.authMode,
       cacheMode: parsed.data.cacheMode,
     });
+
+    // Fire-and-forget dual-write to PG. Errors are swallowed by the helper —
+    // web UI reads still come from InMemoryProfileRepository, this only
+    // powers Grafana dashboards.
+    void pgInsertProfile(this.db, {
+      id: stored.id,
+      name: stored.name,
+      url: stored.url,
+      throttling: stored.throttling,
+    });
+
+    return stored;
   }
 
   list(): Array<Profile & { id: string }>

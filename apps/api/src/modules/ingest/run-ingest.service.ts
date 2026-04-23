@@ -1,6 +1,8 @@
 import type { CoverageSummary, JsExecutionSummary, PageDiagnostics, TraceSummary } from '@pageperf-runner/worker';
 import { requestSchema } from '@pageperf-runner/shared';
 
+import type { Db } from '../../db/client.js';
+import { pgInsertPageMetrics, pgInsertRequests } from '../../db/pg-ingest.js';
 import {
   InMemoryRunRepository,
   type ArtifactRecord,
@@ -25,7 +27,10 @@ type IngestPayload = {
 
 export class RunIngestService
 {
-  constructor(private readonly runs: InMemoryRunRepository)
+  constructor(
+    private readonly runs: InMemoryRunRepository,
+    private readonly db?: Db,
+  )
   {
   }
 
@@ -101,6 +106,19 @@ export class RunIngestService
       pageDiagnostics: payload.pageDiagnostics,
       pages: payload.pages ?? [],
     });
+
+    // Dual-write subset to PG for Grafana dashboards. Fire-and-forget —
+    // helpers swallow their own errors.
+    void pgInsertPageMetrics(this.db, payload.runId, payload.pageMetrics);
+    void pgInsertRequests(
+      this.db,
+      payload.runId,
+      payload.requests.map((request) => ({
+        url: request.url,
+        resourceType: request.resourceType,
+        status: request.status,
+      })),
+    );
 
     const run = this.runs.findById(payload.runId);
 
