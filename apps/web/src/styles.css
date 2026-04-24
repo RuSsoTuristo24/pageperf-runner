@@ -2016,3 +2016,11 @@ textarea {
 		max-height: 45vh;
 	}
 }
+
+.workspace-run-ts {
+	color: rgba(255, 255, 255, 0.5);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0;
+	text-transform: none;
+	font-weight: 400;
+}

@@ -1078,7 +1078,19 @@ export function App()
 			<section className="workspace">
 				<header className="workspace-header">
 					<div>
-						<p className="eyebrow">Текущий прогон</p>
+						<p className="eyebrow">
+							Текущий прогон
+							{selectedRunId ? (() => {
+								const run = runs.find((candidate) => candidate.id === selectedRunId);
+								const ts = run?.createdAt ?? run?.completedAt;
+								if (!ts) return null;
+								try {
+									return <span className="workspace-run-ts"> · {new Date(ts).toLocaleString()}</span>;
+								} catch {
+									return <span className="workspace-run-ts"> · {ts}</span>;
+								}
+							})() : null}
+						</p>
 						<h2>{selectedProfile?.name ?? 'Выберите прогон'}</h2>
 						<p className="workspace-copy">
 							{activePage?.url ?? selectedProfile?.url ?? 'Выберите прогон или создайте новый профиль слева.'}
