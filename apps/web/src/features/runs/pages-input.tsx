@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 type PagesInputProps = {
 	value: string;
@@ -56,11 +57,34 @@ export function PagesInput(props: PagesInputProps)
 {
 	const [isEditing, setIsEditing] = useState(false);
 	const [draft, setDraft] = useState(props.value);
+	const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
 	const lines = useMemo(() => parseLines(props.value), [props.value]);
 	const profileOrigin = useMemo(() => originOf(props.profileUrl), [props.profileUrl]);
 	const previewItems = lines.slice(0, PREVIEW_LIMIT);
 	const hiddenCount = lines.length - previewItems.length;
+
+	useEffect(() =>
+	{
+		if (!isEditing) return;
+
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = 'hidden';
+		textareaRef.current?.focus({ preventScroll: true });
+
+		function onKey(event: KeyboardEvent): void
+		{
+			if (event.key === 'Escape') setIsEditing(false);
+		}
+
+		document.addEventListener('keydown', onKey);
+
+		return () =>
+		{
+			document.body.style.overflow = previousOverflow;
+			document.removeEventListener('keydown', onKey);
+		};
+	}, [isEditing]);
 
 	function openEditor(): void
 	{
@@ -121,58 +145,61 @@ export function PagesInput(props: PagesInputProps)
 
 			<span className="field-hint">По одному URL на строку. Можно относительный путь (/crm/lead/list/) или полный (https://…/crm/lead/list/).</span>
 
-			{isEditing ? (
-				<div
-					className="pages-input-modal-backdrop"
-					role="dialog"
-					aria-modal="true"
-					aria-label="Редактирование списка страниц"
-					onClick={(event) => { if (event.target === event.currentTarget) cancelEditor(); }}
-				>
-					<div className="pages-input-modal">
-						<header className="pages-input-modal-header">
-							<h3>Страницы для прогона</h3>
-							<p>{draftLines.length} {pluralPages(draftLines.length)}</p>
-						</header>
+			{isEditing && typeof document !== 'undefined'
+				? createPortal(
+					<div
+						className="pages-input-modal-backdrop"
+						role="dialog"
+						aria-modal="true"
+						aria-label="Редактирование списка страниц"
+						onClick={(event) => { if (event.target === event.currentTarget) cancelEditor(); }}
+					>
+						<div className="pages-input-modal">
+							<header className="pages-input-modal-header">
+								<h3>Страницы для прогона</h3>
+								<p>{draftLines.length} {pluralPages(draftLines.length)}</p>
+							</header>
 
-						<div className="pages-input-modal-body">
-							<textarea
-								aria-label="Список страниц"
-								className="pages-input-textarea"
-								value={draft}
-								onChange={(event) => setDraft(event.target.value)}
-								placeholder={'/crm/lead/list/\n/blank.php\nhttps://russeltest.bitrix24.ru/crm/deal/kanban/'}
-								autoFocus
-								spellCheck={false}
-							/>
+							<div className="pages-input-modal-body">
+								<textarea
+									ref={textareaRef}
+									aria-label="Список страниц"
+									className="pages-input-textarea"
+									value={draft}
+									onChange={(event) => setDraft(event.target.value)}
+									placeholder={'/crm/lead/list/\n/blank.php\nhttps://russeltest.bitrix24.ru/crm/deal/kanban/'}
+									spellCheck={false}
+								/>
 
-							{draftLines.length > 0 ? (
-								<ol className="pages-input-modal-preview">
-									{draftLines.map((line, index) => (
-										<li key={`${index}-${line}`}>
-											<span className="pages-input-num">{index + 1}</span>
-											<span className="pages-input-label" title={line}>
-												{toPreviewLabel(line, profileOrigin)}
-											</span>
-										</li>
-									))}
-								</ol>
-							) : (
-								<p className="pages-input-modal-empty">Пока пусто — добавьте хотя бы один URL.</p>
-							)}
+								{draftLines.length > 0 ? (
+									<ol className="pages-input-modal-preview">
+										{draftLines.map((line, index) => (
+											<li key={`${index}-${line}`}>
+												<span className="pages-input-num">{index + 1}</span>
+												<span className="pages-input-label" title={line}>
+													{toPreviewLabel(line, profileOrigin)}
+												</span>
+											</li>
+										))}
+									</ol>
+								) : (
+									<p className="pages-input-modal-empty">Пока пусто — добавьте хотя бы один URL.</p>
+								)}
+							</div>
+
+							<footer className="pages-input-modal-footer">
+								<button type="button" className="secondary-button" onClick={cancelEditor}>
+									Отмена
+								</button>
+								<button type="button" className="primary-button" onClick={applyEditor}>
+									Применить
+								</button>
+							</footer>
 						</div>
-
-						<footer className="pages-input-modal-footer">
-							<button type="button" className="secondary-button" onClick={cancelEditor}>
-								Отмена
-							</button>
-							<button type="button" className="primary-button" onClick={applyEditor}>
-								Применить
-							</button>
-						</footer>
-					</div>
-				</div>
-			) : null}
+					</div>,
+					document.body,
+				)
+				: null}
 		</div>
 	);
 }
