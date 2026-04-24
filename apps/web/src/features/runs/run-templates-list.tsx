@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import type { ApiProfile } from '../../lib/api.js';
+import { RunScheduleDialog } from './run-schedule-dialog.js';
 
 type RunTemplatesListProps = {
 	profiles: ApiProfile[];
@@ -25,6 +26,7 @@ export function RunTemplatesList(props: RunTemplatesListProps)
 {
 	const [selectedProfileId, setSelectedProfileId] = useState<string>('');
 	const [filter, setFilter] = useState<string>('');
+	const [isScheduleOpen, setIsScheduleOpen] = useState<boolean>(false);
 
 	const templates = useMemo(
 		() => props.profiles.filter((profile) => profile.isTemplate),
@@ -115,6 +117,24 @@ export function RunTemplatesList(props: RunTemplatesListProps)
 			>
 				{props.isSubmitting ? 'Запуск…' : 'Запустить'}
 			</button>
+
+			<button
+				type="button"
+				className="secondary-button run-templates-schedule-button"
+				onClick={() => setIsScheduleOpen(true)}
+				disabled={!selectedProfileId}
+			>
+				Расписание
+			</button>
+
+			{selectedProfileId ? (
+				<RunScheduleDialog
+					profileId={selectedProfileId}
+					profileName={templates.find((profile) => profile.id === selectedProfileId)?.name ?? ''}
+					isOpen={isScheduleOpen}
+					onClose={() => setIsScheduleOpen(false)}
+				/>
+			) : null}
 		</section>
 	);
 }

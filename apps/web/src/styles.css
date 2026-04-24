@@ -1619,3 +1619,106 @@ textarea {
 	min-width: 56px;
 	text-align: center;
 }
+
+/* ---------- Run schedule ---------- */
+.run-templates-schedule-button {
+	margin-top: 6px;
+	width: 100%;
+}
+
+.run-schedule-modal {
+	width: min(640px, 95vw);
+}
+
+.run-schedule-body {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	grid-template-columns: none;
+}
+
+.run-schedule-cron-input {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.run-schedule-presets {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.run-schedule-preset-buttons {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px;
+}
+
+.run-schedule-preset-button {
+	all: unset;
+	cursor: pointer;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 8px 10px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.03);
+	font-size: 13px;
+	transition: border-color 0.1s ease, background 0.1s ease;
+}
+
+.run-schedule-preset-button:hover {
+	border-color: rgba(255, 255, 255, 0.28);
+	background: rgba(255, 255, 255, 0.06);
+}
+
+.run-schedule-preset-button.is-active {
+	border-color: var(--accent, #3bd4c5);
+	background: rgba(59, 212, 197, 0.08);
+}
+
+.run-schedule-preset-label {
+	font-weight: 500;
+}
+
+.run-schedule-preset-button code {
+	color: rgba(255, 255, 255, 0.5);
+	font-size: 12px;
+}
+
+.run-schedule-meta {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 8px 16px;
+	margin: 4px 0 0;
+	font-size: 12px;
+}
+
+.run-schedule-meta dt {
+	color: rgba(255, 255, 255, 0.45);
+	margin: 0;
+}
+
+.run-schedule-meta dd {
+	margin: 0;
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.run-schedule-footer {
+	justify-content: space-between;
+}
+
+.run-schedule-footer-right {
+	display: inline-flex;
+	gap: 8px;
+}
+
+.error-banner {
+	margin: 0;
+	padding: 8px 10px;
+	background: rgba(255, 107, 107, 0.1);
+	border: 1px solid rgba(255, 107, 107, 0.35);
+	border-radius: 6px;
+	color: #ffb4b4;
+	font-size: 13px;
+}

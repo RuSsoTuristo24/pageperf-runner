@@ -738,7 +738,7 @@ type AssetIssuePayload = {
 	closedAt?: string;
 };
 
-async function sendJson<T>(url: string, method: 'POST' | 'PATCH' | 'DELETE', body?: unknown): Promise<T>
+async function sendJson<T>(url: string, method: 'POST' | 'PUT' | 'PATCH' | 'DELETE', body?: unknown): Promise<T>
 {
 	const init: RequestInit = { method };
 	if (body !== undefined)
@@ -871,4 +871,33 @@ export function fetchLlmReport(
 	const suffix = params.size > 0 ? `?${params.toString()}` : '';
 
 	return fetchJson<ApiLlmReport>(`/api/runs/${runId}/llm-report${suffix}`);
+}
+
+export type ApiRunSchedule = {
+	id: string;
+	profileId: string;
+	cronExpression: string;
+	enabled: boolean;
+	lastTriggeredAt: string | null;
+	lastRunId: string | null;
+	createdAt: string;
+	updatedAt: string;
+};
+
+export async function fetchProfileSchedule(profileId: string): Promise<ApiRunSchedule | null>
+{
+	const response = await fetch(`/api/profiles/${profileId}/schedule`);
+	if (response.status === 404) return null;
+	if (!response.ok) throw await toApiError(response, `/api/profiles/${profileId}/schedule`);
+	return response.json() as Promise<ApiRunSchedule>;
+}
+
+export function putProfileSchedule(profileId: string, payload: { cronExpression: string; enabled: boolean }): Promise<ApiRunSchedule>
+{
+	return sendJson<ApiRunSchedule>(`/api/profiles/${profileId}/schedule`, 'PUT', payload);
+}
+
+export function deleteProfileSchedule(profileId: string): Promise<void>
+{
+	return sendJson<void>(`/api/profiles/${profileId}/schedule`, 'DELETE');
 }

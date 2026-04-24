@@ -4,5 +4,6 @@ export * from './domain/asset-issue.js';
 export * from './domain/auth-session.js';
 export * from './domain/profile.js';
 export * from './domain/run.js';
+export * from './domain/run-schedule.js';
 export * from './domain/request.js';
 export * from './domain/issue.js';

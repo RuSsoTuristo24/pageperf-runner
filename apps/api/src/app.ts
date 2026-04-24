@@ -29,6 +29,10 @@ import { registerRunDetailRoutes } from './modules/runs/run-details.routes.js';
 import { registerRunLlmReportRoutes } from './modules/runs/run-llm-report.routes.js';
 import { InMemoryRunRepository } from './modules/runs/run.repository.js';
 import { registerRunRoutes } from './modules/runs/run.routes.js';
+import { RunScheduleRepository } from './modules/run-schedules/run-schedule.repository.js';
+import { registerRunScheduleRoutes } from './modules/run-schedules/run-schedule.routes.js';
+import { RunScheduleRunner } from './modules/run-schedules/run-schedule-runner.js';
+import { RunScheduleService } from './modules/run-schedules/run-schedule.service.js';
 import { WorkerClient } from './modules/worker-client/worker-client.js';
 import { registerHealthRoutes } from './routes/health.js';
 
@@ -134,6 +138,23 @@ export async function createApp(options: AppOptions = {}): Promise<FastifyInstan
 			}
 		},
 	});
+	const runScheduleRepository = new RunScheduleRepository(storageRoot);
+	const runScheduleService = new RunScheduleService(runScheduleRepository, profileRepository);
+	// Drives node-cron registrations for every enabled run_schedule and
+	// kicks RunService on each tick. Set RUN_SCHEDULE_ENABLED=false to
+	// disable in tests or unusual environments.
+	const runScheduleEnabled = (process.env.RUN_SCHEDULE_ENABLED ?? 'true').toLowerCase() !== 'false';
+	const runScheduleRunner = runScheduleEnabled
+		? new RunScheduleRunner(runScheduleService, runService)
+		: null;
+	if (runScheduleRunner)
+	{
+		runScheduleRunner.start();
+		app.addHook('onClose', async () => {
+			runScheduleRunner.stop();
+		});
+	}
+
 	registerAssetIssueRoutes(app, assetIssueService);
 	registerAuthSessionRoutes(app, authSessionService);
 	registerConfigRoutes(app, { vncUrl: process.env.VNC_URL?.trim() || null });
@@ -141,6 +162,7 @@ export async function createApp(options: AppOptions = {}): Promise<FastifyInstan
 	registerRunRoutes(app, runService);
 	registerRunDetailRoutes(app, runRepository);
 	registerRunLlmReportRoutes(app, llmReportService);
+	registerRunScheduleRoutes(app, runScheduleService);
 
 	const distPath = process.env.WEB_DIST_PATH ?? '/app/apps/web/dist';
 	if (existsSync(distPath))
