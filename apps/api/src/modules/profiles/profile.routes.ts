@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 
-import { ProfileService, ProfileValidationError } from './profile.service.js';
+import { ProfileNotFoundError, ProfileService, ProfileValidationError } from './profile.service.js';
 
 export function registerProfileRoutes(app: FastifyInstance, service: ProfileService): void
 {
@@ -20,6 +20,34 @@ export function registerProfileRoutes(app: FastifyInstance, service: ProfileServ
       if (error instanceof ProfileValidationError)
       {
         reply.code(400);
+
+        return { error: error.message };
+      }
+
+      throw error;
+    }
+  });
+
+  app.patch('/api/profiles/:id/template', async (request, reply) => {
+    const { id } = request.params as { id: string };
+    const body = (request.body ?? {}) as { isTemplate?: unknown };
+
+    if (typeof body.isTemplate !== 'boolean')
+    {
+      reply.code(400);
+
+      return { error: 'isTemplate must be a boolean' };
+    }
+
+    try
+    {
+      return service.setTemplate(id, body.isTemplate);
+    }
+    catch (error)
+    {
+      if (error instanceof ProfileNotFoundError)
+      {
+        reply.code(404);
 
         return { error: error.message };
       }

@@ -10,6 +10,7 @@ export type PgProfileRow = {
 	name: string;
 	url: string;
 	throttling: string;
+	isTemplate?: boolean;
 	createdAt?: Date;
 };
 
@@ -52,12 +53,34 @@ export async function pgInsertProfile(db: Db | undefined, row: PgProfileRow): Pr
 			name: row.name,
 			url: row.url,
 			throttling: row.throttling,
+			...(row.isTemplate !== undefined ? { isTemplate: row.isTemplate } : {}),
 			...(row.createdAt ? { createdAt: row.createdAt } : {}),
 		});
 	}
 	catch (error)
 	{
 		logFailure('profile insert', error);
+	}
+}
+
+export async function pgUpdateProfileTemplate(
+	db: Db | undefined,
+	profileId: string,
+	isTemplate: boolean,
+): Promise<void>
+{
+	if (!db)
+	{
+		return;
+	}
+
+	try
+	{
+		await db.update(profiles).set({ isTemplate }).where(eq(profiles.id, profileId));
+	}
+	catch (error)
+	{
+		logFailure('profile template update', error);
 	}
 }
 

@@ -1,10 +1,11 @@
-import { integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, integer, pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 
 export const profiles = pgTable('profiles', {
 	id: uuid('id').defaultRandom().primaryKey(),
 	name: text('name').notNull(),
 	url: text('url').notNull(),
 	throttling: text('throttling').notNull(),
+	isTemplate: boolean('is_template').default(false).notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 

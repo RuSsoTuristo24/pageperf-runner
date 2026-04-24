@@ -8,11 +8,12 @@ type StoredProfile = Profile & { id: string };
 
 function normalizeStoredProfile(
   profile: StoredProfile | (
-    Omit<StoredProfile, 'authMode' | 'cacheMode'>
+    Omit<StoredProfile, 'authMode' | 'cacheMode' | 'isTemplate'>
     & {
       authMode?: StoredProfile['authMode'];
       cacheMode?: StoredProfile['cacheMode'];
       pages?: StoredProfile['pages'];
+      isTemplate?: StoredProfile['isTemplate'];
     }
   ),
 ): StoredProfile
@@ -22,6 +23,7 @@ function normalizeStoredProfile(
     authMode: profile.authMode ?? 'none',
     cacheMode: profile.cacheMode ?? 'cold',
     pages: profile.pages?.length ? profile.pages : [profile.url],
+    isTemplate: profile.isTemplate ?? false,
   };
 }
 
@@ -60,6 +62,21 @@ export class InMemoryProfileRepository
   findById(id: string): StoredProfile | null
   {
     return this.#profiles.find((profile) => profile.id === id) ?? null;
+  }
+
+  setTemplate(id: string, isTemplate: boolean): StoredProfile | null
+  {
+    const profile = this.#profiles.find((candidate) => candidate.id === id);
+
+    if (!profile)
+    {
+      return null;
+    }
+
+    profile.isTemplate = isTemplate;
+    this.#persist();
+
+    return profile;
   }
 
   #persist(): void

@@ -101,6 +101,90 @@ describe('profile crud', () => {
 
     expect(response.statusCode).toBe(400);
   });
+
+  it('defaults isTemplate to false when not provided', async () => {
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/profiles',
+      payload: {
+        name: 'Ad-hoc default',
+        url: 'https://russeltest.bitrix24.ru/blank.php',
+        throttling: 'native',
+      },
+    });
+
+    expect(response.statusCode).toBe(201);
+    expect(response.json()).toMatchObject({ isTemplate: false });
+  });
+
+  it('accepts isTemplate=true on create', async () => {
+    const response = await app.inject({
+      method: 'POST',
+      url: '/api/profiles',
+      payload: {
+        name: 'Saved template',
+        url: 'https://russeltest.bitrix24.ru/blank.php',
+        throttling: 'native',
+        isTemplate: true,
+      },
+    });
+
+    expect(response.statusCode).toBe(201);
+    expect(response.json()).toMatchObject({ isTemplate: true });
+  });
+
+  it('promotes an ad-hoc profile to template via PATCH', async () => {
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/profiles',
+      payload: {
+        name: 'Will become template',
+        url: 'https://russeltest.bitrix24.ru/blank.php',
+        throttling: 'native',
+      },
+    });
+
+    expect(created.json().isTemplate).toBe(false);
+
+    const promoted = await app.inject({
+      method: 'PATCH',
+      url: `/api/profiles/${created.json().id}/template`,
+      payload: { isTemplate: true },
+    });
+
+    expect(promoted.statusCode).toBe(200);
+    expect(promoted.json()).toMatchObject({ isTemplate: true });
+  });
+
+  it('rejects non-boolean isTemplate in PATCH body', async () => {
+    const created = await app.inject({
+      method: 'POST',
+      url: '/api/profiles',
+      payload: {
+        name: 'Bad patch target',
+        url: 'https://russeltest.bitrix24.ru/blank.php',
+        throttling: 'native',
+      },
+    });
+
+    const response = await app.inject({
+      method: 'PATCH',
+      url: `/api/profiles/${created.json().id}/template`,
+      payload: { isTemplate: 'yes' },
+    });
+
+    expect(response.statusCode).toBe(400);
+  });
+
+  it('returns 404 when promoting a missing profile', async () => {
+    const response = await app.inject({
+      method: 'PATCH',
+      url: '/api/profiles/00000000-0000-4000-8000-000000000000/template',
+      payload: { isTemplate: true },
+    });
+
+    expect(response.statusCode).toBe(404);
+  });
 });
 
 describe('run crud', () => {

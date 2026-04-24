@@ -42,6 +42,7 @@ export const profileSchema = z.object({
 	throttling: throttlingPresetSchema.default('native'),
 	authMode: authModeSchema.default('none'),
 	cacheMode: cacheModeSchema.default('cold'),
+	isTemplate: z.boolean().default(false),
 }).superRefine((value, context) => {
 	if (value.pages && !hasSingleOrigin(value.url, value.pages))
 	{

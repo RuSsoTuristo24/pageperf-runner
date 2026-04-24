@@ -1,11 +1,13 @@
 import { profileSchema, type Profile } from '@pageperf-runner/shared';
 
 import type { Db } from '../../db/client.js';
-import { pgInsertProfile } from '../../db/pg-ingest.js';
+import { pgInsertProfile, pgUpdateProfileTemplate } from '../../db/pg-ingest.js';
 
 import { InMemoryProfileRepository } from './profile.repository.js';
 
 export class ProfileValidationError extends Error {}
+
+export class ProfileNotFoundError extends Error {}
 
 export class ProfileService
 {
@@ -32,6 +34,7 @@ export class ProfileService
       throttling: parsed.data.throttling,
       authMode: parsed.data.authMode,
       cacheMode: parsed.data.cacheMode,
+      isTemplate: parsed.data.isTemplate,
     });
 
     // Fire-and-forget dual-write to PG. Errors are swallowed by the helper —
@@ -42,6 +45,7 @@ export class ProfileService
       name: stored.name,
       url: stored.url,
       throttling: stored.throttling,
+      isTemplate: stored.isTemplate,
     });
 
     return stored;
@@ -55,5 +59,19 @@ export class ProfileService
   findById(id: string): (Profile & { id: string }) | null
   {
     return this.repository.findById(id);
+  }
+
+  setTemplate(id: string, isTemplate: boolean): Profile & { id: string }
+  {
+    const updated = this.repository.setTemplate(id, isTemplate);
+
+    if (!updated)
+    {
+      throw new ProfileNotFoundError(`Profile ${id} not found`);
+    }
+
+    void pgUpdateProfileTemplate(this.db, id, isTemplate);
+
+    return updated;
   }
 }

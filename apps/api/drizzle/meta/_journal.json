@@ -8,6 +8,13 @@
       "when": 1776963127238,
       "tag": "0000_secret_dreadnoughts",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776990393572,
+      "tag": "0001_profile_is_template",
+      "breakpoints": true
     }
   ]
 }
