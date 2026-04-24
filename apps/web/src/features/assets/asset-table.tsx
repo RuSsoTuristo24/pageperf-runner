@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import type { ApiAssetIssue } from '../../lib/api.js';
 import { getDisplayUrl, getResourceLabel, getResourceTypeLabel, getTargetOrigin } from '../../lib/url.js';
@@ -43,6 +43,9 @@ type AssetTableProps = {
 };
 
 type AssetSortKey = 'url' | 'type' | 'duration' | 'encoded' | 'decoded' | 'expansion' | 'compression';
+
+const PAGE_SIZE_OPTIONS = [20, 50, 100] as const;
+type PageSize = typeof PAGE_SIZE_OPTIONS[number];
 
 const COLUMN_TOOLTIPS: Record<AssetSortKey, string> = {
 	url: 'URL ресурса',
@@ -100,11 +103,35 @@ export function AssetTable({
 	const [sortKey, setSortKey] = useState<AssetSortKey>('decoded');
 	const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 	const [editingAssetKey, setEditingAssetKey] = useState<string | null>(null);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [pageSize, setPageSize] = useState<PageSize>(20);
+	const [page, setPage] = useState(0);
 	const targetOrigin = getTargetOrigin(targetUrl);
 	const heavyAssetLabel = Number(heavyAssetThresholdMb) > 0
 		? `> ${Number(heavyAssetThresholdMb).toFixed(2)} МБ`
 		: 'disabled';
-	const sortedAssets = sortAssets(assets, sortKey, sortDirection);
+
+	const filteredAssets = useMemo(() =>
+	{
+		const needle = searchQuery.trim().toLowerCase();
+		if (!needle) return assets;
+		return assets.filter((asset) => asset.url.toLowerCase().includes(needle));
+	}, [assets, searchQuery]);
+
+	const sortedAssets = useMemo(
+		() => sortAssets(filteredAssets, sortKey, sortDirection),
+		[filteredAssets, sortKey, sortDirection],
+	);
+
+	const pageCount = Math.max(1, Math.ceil(sortedAssets.length / pageSize));
+	const safePage = Math.min(page, pageCount - 1);
+	const pageSlice = sortedAssets.slice(safePage * pageSize, safePage * pageSize + pageSize);
+
+	useEffect(() =>
+	{
+		// reset to first page whenever filters/sorts change the visible result count
+		setPage(0);
+	}, [searchQuery, assetType, pageSize, sortKey, sortDirection]);
 
 	function handleSort(nextSortKey: AssetSortKey): void
 	{
@@ -141,6 +168,16 @@ export function AssetTable({
 						<span>Тяжёлых decoded: {heavyAssetCount}</span>
 						<strong>{heavyAssetLabel}</strong>
 					</p>
+					<label className="toolbar-control toolbar-control-search">
+						<span>Поиск по URL</span>
+						<input
+							aria-label="Поиск ресурса по URL"
+							type="search"
+							placeholder="часть пути или имени"
+							value={searchQuery}
+							onChange={(event) => setSearchQuery(event.target.value)}
+						/>
+					</label>
 					<label className="toolbar-control">
 						<span>Тип ресурса</span>
 						<select
@@ -229,7 +266,7 @@ export function AssetTable({
 								<td colSpan={8} className="empty-cell">Нет ресурсов для данного фильтра.</td>
 							</tr>
 						) : null}
-						{sortedAssets.map((asset) => (
+						{pageSlice.map((asset) => (
 							<Fragment key={`${asset.assetKey}-${asset.encodedBytes}`}>
 								<tr
 									className={[
@@ -289,6 +326,51 @@ export function AssetTable({
 					</tbody>
 				</table>
 			</div>
+
+			{sortedAssets.length > 0 ? (
+				<div className="data-table-pagination">
+					<label className="pagination-page-size">
+						<span>На странице</span>
+						<select
+							aria-label="Количество строк на странице"
+							value={pageSize}
+							onChange={(event) => setPageSize(Number(event.target.value) as PageSize)}
+						>
+							{PAGE_SIZE_OPTIONS.map((size) => (
+								<option key={size} value={size}>{size}</option>
+							))}
+						</select>
+					</label>
+
+					<p className="pagination-summary">
+						{safePage * pageSize + 1}–{Math.min((safePage + 1) * pageSize, sortedAssets.length)}
+						{' '}из {sortedAssets.length}
+						{sortedAssets.length !== assets.length ? ` (отфильтровано из ${assets.length})` : ''}
+					</p>
+
+					<div className="pagination-controls">
+						<button
+							type="button"
+							className="secondary-button secondary-button-compact"
+							disabled={safePage === 0}
+							onClick={() => setPage(safePage - 1)}
+						>
+							← Предыдущая
+						</button>
+						<span className="pagination-page-indicator">
+							{safePage + 1} / {pageCount}
+						</span>
+						<button
+							type="button"
+							className="secondary-button secondary-button-compact"
+							disabled={safePage >= pageCount - 1}
+							onClick={() => setPage(safePage + 1)}
+						>
+							Следующая →
+						</button>
+					</div>
+				</div>
+			) : null}
 		</section>
 	);
 }
