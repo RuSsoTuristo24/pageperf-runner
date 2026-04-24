@@ -159,7 +159,7 @@ export function AuthSessionsList(props: AuthSessionsListProps)
               >
                 {isBusy
                   ? 'Ожидание входа…'
-                  : session.status === 'ready' ? 'Переснять' : 'Снять сессию'}
+                  : session.status === 'ready' ? 'Обновить сессию' : 'Пройти вход'}
               </button>
               <button
                 type="button"
