@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AuthSessionsList } from './features/auth/auth-sessions-list.js';
 import { IssueWatch } from './features/asset-issues/issue-watch.js';
@@ -360,6 +360,7 @@ export function App()
 	const [assetType, setAssetType] = useState('all');
 	const [heavyAssetThresholdMb, setHeavyAssetThresholdMb] = useState('1');
 	const [useAuthSession, setUseAuthSession] = useState(false);
+	const lastAutoAuthHostRef = useRef<string | null | undefined>(undefined);
 	const [saveAsTemplate, setSaveAsTemplate] = useState(false);
 	const [isPromotingTemplate, setIsPromotingTemplate] = useState(false);
 	const [selectedPassLabel, setSelectedPassLabel] = useState<'cold' | 'warm' | null>(null);
@@ -500,6 +501,22 @@ export function App()
 	useEffect(() => {
 		setLlmReport(null);
 	}, [selectedRunId, selectedPassLabel, selectedPageKey]);
+
+	useEffect(() => {
+		const host = hostFromUrl(draftProfileUrl);
+
+		if (host === lastAutoAuthHostRef.current) {
+			return;
+		}
+
+		lastAutoAuthHostRef.current = host;
+
+		const hasReadySession = host
+			? authSessions.some((session) => session.host === host && session.status === 'ready')
+			: false;
+
+		setUseAuthSession(hasReadySession);
+	}, [draftProfileUrl, authSessions]);
 
 	useEffect(() => {
 		const selectedRun = runs.find((run) => run.id === selectedRunId);
