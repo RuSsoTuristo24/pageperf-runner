@@ -1001,6 +1001,14 @@ export function App()
 					<p className="brand-copy">Диагностика загрузки страниц, сетевых запросов и JS-бандлов портала Bitrix.</p>
 				</div>
 
+				<RunTemplatesList
+					profiles={profiles}
+					isSubmitting={isSubmittingRun}
+					onStartExisting={(profileId) => {
+						void handleStartExistingProfile(profileId);
+					}}
+				/>
+
 				<RunLaunchForm
 					name={draftProfileName}
 					url={draftProfileUrl}
@@ -1019,14 +1027,6 @@ export function App()
 					onSaveAsTemplateChange={setSaveAsTemplate}
 					onSubmit={() => {
 						void handleCreateAndStartRun();
-					}}
-				/>
-
-				<RunTemplatesList
-					profiles={profiles}
-					isSubmitting={isSubmittingRun}
-					onStartExisting={(profileId) => {
-						void handleStartExistingProfile(profileId);
 					}}
 				/>
 

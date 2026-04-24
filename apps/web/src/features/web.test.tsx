@@ -1810,8 +1810,7 @@ describe('pageperf-runner app shell', () => {
     const dropdown = screen.getByLabelText('Выбрать профиль') as HTMLSelectElement;
     const options = within(dropdown).getAllByRole('option');
     expect(options.map((option) => option.textContent)).toEqual([
-      '— выберите профиль —',
-      'Portal template (native / cold)',
+      'Portal template — portal.example.com (native / cold)',
     ]);
 
     fireEvent.change(dropdown, { target: { value: 'profile-template' } });
