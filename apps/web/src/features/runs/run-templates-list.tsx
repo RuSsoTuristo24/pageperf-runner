@@ -95,25 +95,35 @@ export function RunTemplatesList(props: RunTemplatesListProps)
 				</label>
 			) : null}
 
-			<label className="field">
+			<div className="field">
 				<span>Профиль</span>
-				<select
-					aria-label="Выбрать профиль"
-					size={Math.min(Math.max(filteredTemplates.length, 3), 8)}
-					value={selectedProfileId}
-					onChange={(event) => setSelectedProfileId(event.target.value)}
-				>
-					{filteredTemplates.length === 0 ? (
-						<option value="" disabled>— ничего не найдено —</option>
-					) : (
-						filteredTemplates.map((profile) => (
-							<option key={profile.id} value={profile.id} title={`${profile.name} · ${profile.url}`}>
-								{profile.name} — {formatHint(profile.url)} ({profile.throttling} / {profile.cacheMode})
-							</option>
-						))
-					)}
-				</select>
-			</label>
+				{filteredTemplates.length === 0 ? (
+					<p className="template-empty">— ничего не найдено —</p>
+				) : (
+					<ul
+						className="template-list"
+						role="listbox"
+						aria-label="Выбрать профиль"
+					>
+						{filteredTemplates.map((profile) => (
+							<li key={profile.id}>
+								<button
+									type="button"
+									role="option"
+									aria-selected={selectedProfileId === profile.id}
+									className={`template-list-item${selectedProfileId === profile.id ? ' is-selected' : ''}`}
+									onClick={() => setSelectedProfileId(profile.id)}
+									title={`${profile.name} · ${profile.url}`}
+								>
+									<strong className="template-list-name">{profile.name}</strong>
+									<span className="template-list-url">{formatHint(profile.url)}</span>
+									<span className="template-list-meta">{profile.throttling} / {profile.cacheMode}</span>
+								</button>
+							</li>
+						))}
+					</ul>
+				)}
+			</div>
 
 			<button
 				type="button"

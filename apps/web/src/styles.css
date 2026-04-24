@@ -1826,3 +1826,73 @@ textarea {
 	font-size: 11px;
 	text-align: center;
 }
+
+/* ---------- Templates clickable list ---------- */
+.template-list {
+	list-style: none;
+	margin: 0;
+	padding: 4px;
+	border: 1px solid var(--line-strong);
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.02);
+	max-height: 280px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.template-list-item {
+	all: unset;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	width: 100%;
+	box-sizing: border-box;
+	padding: 8px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+	border: 1px solid transparent;
+	transition: border-color 0.1s ease, background 0.1s ease;
+}
+
+.template-list-item:hover {
+	background: rgba(93, 228, 199, 0.06);
+	border-color: rgba(93, 228, 199, 0.18);
+}
+
+.template-list-item.is-selected {
+	background: rgba(93, 228, 199, 0.16);
+	border-color: rgba(93, 228, 199, 0.48);
+}
+
+.template-list-name {
+	font-weight: 600;
+	color: var(--text-primary, #edf4fb);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.template-list-url {
+	font-size: 12px;
+	color: rgba(255, 255, 255, 0.55);
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.template-list-meta {
+	font-size: 11px;
+	color: rgba(255, 255, 255, 0.4);
+	letter-spacing: 0.02em;
+}
+
+.template-empty {
+	margin: 0;
+	padding: 12px;
+	text-align: center;
+	color: rgba(255, 255, 255, 0.45);
+	font-style: italic;
+}

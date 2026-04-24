@@ -1807,13 +1807,13 @@ describe('pageperf-runner app shell', () => {
 
     expect(await screen.findByRole('heading', { name: 'Запустить по профилю' })).toBeTruthy();
 
-    const dropdown = screen.getByLabelText('Выбрать профиль') as HTMLSelectElement;
-    const options = within(dropdown).getAllByRole('option');
-    expect(options.map((option) => option.textContent)).toEqual([
-      'Portal template — portal.example.com (native / cold)',
-    ]);
+    const listbox = screen.getByLabelText('Выбрать профиль');
+    const options = within(listbox).getAllByRole('option');
+    expect(options).toHaveLength(1);
+    expect(options[0]?.textContent).toContain('Portal template');
+    expect(options[0]?.textContent).toContain('portal.example.com');
 
-    fireEvent.change(dropdown, { target: { value: 'profile-template' } });
+    fireEvent.click(options[0]!);
     fireEvent.click(screen.getByRole('button', { name: 'Запустить' }));
 
     await waitFor(() => {
