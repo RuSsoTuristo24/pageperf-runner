@@ -12,6 +12,7 @@ import { JsExecutionPanel } from './features/runs/js-execution-panel.js';
 import { RunLaunchForm } from './features/runs/run-launch-form.js';
 import { RunList } from './features/runs/run-list.js';
 import { RunOverview } from './features/runs/run-overview.js';
+import { RunTemplatesList } from './features/runs/run-templates-list.js';
 import {
 	captureAuthSession,
 	createProfile,
@@ -28,6 +29,7 @@ import {
 	fetchRunDetails,
 	fetchRuns,
 	hostFromUrl,
+	setProfileTemplate,
 	startRun,
 	type ApiAuthSession,
 	type ApiAssetIssue,
@@ -357,6 +359,8 @@ export function App()
 	const [assetType, setAssetType] = useState('all');
 	const [heavyAssetThresholdMb, setHeavyAssetThresholdMb] = useState('1');
 	const [useAuthSession, setUseAuthSession] = useState(false);
+	const [saveAsTemplate, setSaveAsTemplate] = useState(false);
+	const [isPromotingTemplate, setIsPromotingTemplate] = useState(false);
 	const [selectedPassLabel, setSelectedPassLabel] = useState<'cold' | 'warm' | null>(null);
 	const [selectedPageKey, setSelectedPageKey] = useState<string | null>(null);
 	const [isBootstrapping, setIsBootstrapping] = useState(true);
@@ -709,6 +713,7 @@ export function App()
 				throttling: draftThrottling,
 				authMode: useAuthSession ? 'session' : 'none',
 				cacheMode: draftCacheMode,
+				isTemplate: saveAsTemplate,
 			});
 			const run = await createRun(profile.id);
 			const startedRun = await startRun(run.id);
@@ -729,6 +734,57 @@ export function App()
 		finally
 		{
 			setIsSubmittingRun(false);
+		}
+	}
+
+	async function handleStartExistingProfile(profileId: string): Promise<void>
+	{
+		try
+		{
+			setIsSubmittingRun(true);
+			setErrorMessage(null);
+
+			const run = await createRun(profileId);
+			const startedRun = await startRun(run.id);
+
+			setRuns((currentRuns) => [
+				startedRun.run,
+				...currentRuns.filter((currentRun) => currentRun.id !== startedRun.run.id),
+			]);
+			setSelectedRunId(startedRun.run.id);
+			setSelectedRunDetails(startedRun);
+			setAssetIssues(await fetchAssetIssues());
+		}
+		catch (error)
+		{
+			setErrorMessage(toErrorMessage(error));
+		}
+		finally
+		{
+			setIsSubmittingRun(false);
+		}
+	}
+
+	async function handlePromoteProfileToTemplate(profileId: string): Promise<void>
+	{
+		try
+		{
+			setIsPromotingTemplate(true);
+			setErrorMessage(null);
+
+			const updated = await setProfileTemplate(profileId, true);
+
+			setProfiles((currentProfiles) => currentProfiles.map((profile) => (
+				profile.id === updated.id ? updated : profile
+			)));
+		}
+		catch (error)
+		{
+			setErrorMessage(toErrorMessage(error));
+		}
+		finally
+		{
+			setIsPromotingTemplate(false);
 		}
 	}
 
@@ -952,6 +1008,7 @@ export function App()
 					throttling={draftThrottling}
 					cacheMode={draftCacheMode}
 					useAuthSession={useAuthSession}
+					saveAsTemplate={saveAsTemplate}
 					isSubmitting={isSubmittingRun}
 					onNameChange={setDraftProfileName}
 					onUrlChange={setDraftProfileUrl}
@@ -959,8 +1016,17 @@ export function App()
 					onThrottlingChange={setDraftThrottling}
 					onCacheModeChange={setDraftCacheMode}
 					onUseAuthSessionChange={setUseAuthSession}
+					onSaveAsTemplateChange={setSaveAsTemplate}
 					onSubmit={() => {
 						void handleCreateAndStartRun();
+					}}
+				/>
+
+				<RunTemplatesList
+					profiles={profiles}
+					isSubmitting={isSubmittingRun}
+					onStartExisting={(profileId) => {
+						void handleStartExistingProfile(profileId);
 					}}
 				/>
 
@@ -1023,6 +1089,18 @@ export function App()
 								disabled={isGeneratingLlmReport}
 							>
 								{isGeneratingLlmReport ? 'Готовлю LLM-отчёт…' : 'Сформировать LLM-отчёт'}
+							</button>
+						) : null}
+						{selectedProfile && !selectedProfile.isTemplate ? (
+							<button
+								type="button"
+								className="secondary-button secondary-button-compact"
+								onClick={() => {
+									void handlePromoteProfileToTemplate(selectedProfile.id);
+								}}
+								disabled={isPromotingTemplate}
+							>
+								{isPromotingTemplate ? 'Сохраняю…' : 'Сохранить как шаблон'}
 							</button>
 						) : null}
 						{selectedRunId ? (

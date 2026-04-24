@@ -93,6 +93,7 @@ describe('pageperf-runner app shell', () => {
           throttling: 'slow-4g',
           authMode: 'none',
           cacheMode: 'cold',
+          isTemplate: false,
         }));
 
         return new Response(JSON.stringify({
@@ -103,6 +104,7 @@ describe('pageperf-runner app shell', () => {
           throttling: 'slow-4g',
           authMode: 'none',
           cacheMode: 'cold',
+          isTemplate: false,
         }), {
           status: 201,
           headers: { 'Content-Type': 'application/json' },
@@ -1702,5 +1704,211 @@ describe('pageperf-runner app shell', () => {
     expect(await screen.findByText('900.0 мс')).toBeTruthy();
     fireEvent.click(screen.getByRole('tab', { name: /Запросы/ }));
     expect(await screen.findByText('/warm.js')).toBeTruthy();
+  });
+
+  it('starts a new run from an existing template without recreating the profile', async () => {
+    const createProfileSpy = vi.fn();
+    fetchMock.mockImplementation(async (input, init) => {
+      const url = String(input);
+      const method = init?.method ?? 'GET';
+      const assetIssuesResponse = createEmptyAssetIssuesResponse(url, method);
+
+      if (assetIssuesResponse)
+      {
+        return assetIssuesResponse;
+      }
+
+      const configResponse = createDefaultConfigResponse(url, method);
+
+      if (configResponse)
+      {
+        return configResponse;
+      }
+
+      if (url.endsWith('/api/profiles') && method === 'GET')
+      {
+        return new Response(JSON.stringify([
+          {
+            id: 'profile-template',
+            name: 'Portal template',
+            url: 'https://portal.example.com/',
+            throttling: 'native',
+            authMode: 'none',
+            cacheMode: 'cold',
+            isTemplate: true,
+          },
+          {
+            id: 'profile-adhoc',
+            name: 'Ad-hoc run',
+            url: 'https://one-off.example.com/',
+            throttling: 'native',
+            authMode: 'none',
+            cacheMode: 'cold',
+            isTemplate: false,
+          },
+        ]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (url.endsWith('/api/profiles') && method === 'POST')
+      {
+        createProfileSpy();
+
+        return new Response('{}', { status: 201 });
+      }
+
+      if (url.endsWith('/api/runs') && method === 'GET')
+      {
+        return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+
+      if (url.endsWith('/api/auth/sessions') && method === 'GET')
+      {
+        return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+
+      if (url.endsWith('/api/runs') && method === 'POST')
+      {
+        expect(init?.body).toBe(JSON.stringify({ profileId: 'profile-template' }));
+
+        return new Response(JSON.stringify({
+          id: 'run-from-template',
+          profileId: 'profile-template',
+          status: 'queued',
+        }), {
+          status: 201,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (url.endsWith('/api/runs/run-from-template/start') && method === 'POST')
+      {
+        return new Response(JSON.stringify({
+          run: { id: 'run-from-template', profileId: 'profile-template', status: 'completed' },
+          pageMetrics: [],
+          requests: [],
+          artifacts: [],
+          passes: [],
+        }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      throw new Error(`Unexpected fetch ${method} ${url}`);
+    });
+
+    render(<App />);
+
+    expect(await screen.findByRole('heading', { name: 'Запустить по профилю' })).toBeTruthy();
+
+    const dropdown = screen.getByLabelText('Выбрать профиль') as HTMLSelectElement;
+    const options = within(dropdown).getAllByRole('option');
+    expect(options.map((option) => option.textContent)).toEqual([
+      '— выберите профиль —',
+      'Portal template (native / cold)',
+    ]);
+
+    fireEvent.change(dropdown, { target: { value: 'profile-template' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Запустить' }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith('/api/runs', expect.objectContaining({ method: 'POST' }));
+      expect(fetchMock).toHaveBeenCalledWith('/api/runs/run-from-template/start', expect.objectContaining({ method: 'POST' }));
+    });
+
+    expect(createProfileSpy).not.toHaveBeenCalled();
+  });
+
+  it('promotes an ad-hoc profile to template from the workspace header', async () => {
+    fetchMock.mockImplementation(async (input, init) => {
+      const url = String(input);
+      const method = init?.method ?? 'GET';
+      const assetIssuesResponse = createEmptyAssetIssuesResponse(url, method);
+
+      if (assetIssuesResponse)
+      {
+        return assetIssuesResponse;
+      }
+
+      const configResponse = createDefaultConfigResponse(url, method);
+
+      if (configResponse)
+      {
+        return configResponse;
+      }
+
+      if (url.endsWith('/api/profiles') && method === 'GET')
+      {
+        return new Response(JSON.stringify([
+          {
+            id: 'profile-x',
+            name: 'Ad-hoc profile',
+            url: 'https://example.com/',
+            throttling: 'native',
+            authMode: 'none',
+            cacheMode: 'cold',
+            isTemplate: false,
+          },
+        ]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
+      if (url.endsWith('/api/runs') && method === 'GET')
+      {
+        return new Response(JSON.stringify([
+          { id: 'run-x', profileId: 'profile-x', status: 'completed' },
+        ]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+
+      if (url.endsWith('/api/auth/sessions') && method === 'GET')
+      {
+        return new Response(JSON.stringify([]), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+
+      if (url.endsWith('/api/runs/run-x') && method === 'GET')
+      {
+        return new Response(JSON.stringify({
+          run: { id: 'run-x', profileId: 'profile-x', status: 'completed' },
+          pageMetrics: [],
+          requests: [],
+          artifacts: [],
+          passes: [],
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+
+      if (url.endsWith('/api/profiles/profile-x/template') && method === 'PATCH')
+      {
+        expect(init?.body).toBe(JSON.stringify({ isTemplate: true }));
+
+        return new Response(JSON.stringify({
+          id: 'profile-x',
+          name: 'Ad-hoc profile',
+          url: 'https://example.com/',
+          throttling: 'native',
+          authMode: 'none',
+          cacheMode: 'cold',
+          isTemplate: true,
+        }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+      }
+
+      throw new Error(`Unexpected fetch ${method} ${url}`);
+    });
+
+    render(<App />);
+
+    const promoteButton = await screen.findByRole('button', { name: 'Сохранить как шаблон' });
+    fireEvent.click(promoteButton);
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/profiles/profile-x/template',
+        expect.objectContaining({ method: 'PATCH' }),
+      );
+    });
   });
 });

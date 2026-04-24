@@ -5,6 +5,7 @@ type RunLaunchFormProps = {
 	throttling: string;
 	cacheMode: 'cold' | 'warm' | 'both';
 	useAuthSession: boolean;
+	saveAsTemplate: boolean;
 	isSubmitting: boolean;
 	onNameChange: (value: string) => void;
 	onUrlChange: (value: string) => void;
@@ -12,6 +13,7 @@ type RunLaunchFormProps = {
 	onThrottlingChange: (value: string) => void;
 	onCacheModeChange: (value: 'cold' | 'warm' | 'both') => void;
 	onUseAuthSessionChange: (value: boolean) => void;
+	onSaveAsTemplateChange: (value: boolean) => void;
 	onSubmit: () => void;
 };
 
@@ -90,6 +92,15 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 					onChange={(event) => props.onUseAuthSessionChange(event.target.checked)}
 				/>
 				<span>Использовать сохранённую сессию</span>
+			</label>
+			<label className="field-checkbox">
+				<input
+					aria-label="Сохранить как шаблон"
+					checked={props.saveAsTemplate}
+					type="checkbox"
+					onChange={(event) => props.onSaveAsTemplateChange(event.target.checked)}
+				/>
+				<span>Сохранить как шаблон</span>
 			</label>
 			<button
 				type="button"

@@ -6,6 +6,7 @@ export type ApiProfile = {
 	throttling: string;
 	authMode: 'none' | 'session';
 	cacheMode: 'cold' | 'warm' | 'both';
+	isTemplate: boolean;
 };
 
 export type ApiRun = {
@@ -489,6 +490,7 @@ export type CreateProfilePayload = {
 	throttling: string;
 	authMode: 'none' | 'session';
 	cacheMode: 'cold' | 'warm' | 'both';
+	isTemplate?: boolean;
 };
 
 export type ApiAuthSession = {
@@ -777,6 +779,11 @@ export function fetchRunDetails(runId: string): Promise<ApiRunDetails>
 export function createProfile(payload: CreateProfilePayload): Promise<ApiProfile>
 {
 	return sendJson<ApiProfile>('/api/profiles', 'POST', payload);
+}
+
+export function setProfileTemplate(profileId: string, isTemplate: boolean): Promise<ApiProfile>
+{
+	return sendJson<ApiProfile>(`/api/profiles/${profileId}/template`, 'PATCH', { isTemplate });
 }
 
 export function fetchAuthSessions(): Promise<ApiAuthSession[]>
