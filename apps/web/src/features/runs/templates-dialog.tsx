@@ -3,9 +3,11 @@ import { createPortal } from 'react-dom';
 
 import {
 	deleteProfileSchedule,
+	environmentOptions,
 	fetchProfileSchedule,
 	putProfileSchedule,
 	updateProfile,
+	type ApiEnvironment,
 	type ApiProfile,
 	type ApiRunSchedule,
 } from '../../lib/api.js';
@@ -20,7 +22,13 @@ type TemplatesDialogProps = {
 	onProfileUpdated: (profile: ApiProfile) => void;
 };
 
-type Section = 'pages' | 'schedule';
+type Section = 'params' | 'pages' | 'schedule';
+
+function environmentLabel(env: ApiEnvironment | undefined): string
+{
+	const hit = environmentOptions.find((option) => option.value === env);
+	return hit?.label ?? env ?? '—';
+}
 
 const PAGE_SIZE_OPTIONS = [20, 50, 100] as const;
 type PageSize = typeof PAGE_SIZE_OPTIONS[number];
@@ -64,7 +72,11 @@ export function TemplatesDialog(props: TemplatesDialogProps)
 	const [pageSize, setPageSize] = useState<PageSize>(20);
 	const [page, setPage] = useState(0);
 	const [selectedId, setSelectedId] = useState<string>('');
-	const [section, setSection] = useState<Section>('pages');
+	const [section, setSection] = useState<Section>('params');
+
+	const [environmentDraft, setEnvironmentDraft] = useState<ApiEnvironment>('production');
+	const [isSavingEnvironment, setIsSavingEnvironment] = useState(false);
+	const [environmentError, setEnvironmentError] = useState<string | null>(null);
 
 	const [pagesDraft, setPagesDraft] = useState('');
 	const [isSavingPages, setIsSavingPages] = useState(false);
@@ -116,6 +128,8 @@ export function TemplatesDialog(props: TemplatesDialogProps)
 
 		setPagesDraft((selectedProfile.pages ?? [selectedProfile.url]).join('\n'));
 		setPagesError(null);
+		setEnvironmentDraft(selectedProfile.environment);
+		setEnvironmentError(null);
 	}, [selectedProfile]);
 
 	useEffect(() =>
@@ -163,6 +177,27 @@ export function TemplatesDialog(props: TemplatesDialogProps)
 			document.removeEventListener('keydown', onKey);
 		};
 	}, [props.isOpen, props.onClose]);
+
+	async function handleSaveEnvironment(): Promise<void>
+	{
+		if (!selectedProfile) return;
+
+		setIsSavingEnvironment(true);
+		setEnvironmentError(null);
+		try
+		{
+			const updated = await updateProfile(selectedProfile.id, { environment: environmentDraft });
+			props.onProfileUpdated(updated);
+		}
+		catch (err)
+		{
+			setEnvironmentError(err instanceof Error ? err.message : String(err));
+		}
+		finally
+		{
+			setIsSavingEnvironment(false);
+		}
+	}
 
 	async function handleSavePages(): Promise<void>
 	{
@@ -363,6 +398,8 @@ export function TemplatesDialog(props: TemplatesDialogProps)
 										<h4>{selectedProfile.name}</h4>
 										<p title={selectedProfile.url}>{selectedProfile.url}</p>
 										<p className="templates-dialog-detail-meta">
+											{environmentLabel(selectedProfile.environment)}
+											{' · '}
 											{selectedProfile.throttling} / {selectedProfile.cacheMode}
 											{selectedProfile.authMode === 'session' ? ' · сохранённая сессия' : ''}
 										</p>
@@ -378,6 +415,15 @@ export function TemplatesDialog(props: TemplatesDialogProps)
 								</header>
 
 								<nav className="profile-settings-tabs" role="tablist">
+									<button
+										type="button"
+										role="tab"
+										aria-selected={section === 'params'}
+										className={`profile-settings-tab${section === 'params' ? ' is-active' : ''}`}
+										onClick={() => setSection('params')}
+									>
+										Параметры
+									</button>
 									<button
 										type="button"
 										role="tab"
@@ -399,6 +445,37 @@ export function TemplatesDialog(props: TemplatesDialogProps)
 								</nav>
 
 								<div className="templates-dialog-detail-body">
+									{section === 'params' ? (
+										<div className="profile-settings-section">
+											<label className="field">
+												<span>Среда тестирования</span>
+												<select
+													aria-label="Среда тестирования"
+													value={environmentDraft}
+													onChange={(event) => setEnvironmentDraft(event.target.value as ApiEnvironment)}
+												>
+													{environmentOptions.map((option) => (
+														<option key={option.value} value={option.value}>{option.label}</option>
+													))}
+												</select>
+												<span className="field-hint">Среда, к которой шаблон относится. В Grafana можно фильтровать и сравнивать между средами.</span>
+											</label>
+
+											{environmentError ? <p className="error-banner">{environmentError}</p> : null}
+
+											<div className="profile-settings-section-actions">
+												<button
+													type="button"
+													className="primary-button"
+													onClick={handleSaveEnvironment}
+													disabled={isSavingEnvironment || environmentDraft === selectedProfile.environment}
+												>
+													{isSavingEnvironment ? 'Сохранение…' : 'Сохранить параметры'}
+												</button>
+											</div>
+										</div>
+									) : null}
+
 									{section === 'pages' ? (
 										<div className="profile-settings-section">
 											<PagesInput

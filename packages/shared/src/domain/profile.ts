@@ -20,6 +20,22 @@ export const cacheModeSchema = z.enum([
 	'both',
 ]);
 
+export const environmentSchema = z.enum([
+	'etalon',
+	'production',
+	'box',
+	'experimental',
+]);
+
+export type Environment = z.infer<typeof environmentSchema>;
+
+export const environmentLabels: Record<Environment, string> = {
+	etalon: 'Эталон',
+	production: 'Продакшн',
+	box: 'Коробка',
+	experimental: 'Эксперимент',
+};
+
 function hasSingleOrigin(url: string, pages: string[]): boolean
 {
 	try
@@ -42,6 +58,7 @@ export const profileSchema = z.object({
 	throttling: throttlingPresetSchema.default('native'),
 	authMode: authModeSchema.default('none'),
 	cacheMode: cacheModeSchema.default('cold'),
+	environment: environmentSchema.default('production'),
 	isTemplate: z.boolean().default(false),
 }).superRefine((value, context) => {
 	if (value.pages && !hasSingleOrigin(value.url, value.pages))

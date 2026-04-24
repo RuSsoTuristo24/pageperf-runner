@@ -93,6 +93,7 @@ describe('pageperf-runner app shell', () => {
           throttling: 'slow-4g',
           authMode: 'none',
           cacheMode: 'cold',
+          environment: 'production',
           isTemplate: false,
         }));
 
@@ -104,6 +105,7 @@ describe('pageperf-runner app shell', () => {
           throttling: 'slow-4g',
           authMode: 'none',
           cacheMode: 'cold',
+          environment: 'production',
           isTemplate: false,
         }), {
           status: 201,

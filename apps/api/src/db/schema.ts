@@ -6,6 +6,7 @@ export const profiles = pgTable('profiles', {
 	url: text('url').notNull(),
 	throttling: text('throttling').notNull(),
 	isTemplate: boolean('is_template').default(false).notNull(),
+	environment: text('environment').default('production').notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
@@ -29,6 +30,11 @@ export const requests = pgTable('requests', {
 	url: text('url').notNull(),
 	resourceType: text('resource_type').notNull(),
 	status: integer('status').notNull(),
+	transferSize: integer('transfer_size'),
+	encodedBodySize: integer('encoded_body_size'),
+	decodedBodySize: integer('decoded_body_size'),
+	durationMs: integer('duration_ms'),
+	contentEncoding: text('content_encoding'),
 });
 
 export const assets = pgTable('assets', {

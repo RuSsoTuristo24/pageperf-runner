@@ -15,6 +15,13 @@
       "when": 1776990393572,
       "tag": "0001_profile_is_template",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777068500036,
+      "tag": "0002_env_and_request_sizes",
+      "breakpoints": true
     }
   ]
 }

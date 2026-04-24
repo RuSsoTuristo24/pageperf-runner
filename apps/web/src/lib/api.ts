@@ -1,3 +1,12 @@
+export type ApiEnvironment = 'etalon' | 'production' | 'box' | 'experimental';
+
+export const environmentOptions: { value: ApiEnvironment; label: string }[] = [
+	{ value: 'production', label: 'Продакшн' },
+	{ value: 'etalon', label: 'Эталон' },
+	{ value: 'box', label: 'Коробка' },
+	{ value: 'experimental', label: 'Эксперимент' },
+];
+
 export type ApiProfile = {
 	id: string;
 	name: string;
@@ -6,6 +15,7 @@ export type ApiProfile = {
 	throttling: string;
 	authMode: 'none' | 'session';
 	cacheMode: 'cold' | 'warm' | 'both';
+	environment: ApiEnvironment;
 	isTemplate: boolean;
 };
 
@@ -909,6 +919,7 @@ export type ProfilePatch = {
 	throttling?: string;
 	authMode?: 'none' | 'session';
 	cacheMode?: 'cold' | 'warm' | 'both';
+	environment?: ApiEnvironment;
 };
 
 export function updateProfile(profileId: string, patch: ProfilePatch): Promise<ApiProfile>

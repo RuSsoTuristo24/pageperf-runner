@@ -35,6 +35,7 @@ import {
 	type ApiAuthSession,
 	type ApiAssetIssue,
 	type ApiAppConfig,
+	type ApiEnvironment,
 	type ApiLlmReport,
 	type ApiProfile,
 	type ApiRun,
@@ -379,6 +380,7 @@ export function App()
 	const [draftProfilePages, setDraftProfilePages] = useState('https://russeltest.bitrix24.ru/blank.php');
 	const [draftThrottling, setDraftThrottling] = useState('native');
 	const [draftCacheMode, setDraftCacheMode] = useState<'cold' | 'warm' | 'both'>('cold');
+	const [draftEnvironment, setDraftEnvironment] = useState<ApiEnvironment>('production');
 	const [copyFeedback, setCopyFeedback] = useState(false);
 
 	useEffect(() => {
@@ -728,6 +730,7 @@ export function App()
 				throttling: draftThrottling,
 				authMode: useAuthSession ? 'session' : 'none',
 				cacheMode: draftCacheMode,
+				environment: draftEnvironment,
 				isTemplate: saveAsTemplate,
 			});
 			const run = await createRun(profile.id);
@@ -1033,6 +1036,7 @@ export function App()
 					pages={draftProfilePages}
 					throttling={draftThrottling}
 					cacheMode={draftCacheMode}
+					environment={draftEnvironment}
 					useAuthSession={useAuthSession}
 					saveAsTemplate={saveAsTemplate}
 					isSubmitting={isSubmittingRun}
@@ -1041,6 +1045,7 @@ export function App()
 					onPagesChange={setDraftProfilePages}
 					onThrottlingChange={setDraftThrottling}
 					onCacheModeChange={setDraftCacheMode}
+					onEnvironmentChange={setDraftEnvironment}
 					onUseAuthSessionChange={setUseAuthSession}
 					onSaveAsTemplateChange={setSaveAsTemplate}
 					onSubmit={() => {

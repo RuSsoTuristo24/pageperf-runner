@@ -8,10 +8,11 @@ type StoredProfile = Profile & { id: string };
 
 function normalizeStoredProfile(
   profile: StoredProfile | (
-    Omit<StoredProfile, 'authMode' | 'cacheMode' | 'isTemplate'>
+    Omit<StoredProfile, 'authMode' | 'cacheMode' | 'environment' | 'isTemplate'>
     & {
       authMode?: StoredProfile['authMode'];
       cacheMode?: StoredProfile['cacheMode'];
+      environment?: StoredProfile['environment'];
       pages?: StoredProfile['pages'];
       isTemplate?: StoredProfile['isTemplate'];
     }
@@ -22,6 +23,7 @@ function normalizeStoredProfile(
     ...profile,
     authMode: profile.authMode ?? 'none',
     cacheMode: profile.cacheMode ?? 'cold',
+    environment: profile.environment ?? 'production',
     pages: profile.pages?.length ? profile.pages : [profile.url],
     isTemplate: profile.isTemplate ?? false,
   };
@@ -93,6 +95,7 @@ export class InMemoryProfileRepository
     if (patch.throttling !== undefined) profile.throttling = patch.throttling;
     if (patch.authMode !== undefined) profile.authMode = patch.authMode;
     if (patch.cacheMode !== undefined) profile.cacheMode = patch.cacheMode;
+    if (patch.environment !== undefined) profile.environment = patch.environment;
     if (patch.pages !== undefined) profile.pages = patch.pages.length ? patch.pages : [profile.url];
     if (patch.isTemplate !== undefined) profile.isTemplate = patch.isTemplate;
 

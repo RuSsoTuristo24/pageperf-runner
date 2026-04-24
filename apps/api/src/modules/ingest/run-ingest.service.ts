@@ -117,6 +117,11 @@ export class RunIngestService
         url: request.url,
         resourceType: request.resourceType,
         status: request.status,
+        transferSize: request.transferSize ?? null,
+        encodedBodySize: request.encodedBodySize ?? null,
+        decodedBodySize: request.decodedBodySize ?? null,
+        durationMs: request.durationMs ?? null,
+        contentEncoding: request.contentEncoding ?? null,
       })),
     );
 

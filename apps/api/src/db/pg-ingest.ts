@@ -10,6 +10,7 @@ export type PgProfileRow = {
 	name: string;
 	url: string;
 	throttling: string;
+	environment?: string;
 	isTemplate?: boolean;
 	createdAt?: Date;
 };
@@ -30,6 +31,11 @@ export type PgRequestInput = {
 	url: string;
 	resourceType: string;
 	status?: number;
+	transferSize?: number | null;
+	encodedBodySize?: number | null;
+	decodedBodySize?: number | null;
+	durationMs?: number | null;
+	contentEncoding?: string | null;
 };
 
 function logFailure(operation: string, error: unknown): void
@@ -53,6 +59,7 @@ export async function pgInsertProfile(db: Db | undefined, row: PgProfileRow): Pr
 			name: row.name,
 			url: row.url,
 			throttling: row.throttling,
+			...(row.environment !== undefined ? { environment: row.environment } : {}),
 			...(row.isTemplate !== undefined ? { isTemplate: row.isTemplate } : {}),
 			...(row.createdAt ? { createdAt: row.createdAt } : {}),
 		});
@@ -81,6 +88,34 @@ export async function pgUpdateProfileTemplate(
 	catch (error)
 	{
 		logFailure('profile template update', error);
+	}
+}
+
+export type PgProfilePatch = {
+	name?: string;
+	url?: string;
+	throttling?: string;
+	environment?: string;
+};
+
+export async function pgUpdateProfile(
+	db: Db | undefined,
+	profileId: string,
+	patch: PgProfilePatch,
+): Promise<void>
+{
+	if (!db || Object.keys(patch).length === 0)
+	{
+		return;
+	}
+
+	try
+	{
+		await db.update(profiles).set(patch).where(eq(profiles.id, profileId));
+	}
+	catch (error)
+	{
+		logFailure('profile update', error);
 	}
 }
 
@@ -176,6 +211,11 @@ export async function pgInsertRequests(
 			// requests.status is NOT NULL — fall back to 0 when the upstream
 			// record has no HTTP status (e.g. aborted or cached responses).
 			status: typeof item.status === 'number' ? item.status : 0,
+			transferSize: typeof item.transferSize === 'number' ? item.transferSize : null,
+			encodedBodySize: typeof item.encodedBodySize === 'number' ? item.encodedBodySize : null,
+			decodedBodySize: typeof item.decodedBodySize === 'number' ? item.decodedBodySize : null,
+			durationMs: typeof item.durationMs === 'number' ? Math.round(item.durationMs) : null,
+			contentEncoding: item.contentEncoding ?? null,
 		}));
 		await db.insert(requests).values(rows);
 	}

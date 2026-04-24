@@ -1,3 +1,4 @@
+import { environmentOptions, type ApiEnvironment } from '../../lib/api.js';
 import { PagesInput } from './pages-input.js';
 
 type RunLaunchFormProps = {
@@ -6,6 +7,7 @@ type RunLaunchFormProps = {
 	pages: string;
 	throttling: string;
 	cacheMode: 'cold' | 'warm' | 'both';
+	environment: ApiEnvironment;
 	useAuthSession: boolean;
 	saveAsTemplate: boolean;
 	isSubmitting: boolean;
@@ -14,6 +16,7 @@ type RunLaunchFormProps = {
 	onPagesChange: (value: string) => void;
 	onThrottlingChange: (value: string) => void;
 	onCacheModeChange: (value: 'cold' | 'warm' | 'both') => void;
+	onEnvironmentChange: (value: ApiEnvironment) => void;
 	onUseAuthSessionChange: (value: boolean) => void;
 	onSaveAsTemplateChange: (value: boolean) => void;
 	onSubmit: () => void;
@@ -79,6 +82,19 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 					<option value="warm">тёплый</option>
 					<option value="both">оба</option>
 				</select>
+			</label>
+			<label className="field">
+				<span>Среда</span>
+				<select
+					aria-label="Среда тестирования"
+					value={props.environment}
+					onChange={(event) => props.onEnvironmentChange(event.target.value as ApiEnvironment)}
+				>
+					{environmentOptions.map((option) => (
+						<option key={option.value} value={option.value}>{option.label}</option>
+					))}
+				</select>
+				<span className="field-hint">Для фильтрации в Grafana и сравнения между средами.</span>
 			</label>
 			<label className="field-checkbox">
 				<input

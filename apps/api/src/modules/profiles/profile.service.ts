@@ -1,7 +1,7 @@
 import { profileSchema, type Profile } from '@pageperf-runner/shared';
 
 import type { Db } from '../../db/client.js';
-import { pgInsertProfile, pgUpdateProfileTemplate } from '../../db/pg-ingest.js';
+import { pgInsertProfile, pgUpdateProfile, pgUpdateProfileTemplate } from '../../db/pg-ingest.js';
 
 import { InMemoryProfileRepository } from './profile.repository.js';
 
@@ -34,6 +34,7 @@ export class ProfileService
       throttling: parsed.data.throttling,
       authMode: parsed.data.authMode,
       cacheMode: parsed.data.cacheMode,
+      environment: parsed.data.environment,
       isTemplate: parsed.data.isTemplate,
     });
 
@@ -45,6 +46,7 @@ export class ProfileService
       name: stored.name,
       url: stored.url,
       throttling: stored.throttling,
+      environment: stored.environment,
       isTemplate: stored.isTemplate,
     });
 
@@ -139,11 +141,32 @@ export class ProfileService
       allowed.cacheMode = body.cacheMode;
     }
 
+    if ('environment' in body)
+    {
+      if (body.environment !== 'etalon' && body.environment !== 'production'
+        && body.environment !== 'box' && body.environment !== 'experimental')
+      {
+        throw new ProfileValidationError('environment must be "etalon", "production", "box" or "experimental"');
+      }
+      allowed.environment = body.environment;
+    }
+
     const updated = this.repository.update(id, allowed);
 
     if (!updated)
     {
       throw new ProfileNotFoundError(`Profile ${id} not found`);
+    }
+
+    // Mirror the patch to PG so Grafana sees the new environment / url / etc.
+    const pgPatch: Parameters<typeof pgUpdateProfile>[2] = {};
+    if (allowed.name !== undefined) pgPatch.name = allowed.name;
+    if (allowed.url !== undefined) pgPatch.url = allowed.url;
+    if (allowed.throttling !== undefined) pgPatch.throttling = allowed.throttling;
+    if (allowed.environment !== undefined) pgPatch.environment = allowed.environment;
+    if (Object.keys(pgPatch).length > 0)
+    {
+      void pgUpdateProfile(this.db, id, pgPatch);
     }
 
     return updated;
