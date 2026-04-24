@@ -354,7 +354,7 @@ export function App()
 	const [assetIssues, setAssetIssues] = useState<ApiAssetIssue[]>([]);
 	const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 	const [selectedRunDetails, setSelectedRunDetails] = useState<ApiRunDetails | null>(null);
-	const [workspaceTab, setWorkspaceTab] = useState<WorkspaceTab>('requests');
+	const [workspaceTab, setWorkspaceTab] = useState<WorkspaceTab>('assets');
 	const [requestType, setRequestType] = useState('all');
 	const [assetType, setAssetType] = useState('all');
 	const [heavyAssetThresholdMb, setHeavyAssetThresholdMb] = useState('1');

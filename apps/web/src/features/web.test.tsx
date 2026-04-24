@@ -698,6 +698,7 @@ describe('pageperf-runner app shell', () => {
 
     render(<App />);
 
+    fireEvent.click(await screen.findByRole('tab', { name: /Запросы/ }));
     await screen.findByRole('heading', { name: 'Запросы' });
     await screen.findByText('/bitrix/js/call/core/dist/call.bundle.min.js');
 
@@ -815,6 +816,7 @@ describe('pageperf-runner app shell', () => {
 
     render(<App />);
 
+    fireEvent.click(await screen.findByRole('tab', { name: /Запросы/ }));
     expect(await screen.findByRole('heading', { name: 'Waterfall' })).toBeTruthy();
     expect(await screen.findByText('parser')).toBeTruthy();
     expect(await screen.findByText('h2')).toBeTruthy();
@@ -1020,6 +1022,7 @@ describe('pageperf-runner app shell', () => {
 
     render(<App />);
 
+    fireEvent.click(await screen.findByRole('tab', { name: /Запросы/ }));
     const requestTable = await screen.findByRole('table', { name: 'Requests table' });
     await screen.findByText('/bitrix/js/main/core/core.min.js');
     expect(within(requestTable).getByText('Transfer')).toBeTruthy();
