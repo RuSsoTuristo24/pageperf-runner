@@ -10,6 +10,7 @@ import { RenderBlockingPanel } from './features/diagnostics/render-blocking-pane
 import { ThirdPartyPanel } from './features/diagnostics/third-party-panel.js';
 import { JsExecutionPanel } from './features/runs/js-execution-panel.js';
 import { RunLaunchForm } from './features/runs/run-launch-form.js';
+import { normalizePagesForSubmit } from './features/runs/pages-input.js';
 import { RunList } from './features/runs/run-list.js';
 import { RunOverview } from './features/runs/run-overview.js';
 import { RunTemplatesList } from './features/runs/run-templates-list.js';
@@ -696,10 +697,7 @@ export function App()
 
 	async function handleCreateAndStartRun(): Promise<void>
 	{
-		const profilePages = draftProfilePages
-			.split(/\r?\n/)
-			.map((page) => page.trim())
-			.filter(Boolean);
+		const profilePages = normalizePagesForSubmit(draftProfilePages, draftProfileUrl);
 
 		try
 		{

@@ -1,3 +1,5 @@
+import { PagesInput } from './pages-input.js';
+
 type RunLaunchFormProps = {
 	name: string;
 	url: string;
@@ -48,17 +50,11 @@ export function RunLaunchForm(props: RunLaunchFormProps)
 					onChange={(event) => props.onUrlChange(event.target.value)}
 				/>
 			</label>
-			<label className="field">
-				<span>Страницы для прогона</span>
-				<textarea
-					aria-label="Страницы для прогона"
-					className="field-textarea"
-					placeholder={"https://example.com/page1\nhttps://example.com/page2"}
-					value={props.pages}
-					onChange={(event) => props.onPagesChange(event.target.value)}
-				/>
-				<span className="field-hint">По одному URL на строку</span>
-			</label>
+			<PagesInput
+				value={props.pages}
+				profileUrl={props.url}
+				onChange={props.onPagesChange}
+			/>
 			<label className="field">
 				<span>Пресет сети</span>
 				<select
