@@ -1896,3 +1896,123 @@ textarea {
 	color: rgba(255, 255, 255, 0.45);
 	font-style: italic;
 }
+
+/* ---------- Templates Dialog (split view) ---------- */
+.templates-dialog {
+	width: min(1200px, 96vw);
+	height: min(720px, 92vh);
+}
+
+.templates-dialog-header {
+	padding: 14px 20px 10px;
+}
+
+.templates-dialog-body {
+	display: grid;
+	grid-template-columns: minmax(280px, 360px) 1fr;
+	gap: 0;
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.templates-dialog-list-pane {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 14px 14px 10px;
+	border-right: 1px solid rgba(255, 255, 255, 0.08);
+	min-height: 0;
+	overflow: hidden;
+}
+
+.templates-dialog-search {
+	margin-bottom: 0;
+}
+
+.templates-dialog-list {
+	flex: 1;
+	max-height: none;
+	min-height: 0;
+}
+
+.templates-dialog-pagination {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	font-size: 12px;
+	padding-top: 8px;
+	border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.templates-dialog-pagination .pagination-summary {
+	flex: 1;
+	min-width: 0;
+}
+
+.templates-dialog-detail-pane {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.templates-dialog-empty {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 1;
+	color: rgba(255, 255, 255, 0.5);
+	font-style: italic;
+}
+
+.templates-dialog-detail-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 20px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.templates-dialog-detail-header h4 {
+	margin: 0 0 4px;
+	font-size: 16px;
+}
+
+.templates-dialog-detail-header p {
+	margin: 0;
+	font-size: 13px;
+	color: rgba(255, 255, 255, 0.55);
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 560px;
+}
+
+.templates-dialog-detail-meta {
+	margin-top: 4px !important;
+	font-family: inherit !important;
+	font-size: 11px !important;
+	color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.templates-dialog-detail-body {
+	flex: 1;
+	padding: 16px 20px;
+	overflow: auto;
+}
+
+@media (max-width: 720px) {
+	.templates-dialog-body {
+		grid-template-columns: 1fr;
+	}
+	.templates-dialog-list-pane {
+		border-right: none;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		max-height: 45vh;
+	}
+}

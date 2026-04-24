@@ -1805,9 +1805,12 @@ describe('pageperf-runner app shell', () => {
 
     render(<App />);
 
-    expect(await screen.findByRole('heading', { name: 'Запустить по профилю' })).toBeTruthy();
+    expect(await screen.findByRole('heading', { name: 'Запустить по шаблону' })).toBeTruthy();
 
-    const listbox = screen.getByLabelText('Выбрать профиль');
+    // Sidebar now has a single "Open list" button that launches the templates dialog.
+    fireEvent.click(await screen.findByRole('button', { name: /Открыть список/ }));
+
+    const listbox = await screen.findByLabelText('Список шаблонов');
     const options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(1);
     expect(options[0]?.textContent).toContain('Portal template');
