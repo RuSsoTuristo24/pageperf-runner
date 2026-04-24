@@ -169,6 +169,7 @@ export function PagesInput(props: PagesInputProps)
 									onChange={(event) => setDraft(event.target.value)}
 									placeholder={'/crm/lead/list/\n/blank.php\nhttps://russeltest.bitrix24.ru/crm/deal/kanban/'}
 									spellCheck={false}
+									wrap="off"
 								/>
 
 								{draftLines.length > 0 ? (
