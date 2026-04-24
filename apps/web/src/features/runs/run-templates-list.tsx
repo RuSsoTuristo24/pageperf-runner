@@ -132,6 +132,9 @@ export function RunTemplatesList(props: RunTemplatesListProps)
 			>
 				Настройки шаблона
 			</button>
+			{!selectedProfileId ? (
+				<p className="run-templates-hint">Сначала выберите шаблон в списке выше</p>
+			) : null}
 
 			<ProfileSettingsDialog
 				profile={selectedProfile}
