@@ -1722,3 +1722,76 @@ textarea {
 	color: #ffb4b4;
 	font-size: 13px;
 }
+
+/* ---------- Profile Settings Dialog (tabs) ---------- */
+.profile-settings-modal {
+	width: min(1100px, 95vw);
+}
+
+.profile-settings-header {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+}
+
+.profile-settings-header p {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
+.profile-settings-close {
+	font-size: 20px;
+	line-height: 1;
+	padding: 2px 10px;
+}
+
+.profile-settings-tabs {
+	display: flex;
+	gap: 4px;
+	padding: 0 20px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.profile-settings-tab {
+	all: unset;
+	cursor: pointer;
+	padding: 10px 16px;
+	border-radius: 8px 8px 0 0;
+	color: rgba(255, 255, 255, 0.6);
+	font-weight: 500;
+	border-bottom: 2px solid transparent;
+	transition: color 0.1s ease, border-color 0.1s ease, background 0.1s ease;
+}
+
+.profile-settings-tab:hover {
+	color: rgba(255, 255, 255, 0.9);
+	background: rgba(255, 255, 255, 0.03);
+}
+
+.profile-settings-tab.is-active {
+	color: var(--accent, #5de4c7);
+	border-bottom-color: var(--accent, #5de4c7);
+}
+
+.profile-settings-body {
+	display: block;
+	grid-template-columns: none;
+}
+
+.profile-settings-section {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.profile-settings-section-actions {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.profile-settings-section-actions-split {
+	justify-content: space-between;
+}

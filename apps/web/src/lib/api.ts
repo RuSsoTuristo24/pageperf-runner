@@ -901,3 +901,17 @@ export function deleteProfileSchedule(profileId: string): Promise<void>
 {
 	return sendJson<void>(`/api/profiles/${profileId}/schedule`, 'DELETE');
 }
+
+export type ProfilePatch = {
+	name?: string;
+	url?: string;
+	pages?: string[];
+	throttling?: string;
+	authMode?: 'none' | 'session';
+	cacheMode?: 'cold' | 'warm' | 'both';
+};
+
+export function updateProfile(profileId: string, patch: ProfilePatch): Promise<ApiProfile>
+{
+	return sendJson<ApiProfile>(`/api/profiles/${profileId}`, 'PATCH', patch);
+}

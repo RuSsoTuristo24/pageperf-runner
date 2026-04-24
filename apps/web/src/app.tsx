@@ -1022,6 +1022,9 @@ export function App()
 					onStartExisting={(profileId) => {
 						void handleStartExistingProfile(profileId);
 					}}
+					onProfileUpdated={(updated) => {
+						setProfiles((current) => current.map((profile) => profile.id === updated.id ? updated : profile));
+					}}
 				/>
 
 				<RunLaunchForm

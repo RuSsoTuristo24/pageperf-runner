@@ -28,6 +28,31 @@ export function registerProfileRoutes(app: FastifyInstance, service: ProfileServ
     }
   });
 
+  app.patch('/api/profiles/:id', async (request, reply) => {
+    const { id } = request.params as { id: string };
+
+    try
+    {
+      return service.update(id, request.body ?? {});
+    }
+    catch (error)
+    {
+      if (error instanceof ProfileValidationError)
+      {
+        reply.code(400);
+        return { error: error.message };
+      }
+
+      if (error instanceof ProfileNotFoundError)
+      {
+        reply.code(404);
+        return { error: error.message };
+      }
+
+      throw error;
+    }
+  });
+
   app.patch('/api/profiles/:id/template', async (request, reply) => {
     const { id } = request.params as { id: string };
     const body = (request.body ?? {}) as { isTemplate?: unknown };

@@ -79,6 +79,28 @@ export class InMemoryProfileRepository
     return profile;
   }
 
+  update(id: string, patch: Partial<Omit<StoredProfile, 'id'>>): StoredProfile | null
+  {
+    const profile = this.#profiles.find((candidate) => candidate.id === id);
+
+    if (!profile)
+    {
+      return null;
+    }
+
+    if (patch.name !== undefined) profile.name = patch.name;
+    if (patch.url !== undefined) profile.url = patch.url;
+    if (patch.throttling !== undefined) profile.throttling = patch.throttling;
+    if (patch.authMode !== undefined) profile.authMode = patch.authMode;
+    if (patch.cacheMode !== undefined) profile.cacheMode = patch.cacheMode;
+    if (patch.pages !== undefined) profile.pages = patch.pages.length ? patch.pages : [profile.url];
+    if (patch.isTemplate !== undefined) profile.isTemplate = patch.isTemplate;
+
+    this.#persist();
+
+    return profile;
+  }
+
   #persist(): void
   {
     if (!this.#storageFilePath)

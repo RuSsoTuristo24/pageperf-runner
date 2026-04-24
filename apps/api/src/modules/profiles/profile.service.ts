@@ -74,4 +74,78 @@ export class ProfileService
 
     return updated;
   }
+
+  update(id: string, patch: unknown): Profile & { id: string }
+  {
+    if (!patch || typeof patch !== 'object')
+    {
+      throw new ProfileValidationError('patch payload must be an object');
+    }
+
+    const allowed: Partial<Profile> = {};
+    const body = patch as Record<string, unknown>;
+
+    if ('name' in body)
+    {
+      if (typeof body.name !== 'string' || !body.name.trim())
+      {
+        throw new ProfileValidationError('name must be a non-empty string');
+      }
+      allowed.name = body.name.trim();
+    }
+
+    if ('url' in body)
+    {
+      if (typeof body.url !== 'string' || !body.url.trim())
+      {
+        throw new ProfileValidationError('url must be a non-empty string');
+      }
+      allowed.url = body.url.trim();
+    }
+
+    if ('pages' in body)
+    {
+      if (!Array.isArray(body.pages) || body.pages.some((page) => typeof page !== 'string'))
+      {
+        throw new ProfileValidationError('pages must be an array of strings');
+      }
+      allowed.pages = (body.pages as string[]).map((page) => page.trim()).filter(Boolean);
+    }
+
+    if ('throttling' in body)
+    {
+      if (typeof body.throttling !== 'string')
+      {
+        throw new ProfileValidationError('throttling must be a string');
+      }
+      allowed.throttling = body.throttling;
+    }
+
+    if ('authMode' in body)
+    {
+      if (body.authMode !== 'none' && body.authMode !== 'session')
+      {
+        throw new ProfileValidationError('authMode must be "none" or "session"');
+      }
+      allowed.authMode = body.authMode;
+    }
+
+    if ('cacheMode' in body)
+    {
+      if (body.cacheMode !== 'cold' && body.cacheMode !== 'warm' && body.cacheMode !== 'both')
+      {
+        throw new ProfileValidationError('cacheMode must be "cold", "warm" or "both"');
+      }
+      allowed.cacheMode = body.cacheMode;
+    }
+
+    const updated = this.repository.update(id, allowed);
+
+    if (!updated)
+    {
+      throw new ProfileNotFoundError(`Profile ${id} not found`);
+    }
+
+    return updated;
+  }
 }

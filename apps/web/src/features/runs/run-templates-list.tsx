@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 
 import type { ApiProfile } from '../../lib/api.js';
-import { RunScheduleDialog } from './run-schedule-dialog.js';
+import { ProfileSettingsDialog } from './profile-settings-dialog.js';
 
 type RunTemplatesListProps = {
 	profiles: ApiProfile[];
 	isSubmitting: boolean;
 	onStartExisting: (profileId: string) => void;
+	onProfileUpdated?: (profile: ApiProfile) => void;
 };
 
 function formatHint(url: string): string
@@ -26,7 +27,7 @@ export function RunTemplatesList(props: RunTemplatesListProps)
 {
 	const [selectedProfileId, setSelectedProfileId] = useState<string>('');
 	const [filter, setFilter] = useState<string>('');
-	const [isScheduleOpen, setIsScheduleOpen] = useState<boolean>(false);
+	const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 
 	const templates = useMemo(
 		() => props.profiles.filter((profile) => profile.isTemplate),
@@ -45,6 +46,11 @@ export function RunTemplatesList(props: RunTemplatesListProps)
 			|| profile.url.toLowerCase().includes(needle),
 		);
 	}, [templates, filter]);
+
+	const selectedProfile = useMemo(
+		() => templates.find((profile) => profile.id === selectedProfileId) ?? null,
+		[templates, selectedProfileId],
+	);
 
 	if (templates.length === 0)
 	{
@@ -121,20 +127,18 @@ export function RunTemplatesList(props: RunTemplatesListProps)
 			<button
 				type="button"
 				className="secondary-button run-templates-schedule-button"
-				onClick={() => setIsScheduleOpen(true)}
+				onClick={() => setIsSettingsOpen(true)}
 				disabled={!selectedProfileId}
 			>
-				Расписание
+				Настройки шаблона
 			</button>
 
-			{selectedProfileId ? (
-				<RunScheduleDialog
-					profileId={selectedProfileId}
-					profileName={templates.find((profile) => profile.id === selectedProfileId)?.name ?? ''}
-					isOpen={isScheduleOpen}
-					onClose={() => setIsScheduleOpen(false)}
-				/>
-			) : null}
+			<ProfileSettingsDialog
+				profile={selectedProfile}
+				isOpen={isSettingsOpen && !!selectedProfile}
+				onClose={() => setIsSettingsOpen(false)}
+				onProfileUpdated={props.onProfileUpdated}
+			/>
 		</section>
 	);
 }
