@@ -10,7 +10,7 @@
 ## Install Dependencies
 
 ```powershell
-cd C:\bitrix_repos\pageperf-runner
+cd C:\bitrix_repos\perf-platform\pageperf-runner
 corepack pnpm install
 ```
 
