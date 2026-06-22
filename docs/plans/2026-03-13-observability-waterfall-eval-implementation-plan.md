@@ -14,11 +14,11 @@
 Status: done
 
 **Files:**
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run.repository.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\worker\src\collector\network-collector.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\web\src\lib\api.ts`
-- Test: `C:\bitrix_repos\webperf-hub\packages\shared\src\shared.test.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run-crud.test.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run.repository.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/worker/src/collector/network-collector.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/web/src/lib/api.ts`
+- Test: `~/bitrix_repos/webperf-hub/packages/shared/src/shared.test.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run-crud.test.ts`
 
 **Step 1: Write the failing test**
 
@@ -44,7 +44,7 @@ Status: done
 
 **Step 2: Run test to verify it fails**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/api test -- run-crud`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/api test -- run-crud`
 
 Expected: FAIL on missing request fields in type/schema expectations.
 
@@ -54,7 +54,7 @@ Expected: FAIL on missing request fields in type/schema expectations.
 
 **Step 4: Run test to verify it passes**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/api test -- run-crud`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/api test -- run-crud`
 
 Expected: PASS.
 
@@ -62,9 +62,9 @@ Expected: PASS.
 Status: done
 
 **Files:**
-- Modify: `C:\bitrix_repos\webperf-hub\apps\worker\src\runner\live-profile.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\worker\src\collector\network-collector.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\worker\src\worker.test.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/worker/src/runner/live-profile.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/worker/src/collector/network-collector.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/worker/src/worker.test.ts`
 
 **Step 1: Write the failing test**
 
@@ -83,7 +83,7 @@ expect(result.requests[0]).toMatchObject({
 
 **Step 2: Run test to verify it fails**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/worker test -- worker.test.ts`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/worker test -- worker.test.ts`
 
 Expected: FAIL because these fields are not collected yet.
 
@@ -100,7 +100,7 @@ Expected: FAIL because these fields are not collected yet.
 
 **Step 4: Run test to verify it passes**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/worker test -- worker.test.ts`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/worker test -- worker.test.ts`
 
 Expected: PASS.
 
@@ -108,11 +108,11 @@ Expected: PASS.
 Status: done
 
 **Files:**
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\ingest\run-ingest.service.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run.service.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run-details.routes.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run-multi-page.test.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run-crud.test.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/ingest/run-ingest.service.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run.service.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run-details.routes.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run-multi-page.test.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run-crud.test.ts`
 
 **Step 1: Write the failing test**
 
@@ -120,7 +120,7 @@ Status: done
 
 **Step 2: Run test to verify it fails**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/api test -- run-multi-page`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/api test -- run-multi-page`
 
 Expected: FAIL because new fields are not persisted end-to-end.
 
@@ -132,7 +132,7 @@ Expected: FAIL because new fields are not persisted end-to-end.
 
 **Step 4: Run test to verify it passes**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/api test -- run-multi-page`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/api test -- run-multi-page`
 
 Expected: PASS.
 
@@ -140,11 +140,11 @@ Expected: PASS.
 Status: done
 
 **Files:**
-- Create: `C:\bitrix_repos\webperf-hub\apps\web\src\features\requests\request-waterfall.tsx`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\web\src\features\requests\request-table.tsx`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\web\src\app.tsx`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\web\src\styles.css`
-- Test: `C:\bitrix_repos\webperf-hub\apps\web\src\features\web.test.tsx`
+- Create: `~/bitrix_repos/webperf-hub/apps/web/src/features/requests/request-waterfall.tsx`
+- Modify: `~/bitrix_repos/webperf-hub/apps/web/src/features/requests/request-table.tsx`
+- Modify: `~/bitrix_repos/webperf-hub/apps/web/src/app.tsx`
+- Modify: `~/bitrix_repos/webperf-hub/apps/web/src/styles.css`
+- Test: `~/bitrix_repos/webperf-hub/apps/web/src/features/web.test.tsx`
 
 **Step 1: Write the failing test**
 
@@ -158,7 +158,7 @@ expect(screen.getByText('h2')).toBeTruthy();
 
 **Step 2: Run test to verify it fails**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/web test -- web.test.tsx`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/web test -- web.test.tsx`
 
 Expected: FAIL because waterfall panel does not exist.
 
@@ -171,7 +171,7 @@ Expected: FAIL because waterfall panel does not exist.
 
 **Step 4: Run test to verify it passes**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/web test -- web.test.tsx`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/web test -- web.test.tsx`
 
 Expected: PASS.
 
@@ -179,12 +179,12 @@ Expected: PASS.
 Status: done
 
 **Files:**
-- Modify: `C:\bitrix_repos\webperf-hub\apps\worker\src\collector\trace-collector.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\worker\src\runner\live-profile.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run.repository.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\web\src\lib\api.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\worker\src\collector\trace-collector.test.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\worker\src\worker.test.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/worker/src/collector/trace-collector.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/worker/src/runner/live-profile.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run.repository.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/web/src/lib/api.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/worker/src/collector/trace-collector.test.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/worker/src/worker.test.ts`
 
 **Step 1: Write the failing test**
 
@@ -204,7 +204,7 @@ expect(result.jsExecutionSummary.resources).toEqual([
 
 **Step 2: Run test to verify it fails**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/worker test -- trace-collector`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/worker test -- trace-collector`
 
 Expected: FAIL because per-resource execution summary does not exist.
 
@@ -217,7 +217,7 @@ Expected: FAIL because per-resource execution summary does not exist.
 
 **Step 4: Run test to verify it passes**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/worker test -- trace-collector`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/worker test -- trace-collector`
 
 Expected: PASS.
 
@@ -225,10 +225,10 @@ Expected: PASS.
 Status: done
 
 **Files:**
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\ingest\run-ingest.service.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run.service.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run-details.routes.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run-multi-page.test.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/ingest/run-ingest.service.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run.service.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run-details.routes.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run-multi-page.test.ts`
 
 **Step 1: Write the failing test**
 
@@ -236,7 +236,7 @@ Status: done
 
 **Step 2: Run test to verify it fails**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/api test -- run-multi-page`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/api test -- run-multi-page`
 
 Expected: FAIL because API contract does not include new summary.
 
@@ -248,7 +248,7 @@ Expected: FAIL because API contract does not include new summary.
 
 **Step 4: Run test to verify it passes**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/api test -- run-multi-page`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/api test -- run-multi-page`
 
 Expected: PASS.
 
@@ -256,11 +256,11 @@ Expected: PASS.
 Status: done
 
 **Files:**
-- Create: `C:\bitrix_repos\webperf-hub\apps\web\src\features\runs\js-execution-panel.tsx`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\web\src\app.tsx`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\web\src\styles.css`
-- Test: `C:\bitrix_repos\webperf-hub\apps\web\src\features\web.test.tsx`
-- Test: `C:\bitrix_repos\webperf-hub\apps\web\src\features\run-pages.test.tsx`
+- Create: `~/bitrix_repos/webperf-hub/apps/web/src/features/runs/js-execution-panel.tsx`
+- Modify: `~/bitrix_repos/webperf-hub/apps/web/src/app.tsx`
+- Modify: `~/bitrix_repos/webperf-hub/apps/web/src/styles.css`
+- Test: `~/bitrix_repos/webperf-hub/apps/web/src/features/web.test.tsx`
+- Test: `~/bitrix_repos/webperf-hub/apps/web/src/features/run-pages.test.tsx`
 
 **Step 1: Write the failing test**
 
@@ -274,7 +274,7 @@ expect(screen.getByText('unattributed')).toBeTruthy();
 
 **Step 2: Run test to verify it fails**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/web test -- run-pages`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/web test -- run-pages`
 
 Expected: FAIL because panel is missing.
 
@@ -288,7 +288,7 @@ Expected: FAIL because panel is missing.
 
 **Step 4: Run test to verify it passes**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/web test -- run-pages`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/web test -- run-pages`
 
 Expected: PASS.
 
@@ -296,11 +296,11 @@ Expected: PASS.
 Status: partial
 
 **Files:**
-- Modify: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run.repository.ts`
-- Modify: `C:\bitrix_repos\webperf-hub\apps\web\src\lib\api.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\api\src\modules\runs\run-crud.test.ts`
-- Test: `C:\bitrix_repos\webperf-hub\apps\web\src\features\web.test.tsx`
-- Docs: `C:\bitrix_repos\webperf-hub\README.md`
+- Modify: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run.repository.ts`
+- Modify: `~/bitrix_repos/webperf-hub/apps/web/src/lib/api.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/api/src/modules/runs/run-crud.test.ts`
+- Test: `~/bitrix_repos/webperf-hub/apps/web/src/features/web.test.tsx`
+- Docs: `~/bitrix_repos/webperf-hub/README.md`
 
 **Step 1: Write the failing test**
 
@@ -308,7 +308,7 @@ Status: partial
 
 **Step 2: Run test to verify it fails**
 
-Run: `corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/web test -- web.test.tsx`
+Run: `corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/web test -- web.test.tsx`
 
 Expected: FAIL if any new UI assumes enriched schema unconditionally.
 
@@ -323,9 +323,9 @@ Expected: FAIL if any new UI assumes enriched schema unconditionally.
 Run:
 
 ```bash
-corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/api test
-corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/web test
-corepack pnpm --dir C:\bitrix_repos\webperf-hub --filter @webperf/worker test
+corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/api test
+corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/web test
+corepack pnpm --dir ~/bitrix_repos/webperf-hub --filter @webperf/worker test
 ```
 
 Expected: all PASS.
@@ -334,8 +334,8 @@ Expected: all PASS.
 Status: pending manual smoke-check
 
 **Files:**
-- Docs: `C:\bitrix_repos\webperf-hub\docs\plans\2026-03-13-observability-waterfall-eval-design.md`
-- Docs: `C:\bitrix_repos\webperf-hub\docs\plans\2026-03-13-observability-waterfall-eval-implementation-plan.md`
+- Docs: `~/bitrix_repos/webperf-hub/docs/plans/2026-03-13-observability-waterfall-eval-design.md`
+- Docs: `~/bitrix_repos/webperf-hub/docs/plans/2026-03-13-observability-waterfall-eval-implementation-plan.md`
 
 **Step 1: Write the failing test**
 

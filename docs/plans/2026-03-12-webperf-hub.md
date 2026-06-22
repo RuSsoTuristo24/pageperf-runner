@@ -4,7 +4,7 @@
 
 **Goal:** Build a standalone Windows 11 friendly service that profiles browser page loads with Playwright and CDP, stores normalized run history, shows results in a web UI, and exposes Grafana- and AI-ready summaries.
 
-**Architecture:** The system lives in `C:\bitrix_repos\webperf-hub` as a standalone TypeScript monorepo with three apps: backend API, collector/runner worker, and React UI. Browser truth comes from Chrome DevTools Protocol, orchestration comes from Playwright, normalized facts go to PostgreSQL, and heavy artifacts stay on disk under a structured artifact root.
+**Architecture:** The system lives in `~/bitrix_repos/webperf-hub` as a standalone TypeScript monorepo with three apps: backend API, collector/runner worker, and React UI. Browser truth comes from Chrome DevTools Protocol, orchestration comes from Playwright, normalized facts go to PostgreSQL, and heavy artifacts stay on disk under a structured artifact root.
 
 **Tech Stack:** Node.js 22+, TypeScript, pnpm workspaces, Fastify, Drizzle ORM, PostgreSQL, Playwright, React, Vite, Vitest, Zod.
 

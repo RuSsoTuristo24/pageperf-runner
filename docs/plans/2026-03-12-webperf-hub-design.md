@@ -8,7 +8,7 @@
 
 ## Decision
 
-Build `WebPerf Hub` as a standalone tool in `C:\bitrix_repos\webperf-hub`, not as a Bitrix module.
+Build `WebPerf Hub` as a standalone tool in `~/bitrix_repos/webperf-hub`, not as a Bitrix module.
 
 ## Why Standalone
 
